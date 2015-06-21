@@ -48,6 +48,7 @@ void initPast()
 	}
 	input >> mapWidth >> mapHeight >> numPlayers;
 	playerNames = std::vector<string>(0);
+	getline(input, in);
 	for(unsigned char a = 0; a < numPlayers; a++) //Maybe still on last line? Check that as a possible error:
 	{
 		getline(input, in);
@@ -75,23 +76,14 @@ bool renderPast()
 	float pointSize = std::min(xPointSize, yPointSize) * decrementFactor;
 	glPointSize(pointSize);
 
-	string thisMap;
-	while(thisMap.size() == 0)
-	getline(input, thisMap);
-
-	input.close();
-
 	glBegin(GL_POINTS);
 	unsigned char xLoc = 0, yLoc = 0;
-	for(unsigned short a = 0; a < thisMap.size() - 2; a += 3)
+	unsigned short runningTotalRendered = 0;
+	while(runningTotalRendered < mapWidth * mapHeight)
 	{
-		unsigned char numberToRender, value, sentienceChar;
+		unsigned short numberToRender, value;
 		bool sentience;
-		numberToRender = thisMap[a];
-		value = thisMap[a + 1];
-		sentienceChar = thisMap[a + 2];
-		if(sentienceChar == '0') sentience = false;
-		else sentience = true;
+		input >> numberToRender >> value >> sentience;
 		color c = colorCodes[value];
 		const GLubyte DIMMING_FACTOR = 3;
 		if(!sentience)
@@ -100,6 +92,7 @@ bool renderPast()
 			c.g /= DIMMING_FACTOR;
 			c.b /= DIMMING_FACTOR;
 		}
+		runningTotalRendered += numberToRender;
 		glColor3ub(c.r, c.g, c.b);
 		while(numberToRender > 0)
 		{

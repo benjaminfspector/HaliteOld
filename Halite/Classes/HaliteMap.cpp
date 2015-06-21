@@ -25,7 +25,7 @@ void HaliteMap::outputToFile(string fileName)
 	out << "1\n";
 	struct vecLoc { unsigned char x, y; };
 	vecLoc presentPosition = { 0, 0 };
-	unsigned char lastValue = 255, numWrite = 0;
+	unsigned short lastValue = 255, numWrite = 0;
 	bool goOn = true, isSentient = false;
 	while(goOn)
 	{
@@ -35,10 +35,10 @@ void HaliteMap::outputToFile(string fileName)
 			lastValue = hMap[presentPosition.y][presentPosition.x].owner;
 			isSentient = hMap[presentPosition.y][presentPosition.x].isSentient;
 		}
-		else if(hMap[presentPosition.y][presentPosition.x].owner == lastValue && isSentient == hMap[presentPosition.y][presentPosition.x].isSentient && numWrite != 255) numWrite++;
+		else if(hMap[presentPosition.y][presentPosition.x].owner == lastValue && isSentient == hMap[presentPosition.y][presentPosition.x].isSentient) numWrite++;
 		else
 		{
-			out << numWrite << lastValue << isSentient;
+			out << numWrite << " " << lastValue << " " << isSentient << " ";
 			numWrite = 1;
 			lastValue = hMap[presentPosition.y][presentPosition.x].owner;
 			isSentient = hMap[presentPosition.y][presentPosition.x].isSentient;
@@ -54,7 +54,7 @@ void HaliteMap::outputToFile(string fileName)
 	}
 	if(numWrite != 0)
 	{
-		out << numWrite << lastValue << isSentient;
+		out << numWrite << " " << lastValue << " " << isSentient;
 	}
 	out << "\n";
 	out.close();
