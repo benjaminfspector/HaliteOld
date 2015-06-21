@@ -2,7 +2,11 @@
 
 using namespace std;
 
-list<HaliteMove> * getplayerMoves(unsigned int playerTag, HaliteMap m);
+void runPlayer(unsigned char playerToRun);
+
+//Here are the player objects
+YOURNAME Bob, Alice;
+//End here
 
 void initColorCodes()
 {
@@ -56,12 +60,27 @@ void initPast()
 	}
 	outputPlayerColorCodes();
 }
-bool renderPast()
+bool getPast()
 {
 	bool answer;
 	input >> answer;
 	if(!answer) return false;
 
+	thisMap.clear();
+	unsigned short runningTotalGotten = 0;
+	while(runningTotalGotten < mapWidth * mapHeight)
+	{
+		unsigned short numberToRender, value;
+		bool sentience;
+		input >> numberToRender >> value >> sentience;
+		thisMap.push_back({ numberToRender, value, sentience });
+		runningTotalGotten += numberToRender;
+	}
+
+	return true;
+}
+void renderPast()
+{
 	//Clear color buffer
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -78,23 +97,19 @@ bool renderPast()
 
 	glBegin(GL_POINTS);
 	unsigned char xLoc = 0, yLoc = 0;
-	unsigned short runningTotalRendered = 0;
-	while(runningTotalRendered < mapWidth * mapHeight)
+	const GLubyte DIMMING_FACTOR = 3;
+	for(auto a = thisMap.begin(); a != thisMap.end(); a++)
 	{
-		unsigned short numberToRender, value;
-		bool sentience;
-		input >> numberToRender >> value >> sentience;
-		color c = colorCodes[value];
-		const GLubyte DIMMING_FACTOR = 3;
-		if(!sentience)
+		torender b = *a;
+		color c = colorCodes[b.value];
+		if(!b.sentience)
 		{
 			c.r /= DIMMING_FACTOR;
 			c.g /= DIMMING_FACTOR;
 			c.b /= DIMMING_FACTOR;
 		}
-		runningTotalRendered += numberToRender;
 		glColor3ub(c.r, c.g, c.b);
-		while(numberToRender > 0)
+		while(b.num > 0)
 		{
 			glVertex2f(xLoc + 0.5, yLoc + 0.5);
 			xLoc++;
@@ -103,9 +118,10 @@ bool renderPast()
 				xLoc = 0;
 				yLoc++;
 			}
-			numberToRender--;
+			b.num--;
 		}
 	}
+	glEnd();
 
 	//Save default matrix again
 	glPushMatrix();
@@ -114,8 +130,6 @@ bool renderPast()
 	glTranslatef(0.f, 0.f, 0.f);
 
 	glutSwapBuffers();
-
-	return true;
 }
 
 void init()
@@ -123,7 +137,7 @@ void init()
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
-	playerNames.push_back("Jim");
+	//playerNames.push_back("Jim");
 	//playerNames.push_back("Fred");
 	//playerNames.push_back("Tim");
 	//playerNames.push_back("Jane");
@@ -137,15 +151,16 @@ void init()
 	filename += ".hlt";
 
 	myMap = HaliteMap(playerNames, MAP_WIDTH, MAP_HEIGHT);
+
+	//Put in player objects here:
+
+	Bob = YOURNAME(1, myMap);
+	Alice = YOURNAME(2, myMap);
 }
 void close()
 {
 	if(output.is_open()) output.close();
 	if(input.is_open()) input.close();
-	for(unsigned int a = 0; a < playerMoves.size(); a++)
-	{
-		delete playerMoves[a];
-	}
 }
 
 void initOutput()
@@ -164,24 +179,31 @@ void doOutput(unsigned char lastResult)
 	myMap.outputToFile(filename);
 	output.open(filename, ios_base::app);
 	if(lastResult != 0) output << "0";
+	output.close();
 }
 
 void runPlayers()
 {
-	std::vector< future< list<HaliteMove> * > > moveThreads(myMap.numberOfPlayers);
-	for(unsigned int a = 0; a < playerMoves.size(); a++)
-	{
-		delete playerMoves[a];
-	}
+	vector<thread> moveThreads (myMap.numberOfPlayers);
 	playerMoves.clear();
-	for(unsigned int a = 0; a < moveThreads.size(); a++)
+
+	//Create moveThreads: 
+	for(unsigned char a = 0; a < myMap.numberOfPlayers; a++)
 	{
-		moveThreads[a] = async(&getplayerMoves, a+1, myMap);
+		moveThreads[a] = thread(&runPlayer, a + 1);
 	}
-	for(unsigned int a = 0; a < moveThreads.size(); a++)
+
+	//Wait for completion.
+	for(unsigned char a = 0; a < myMap.numberOfPlayers; a++)
 	{
-		playerMoves.push_back(moveThreads[a].get());
+		moveThreads[a].join();
 	}
+	moveThreads.clear();
+
+	//Add player's moves back to playerMoves
+	playerMoves.push_back(&Bob.moves);
+	playerMoves.push_back(&Alice.moves);
+
 	std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
 }
@@ -205,19 +227,16 @@ void renderGame()
 		unsigned int bD = 0;
 		for(auto b = a->begin(); b != a->end(); b++)
 		{
-			//if(b->owner != 0)
+			color c = colorCodes[b->owner];
+			const GLubyte DIMMING_FACTOR = 3;
+			if(!b->isSentient)
 			{
-				color c = colorCodes[b->owner];
-				const GLubyte DIMMING_FACTOR = 3;
-				if(!b->isSentient)
-				{
-					c.r /= DIMMING_FACTOR;
-					c.g /= DIMMING_FACTOR;
-					c.b /= DIMMING_FACTOR;
-				}
-				glColor3ub(c.r, c.g, c.b);
-				glVertex2f(bD+0.5, aD+0.5);
+				c.r /= DIMMING_FACTOR;
+				c.g /= DIMMING_FACTOR;
+				c.b /= DIMMING_FACTOR;
 			}
+			glColor3ub(c.r, c.g, c.b);
+			glVertex2f(bD+0.5, aD+0.5);
 			bD++;
 		}
 		aD++;
@@ -225,37 +244,14 @@ void renderGame()
 	glEnd();
 }
 
-list<HaliteMove> * getplayerMoves(unsigned int playerTag, HaliteMap m)
+void runPlayer(unsigned char playerToRun)
 {
-	list<HaliteMove> * answer = new list<HaliteMove> (0);
-	for(unsigned char y = 0; y < m.hMap.size(); y++)
+	if(playerToRun == 1)
 	{
-		for(unsigned char x = 0; x < m.hMap[y].size(); x++)
-		{
-			//Sample program - simply HaliteMoves them all upwards. Not very effective.
-			if(m.hMap[y][x].owner == playerTag && m.hMap[y][x].isSentient)
-			{
-				unsigned char m = rand() % 5;
-				switch(m)
-				{
-				case 0:
-					answer->push_back(HaliteMove(HaliteMove::STILL, x, y));
-					break;
-				case 1:
-					answer->push_back(HaliteMove(HaliteMove::NORTH, x, y));
-					break;
-				case 2:
-					answer->push_back(HaliteMove(HaliteMove::EAST, x, y));
-					break;
-				case 3:
-					answer->push_back(HaliteMove(HaliteMove::SOUTH, x, y));
-					break;
-				case 4:
-					answer->push_back(HaliteMove(HaliteMove::WEST, x, y));
-				}
-			}
-		}
+		Bob.getMoves(myMap);
 	}
-
-	return answer;
+	else if(playerToRun == 2)
+	{
+		Alice.getMoves(myMap);
+	}
 }

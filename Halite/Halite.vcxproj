@@ -40,8 +40,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\freeglutMSVC\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\freeglutMSVC\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\boost_1_58_0\boost\bind;C:\boost_1_58_0\boost\thread;C:\freeglutMSVC\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\boost_1_58_0\libs;C:\freeglutMSVC\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -76,6 +76,7 @@
     <ClCompile Include="Classes\LUtil.cpp" />
     <ClCompile Include="Classes\main.cpp" />
     <ClCompile Include="Classes\HaliteMove.cpp" />
+    <ClCompile Include="Classes\YourName.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\GameRun.h" />
@@ -84,6 +85,7 @@
     <ClInclude Include="Classes\LOpenGL.h" />
     <ClInclude Include="Classes\LUtil.h" />
     <ClInclude Include="Classes\HaliteMove.h" />
+    <ClInclude Include="Classes\YourName.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

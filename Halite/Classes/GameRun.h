@@ -4,16 +4,17 @@
 #include "HaliteMap.h"
 #include "LUtil.h"
 
-#include <iostream> //Temporary, for debugging
-#include <fstream> //Temporary, for debugging
-#include <string> //Temporary, for debugging
+#include "YourName.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
 #include <list>
 #include <time.h>
 #include <math.h>
 #include <thread>
-#include <future>
+#include <algorithm>
 #include <map>
 
 //Temporary Constants
@@ -32,6 +33,8 @@ static std::string filename;
 static std::map<unsigned char, color> colorCodes; //Make 0.8 times as bright when unoccupied.
 
 //Variables for reading in file
+struct torender { unsigned short num; char value; bool sentience; };
+static std::list<torender> thisMap;
 static std::fstream input;
 static unsigned char mapWidth, mapHeight, numPlayers;
 
@@ -48,7 +51,8 @@ void initColorCodes();
 void outputPlayerColorCodes();
 
 void initPast();
-bool renderPast();
+bool getPast();
+void renderPast();
 
 void init();
 void close();

@@ -106,10 +106,7 @@ int main( int argc, char* args[] )
 		//Set mouse motion handler
 		glutMotionFunc(handleMouseMotion);
 
-		//Set rendering function
-		glutDisplayFunc(render);
-
-		glutFullScreen();
+		//glutFullScreen();
 	}
 
 	if(action != PAST)
@@ -128,7 +125,9 @@ int main( int argc, char* args[] )
 	}
 	else if(action == PAST)
 	{
+		//Set rendering function
 		initPast();
+		glutDisplayFunc(renderPast);
 		glutTimerFunc(1000 / SCREEN_FPS, pastLoop, 0);
 		glutMainLoop();
 	}
@@ -143,9 +142,10 @@ int main( int argc, char* args[] )
 			glutTimerFunc(1000 / SCREEN_FPS, bothLoop, 0);
 		}
 
+		//Set rendering function
+		glutDisplayFunc(render);
 		render();
 		outputPlayerColorCodes();
-		//Start GLUT main loop
 		glutMainLoop();
 	}
 
@@ -212,12 +212,13 @@ void bothLoop( int val )
 
 void pastLoop( int val )
 {
-	bool result = renderPast();
+	bool result = getPast();
 
+	renderPast();
 	if(!result)
 	{
-		close();
 		system("pause");
+		close();
 		exit(0);
 	}
 

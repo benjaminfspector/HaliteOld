@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="AI Template">
+      <UniqueIdentifier>{d2296708-ded4-4131-95d3-91ed46fa4141}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\LUtil.cpp">
@@ -33,6 +36,9 @@
     <ClCompile Include="Classes\GameRun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\YourName.cpp">
+      <Filter>AI Template</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\LOpenGL.h">
@@ -52,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="Classes\GameRun.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\YourName.h">
+      <Filter>AI Template</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
