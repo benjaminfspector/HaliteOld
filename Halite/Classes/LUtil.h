@@ -15,7 +15,15 @@ const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 1000;
 const int SCREEN_FPS = 30;
 
-bool initGL();
+enum Job
+{
+	RENDER,
+	WRITE,
+	BOTH,
+	PAST
+};
+
+bool initGL(Job newAction);
 
 void render();
 

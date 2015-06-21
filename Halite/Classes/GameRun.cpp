@@ -255,3 +255,60 @@ void runPlayer(unsigned char playerToRun)
 		Alice.getMoves(myMap);
 	}
 }
+
+void runPresentAnalysis()
+{
+	struct capability { unsigned short numSentient, numFactory; };
+	vector<capability> playerCapabilities(myMap.numberOfPlayers, { 0, 0 });
+	for(auto a = myMap.hMap.begin(); a != myMap.hMap.end(); a++)
+	{
+		for(auto b = a->begin(); b != a->end(); b++)
+		{
+			if(b->owner != 0)
+			{
+				if(b->isSentient)
+				{
+					playerCapabilities[b->owner - 1].numSentient++;
+				}
+				else
+				{
+					playerCapabilities[b->owner - 1].numFactory++;
+				}
+			}
+		}
+	}
+
+	for(unsigned short a = 0; a < myMap.numberOfPlayers; a++)
+	{
+		std::cout << "Player " << playerNames[a] << " has " << playerCapabilities[a].numSentient << " sentient crystals and " << playerCapabilities[a].numFactory << " factory crystals.\n";
+	}
+
+	system("pause");
+}
+void runPastAnalysis()
+{
+	std::cout << "Here!\n";
+	struct capability { unsigned short numSentient, numFactory; };
+	vector<capability> playerCapabilities(playerNames.size(), { 0, 0 });
+	for(auto a = thisMap.begin(); a != thisMap.end(); a++)
+	{
+		if(a->value != 0)
+		{
+			if(a->sentience)
+			{
+				playerCapabilities[a->value - 1].numSentient += a->num;
+			}
+			else
+			{
+				playerCapabilities[a->value - 1].numFactory += a->num;
+			}
+		}
+	}
+
+	for(unsigned short a = 0; a < playerNames.size(); a++)
+	{
+		std::cout << "Player " << playerNames[a] << " has " << playerCapabilities[a].numSentient << " sentient crystals and " << playerCapabilities[a].numFactory << " factory crystals.\n";
+	}
+
+	system("pause");
+}

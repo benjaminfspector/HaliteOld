@@ -1,7 +1,11 @@
 #include "LUtil.h"
 
-bool initGL()
+static Job utilAction = WRITE;
+
+bool initGL(Job newAction)
 {
+	utilAction = newAction;
+
     //Initialize Projection Matrix
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
@@ -82,6 +86,17 @@ void handleKeys( unsigned char key, int x, int y )
 	else if(key == 'c')
 	{
 		outputPlayerColorCodes();
+	}
+	else if(key == 'a')
+	{
+		if(utilAction == PAST)
+		{
+			runPastAnalysis();
+		}
+		else
+		{
+			runPresentAnalysis();
+		}
 	}
 }
 

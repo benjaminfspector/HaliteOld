@@ -18,8 +18,8 @@
 #include <map>
 
 //Temporary Constants
-static const unsigned char MAP_HEIGHT = 20;
-static const unsigned char MAP_WIDTH = 20;
+static const unsigned char MAP_HEIGHT = 50;
+static const unsigned char MAP_WIDTH = 50;
 
 struct color
 {
@@ -64,5 +64,8 @@ void runPlayers();
 unsigned char calculateResults(); /* 0 indicates continuation; other indicates playerTag */
 
 void renderGame();
+
+void runPresentAnalysis();
+void runPastAnalysis();
 
 #endif

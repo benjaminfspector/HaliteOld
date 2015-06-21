@@ -14,6 +14,7 @@
 
 class YOURNAME
 {
+
 private:
 	unsigned short myTag;
 public:

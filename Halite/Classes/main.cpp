@@ -5,15 +5,7 @@
 #include <string>
 #include <thread>
 
-enum Job
-{
-	RENDER,
-	WRITE,
-	BOTH,
-	PAST
-};
-
-Job action;
+static Job myAction;
 
 void renderLoop( int val );
 
@@ -45,29 +37,29 @@ int main( int argc, char* args[] )
 		}
 		else if(in == "render" || in == "r")
 		{
-			action = RENDER;
+			myAction = RENDER;
 			break;
 		}
 		else if(in == "output" || in == "o")
 		{
-			action = WRITE;
+			myAction = WRITE;
 			break;
 		}
 		else if(in == "both" || in == "b")
 		{
-			action = BOTH;
+			myAction = BOTH;
 			break;
 		}
 		else
 		{
-			action = PAST;
+			myAction = PAST;
 			break;
 		}
 	}
 	
 	initColorCodes();
 
-	if(action != WRITE)
+	if(myAction != WRITE)
 	{
 		//Initialize FreeGLUT
 		glutInit(&argc, args);
@@ -81,7 +73,7 @@ int main( int argc, char* args[] )
 		glutCreateWindow("Halite");
 
 		//Do post window/context creation initialization
-		if(!initGL())
+		if(!initGL(myAction))
 		{
 			printf("Unable to initialize graphics library!\n");
 			return 1;
@@ -109,21 +101,21 @@ int main( int argc, char* args[] )
 		//glutFullScreen();
 	}
 
-	if(action != PAST)
+	if(myAction != PAST)
 	{
 		init();		
 	}
-	if(action == WRITE || action == BOTH)
+	if(myAction == WRITE || myAction == BOTH)
 	{
 		initOutput();
 		doOutput(myMap.findWinner());
 	}
 
-	if(action == WRITE)
+	if(myAction == WRITE)
 	{
 		fileLoop();
 	}
-	else if(action == PAST)
+	else if(myAction == PAST)
 	{
 		//Set rendering function
 		initPast();
@@ -133,11 +125,11 @@ int main( int argc, char* args[] )
 	}
 	else
 	{
-		if(action == RENDER)
+		if(myAction == RENDER)
 		{
 			glutTimerFunc(1000 / SCREEN_FPS, renderLoop, 0);
 		}
-		else if(action == BOTH)
+		else if(myAction == BOTH)
 		{
 			glutTimerFunc(1000 / SCREEN_FPS, bothLoop, 0);
 		}
