@@ -15,9 +15,9 @@ enum Job
 
 Job action;
 
-void runRenderLoop( int val );
+void renderLoop( int val );
 
-void runFileLoop();
+void fileLoop();
 
 void bothLoop( int val );
 
@@ -65,6 +65,8 @@ int main( int argc, char* args[] )
 		}
 	}
 	
+	initColorCodes();
+
 	if(action != WRITE)
 	{
 		//Initialize FreeGLUT
@@ -107,14 +109,12 @@ int main( int argc, char* args[] )
 		//Set rendering function
 		glutDisplayFunc(render);
 
-		//glutFullScreen();
+		glutFullScreen();
 	}
-
-
 
 	if(action != PAST)
 	{
-		init();
+		init();		
 	}
 	if(action == WRITE || action == BOTH)
 	{
@@ -144,6 +144,7 @@ int main( int argc, char* args[] )
 		}
 
 		render();
+		outputPlayerColorCodes();
 		//Start GLUT main loop
 		glutMainLoop();
 	}
@@ -165,7 +166,7 @@ void renderLoop( int val )
 	}
 
     //Run frame one more time
-    glutTimerFunc( 1000 / SCREEN_FPS, runRenderLoop, val );
+    glutTimerFunc( 1000 / SCREEN_FPS, renderLoop, val );
 }
 
 void fileLoop()
@@ -190,10 +191,13 @@ void bothLoop( int val )
 	runPlayers();
 	unsigned char result = calculateResults();
 	
-	std::thread fileThread (doOutput, result);
-	std::thread renderThread (render);
-	fileThread.join();
-	renderThread.join();
+	//std::thread fileThread (doOutput, result);
+	//std::thread renderThread (render);
+	//fileThread.join();
+	//renderThread.join();
+
+	doOutput(result);
+	render();
 
 	if(result != 0)
 	{
@@ -203,7 +207,7 @@ void bothLoop( int val )
 	}
 
 	//Run frame one more time
-	glutTimerFunc(1000 / SCREEN_FPS, runRenderLoop, val);
+	glutTimerFunc(1000 / SCREEN_FPS, bothLoop, val);
 }
 
 void pastLoop( int val )
@@ -218,5 +222,5 @@ void pastLoop( int val )
 	}
 
 	//Run frame one more time
-	glutTimerFunc(1000 / SCREEN_FPS, runRenderLoop, val);
+	glutTimerFunc(1000 / SCREEN_FPS, pastLoop, val);
 }

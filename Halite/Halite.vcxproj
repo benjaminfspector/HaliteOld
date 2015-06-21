@@ -71,14 +71,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\GameRun.cpp" />
-    <ClCompile Include="Classes\Geometry\fcGeometry.cpp" />
-    <ClCompile Include="Classes\Geometry\fcLine.cpp" />
-    <ClCompile Include="Classes\Geometry\fcPoint.cpp" />
-    <ClCompile Include="Classes\Geometry\fcPolygon.cpp" />
-    <ClCompile Include="Classes\Geometry\fcPrintGeometry.cpp" />
-    <ClCompile Include="Classes\Geometry\fcRectangle.cpp" />
-    <ClCompile Include="Classes\Geometry\fcRelativeLocation.cpp" />
-    <ClCompile Include="Classes\Geometry\fcSeg.cpp" />
     <ClCompile Include="Classes\HaliteMap.cpp" />
     <ClCompile Include="Classes\HaliteLocation.cpp" />
     <ClCompile Include="Classes\LUtil.cpp" />
@@ -87,14 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\GameRun.h" />
-    <ClInclude Include="Classes\Geometry\fcGeometry.h" />
-    <ClInclude Include="Classes\Geometry\fcLine.h" />
-    <ClInclude Include="Classes\Geometry\fcPoint.h" />
-    <ClInclude Include="Classes\Geometry\fcPolygon.h" />
-    <ClInclude Include="Classes\Geometry\fcPrintGeometry.h" />
-    <ClInclude Include="Classes\Geometry\fcRectangle.h" />
-    <ClInclude Include="Classes\Geometry\fcRelativeLocation.h" />
-    <ClInclude Include="Classes\Geometry\fcSeg.h" />
     <ClInclude Include="Classes\HaliteMap.h" />
     <ClInclude Include="Classes\HaliteLocation.h" />
     <ClInclude Include="Classes\LOpenGL.h" />

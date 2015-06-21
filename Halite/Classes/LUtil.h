@@ -10,8 +10,6 @@
 #include <string>
 #include <sstream>
 
-const float GRAVITY_MULTIPLIER = 1000;
-
 ///Screen constants
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 1000;

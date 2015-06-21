@@ -79,6 +79,10 @@ void handleKeys( unsigned char key, int x, int y )
 		close();
 		init();
 	}
+	else if(key == 'c')
+	{
+		outputPlayerColorCodes();
+	}
 }
 
 void handleKeysUp(unsigned char key, int x, int y)

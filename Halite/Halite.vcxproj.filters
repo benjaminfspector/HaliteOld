@@ -13,35 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Geometry">
-      <UniqueIdentifier>{c49c2007-f3d3-4367-b535-f0b3db42af72}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Classes\Geometry\fcRelativeLocation.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Geometry\fcGeometry.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Geometry\fcLine.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Geometry\fcPoint.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Geometry\fcPolygon.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Geometry\fcPrintGeometry.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Geometry\fcRectangle.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Geometry\fcSeg.cpp">
-      <Filter>Geometry</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\LUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,30 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Classes\Geometry\fcGeometry.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Geometry\fcLine.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Geometry\fcPoint.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Geometry\fcPolygon.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Geometry\fcPrintGeometry.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Geometry\fcRectangle.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Geometry\fcRelativeLocation.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Geometry\fcSeg.h">
-      <Filter>Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\LOpenGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>

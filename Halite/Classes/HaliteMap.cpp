@@ -22,7 +22,7 @@ void HaliteMap::outputToFile(string fileName)
 {
 	std::fstream out;
 	out.open(fileName, ios_base::app);
-	out << "\n1\n";
+	out << "1\n";
 	struct vecLoc { unsigned char x, y; };
 	vecLoc presentPosition = { 0, 0 };
 	unsigned char lastValue = 255, numWrite = 0;
@@ -56,6 +56,7 @@ void HaliteMap::outputToFile(string fileName)
 	{
 		out << numWrite << lastValue << isSentient;
 	}
+	out << "\n";
 	out.close();
 }
 

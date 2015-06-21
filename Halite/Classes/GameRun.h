@@ -33,6 +33,7 @@ static std::map<unsigned char, color> colorCodes; //Make 0.8 times as bright whe
 
 //Variables for reading in file
 static std::fstream input;
+static unsigned char mapWidth, mapHeight, numPlayers;
 
 //Variables for game creation
 
@@ -42,6 +43,9 @@ static std::fstream output;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+void initColorCodes();
+void outputPlayerColorCodes();
 
 void initPast();
 bool renderPast();
