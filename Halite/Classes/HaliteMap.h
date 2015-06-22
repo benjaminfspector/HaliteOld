@@ -34,7 +34,7 @@ public:
 
 	//End unsafe
 
-	void punishPlayer(std::vector<unsigned short> puns);
+	void punishPlayers(std::vector<unsigned short> puns);
 	HaliteMap calculateResults(std::vector< std::list<HaliteMove> * > * playerMoves);
 	unsigned char findWinner(); //0 means keep going; other return means there is a definite winner.
 
