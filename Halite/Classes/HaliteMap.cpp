@@ -372,6 +372,12 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 		if(myDual.hMap[a->second][a->first].owner != 0) punishments[myDual.hMap[a->second][a->first].owner - 1]++;
 		myDual.hMap[a->second][a->first] = HaliteLocation();
 	}
+	
+	//Punish players
+	for(unsigned short a = 0; a < punishments.size(); a++)
+	{
+		punishPlayer(a+1, punishments[a]);
+	}
 
 	//Generate new soldiers
 	const unsigned short SPAWN_PROBABILITY = 200; // 1/SPAWN_PROBABILITY
