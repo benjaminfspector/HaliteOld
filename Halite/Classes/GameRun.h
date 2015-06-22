@@ -4,7 +4,7 @@
 #include "HaliteMap.h"
 #include "LUtil.h"
 
-#include "YourName.h"
+#include "AI_Template\YourName.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,8 +18,8 @@
 #include <map>
 
 //Temporary Constants
-static const unsigned char MAP_HEIGHT = 50;
-static const unsigned char MAP_WIDTH = 50;
+static const unsigned char MAP_HEIGHT = 35;
+static const unsigned char MAP_WIDTH = 35;
 
 struct color
 {

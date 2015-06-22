@@ -16,6 +16,9 @@
     <Filter Include="AI Template">
       <UniqueIdentifier>{d2296708-ded4-4131-95d3-91ed46fa4141}</UniqueIdentifier>
     </Filter>
+    <Filter Include="STD_AI_1">
+      <UniqueIdentifier>{9bcbd330-1fd7-4bcc-b55e-f9208ad9c676}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\LUtil.cpp">
@@ -36,8 +39,11 @@
     <ClCompile Include="Classes\GameRun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\YourName.cpp">
+    <ClCompile Include="Classes\AI_Template\YourName.cpp">
       <Filter>AI Template</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\STD_AI_1\STD_AI_1.cpp">
+      <Filter>STD_AI_1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,8 +65,11 @@
     <ClInclude Include="Classes\GameRun.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\YourName.h">
+    <ClInclude Include="Classes\AI_Template\YourName.h">
       <Filter>AI Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\STD_AI_1\STD_AI_1.h">
+      <Filter>STD_AI_1</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
