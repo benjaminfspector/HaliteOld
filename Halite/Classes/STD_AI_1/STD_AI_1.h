@@ -17,6 +17,7 @@ class STD_AI_1
 
 private:
 	unsigned short myTag;
+	unsigned char presentDirection;
 public:
 	STD_AI_1(unsigned short givenTag, HaliteMap initialMap);
 	STD_AI_1();
