@@ -40,7 +40,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\freeglutMSVC\Halite\Halite\Classes;C:\freeglutMSVC\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\basementlions\Documents\Halite\Halite\Classes;C:\freeglutMSVC\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\freeglutMSVC\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -88,6 +88,10 @@
     <ClInclude Include="Classes\LUtil.h" />
     <ClInclude Include="Classes\HaliteMove.h" />
     <ClInclude Include="Classes\STD_AI_1\STD_AI_1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Classes\Diffusion_AI\DiffusionAI.cpp" />
+    <Text Include="Classes\Diffusion_AI\DiffusionAI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

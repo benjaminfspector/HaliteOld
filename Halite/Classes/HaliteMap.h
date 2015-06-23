@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <iostream>
 #include "HaliteLocation.h"
 #include "HaliteMove.h"
@@ -24,7 +25,8 @@ public:
 
 	//To aid with speed, these are NOT safe. Check with inBounds before using them.
 
-	float getDistance(unsigned char x1, unsigned char y1, unsigned char x2, unsigned char y2);
+	float HaliteMap::getDistance(short x1, short y1, short x2, short y2);
+	float HaliteMap::getAngle(short x1, short y1, short x2, short y2);
 	HaliteLocation getNorthern(unsigned char xx, unsigned char yy);
 	HaliteLocation getEastern(unsigned char xx, unsigned char yy);
 	HaliteLocation getSouthern(unsigned char xx, unsigned char yy);

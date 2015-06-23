@@ -60,12 +60,20 @@ void HaliteMap::outputToFile(string fileName)
 	out.close();
 }
 
-float HaliteMap::getDistance(unsigned char x1, unsigned char y1, unsigned char x2, unsigned char y2)
+float HaliteMap::getDistance(short x1, short y1, short x2, short y2)
 {
-	unsigned char dx = abs(x2 - x1), dy = abs(y2 - y1);
+	short dx = abs(x2 - x1), dy = abs(y2 - y1);
 	if(dx > mapWidth / 2) dx = mapWidth - dx;
 	if(dy > mapHeight / 2) dy = mapHeight - dy;
 	return sqrt((dx*dx) + (dy*dy));
+}
+
+float HaliteMap::getAngle(short x1, short y1, short x2, short y2)
+{
+	short dx = x2 - x1, dy = y2 - y1;
+	if (abs(dx) > mapWidth - dx) dx = mapWidth - dx;
+	if (abs(dy) > mapHeight) dy = mapHeight - dy;
+	return atan2(dy, dx);
 }
 
 HaliteLocation HaliteMap::getNorthern(unsigned char xx, unsigned char yy)

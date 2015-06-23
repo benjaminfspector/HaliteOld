@@ -7,6 +7,10 @@
 
 static Job myAction;
 
+bool amDone = true;
+
+unsigned short result = 0;
+
 void renderLoop( int val );
 
 void fileLoop();
@@ -19,7 +23,7 @@ int main( int argc, char* args[] )
 {
 	//Move console to second monitor
 	HWND consoleWindow = GetConsoleWindow();
-	SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	//SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	//End moveConsole
 
     srand(time(NULL));
@@ -197,16 +201,12 @@ int main( int argc, char* args[] )
 
 void renderLoop( int val )
 {
-	runPlayers();
-	unsigned char result = calculateResults();
-	render();
-
-	if(result != 0)
+	if (result == 0)
 	{
-		close();
-		system("pause");
-		exit(0);
+		runPlayers();
+		result = calculateResults();
 	}
+	render();
 
     //Run frame one more time
     glutTimerFunc( 1000 / SCREEN_FPS, renderLoop, val );
@@ -231,23 +231,23 @@ void fileLoop()
 
 void bothLoop( int val )
 {
-	runPlayers();
-	unsigned char result = calculateResults();
+	if (result == 0)
+	{
+		runPlayers();
+		result = calculateResults();
+		if (result != 256)
+		{
+			doOutput(result);
+			result = 256;
+		}
+	}
 	
 	//std::thread fileThread (doOutput, result);
 	//std::thread renderThread (render);
 	//fileThread.join();
 	//renderThread.join();
-
-	doOutput(result);
+	
 	render();
-
-	if(result != 0)
-	{
-		close();
-		system("pause");
-		exit(0);
-	}
 
 	//Run frame one more time
 	glutTimerFunc(1000 / SCREEN_FPS, bothLoop, val);
@@ -255,15 +255,10 @@ void bothLoop( int val )
 
 void pastLoop( int val )
 {
-	bool result = getPast();
+	if (amDone)
+	amDone = getPast();
 
 	renderPast();
-	if(!result)
-	{
-		system("pause");
-		close();
-		exit(0);
-	}
 
 	//Run frame one more time
 	glutTimerFunc(1000 / SCREEN_FPS, pastLoop, val);

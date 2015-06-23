@@ -19,6 +19,9 @@
     <Filter Include="STD_AI_1">
       <UniqueIdentifier>{9bcbd330-1fd7-4bcc-b55e-f9208ad9c676}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Diffusion_AI">
+      <UniqueIdentifier>{efb7c32a-8298-4a75-a5d8-8d6ca628c219}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\LUtil.cpp">
@@ -71,5 +74,13 @@
     <ClInclude Include="Classes\STD_AI_1\STD_AI_1.h">
       <Filter>STD_AI_1</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Classes\Diffusion_AI\DiffusionAI.cpp">
+      <Filter>Diffusion_AI</Filter>
+    </Text>
+    <Text Include="Classes\Diffusion_AI\DiffusionAI.h">
+      <Filter>Diffusion_AI</Filter>
+    </Text>
   </ItemGroup>
 </Project>
