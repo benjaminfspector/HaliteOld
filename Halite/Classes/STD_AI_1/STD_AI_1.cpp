@@ -8,7 +8,7 @@ STD_AI_1::STD_AI_1(unsigned short givenTag, HaliteMap initialMap)
 //Random move AI
 void STD_AI_1::getMoves(HaliteMap presentMap)
 {
-	moves = std::list<HaliteMove>(0);
+	moves.clear();
 
 	//Find list of locations we need to move
 	struct loc { unsigned short x, y; };
@@ -50,8 +50,56 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 			else possibilities[b] = BAD;
 		}
 
-		goodness best;
+		goodness bestPossible = BAD;
+		for(unsigned short b = 0; b < 5; b++)
+		{
+			if(possibilities[b] == MID)
+			{
+				bestPossible = MID;
+			}
+			else if(possibilities[b] == BEST)
+			{
+				bestPossible = BEST;
+				break;
+			}
+		}
 
+		unsigned short presentPoint = rand() % 5;
+		while(possibilities[presentPoint] != bestPossible)
+		{
+			presentPoint++;
+			if(presentPoint == 5) presentPoint = 0;
+		}
+
+		if(presentPoint == 0)
+		{
+			moves.push_back(HaliteMove(HaliteMove::NORTH, a->x, a->y));
+			if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
+			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
+		}
+		else if(presentPoint == 1)
+		{
+			moves.push_back(HaliteMove(HaliteMove::EAST, a->x, a->y));
+			if(a->x != presentMap.mapWidth - 1) presentMap.hMap[a->y][a->x + 1] = HaliteLocation(myTag, true);
+			else presentMap.hMap[a->y][0] = HaliteLocation(myTag, true);
+		}
+		else if(presentPoint == 2)
+		{
+			moves.push_back(HaliteMove(HaliteMove::SOUTH, a->x, a->y));
+			if(a->y != presentMap.mapHeight - 1) presentMap.hMap[a->y + 1][a->x] = HaliteLocation(myTag, true);
+			else presentMap.hMap[0][a->x] = HaliteLocation(myTag, true);
+		}
+		else if(presentPoint == 3)
+		{
+			moves.push_back(HaliteMove(HaliteMove::WEST, a->x, a->y));
+			if(a->x != 0) presentMap.hMap[a->y][a->x - 1] = HaliteLocation(myTag, true);
+			else presentMap.hMap[a->y][presentMap.mapWidth - 1] = HaliteLocation(myTag, true);
+		}
+		else
+		{
+			moves.push_back(HaliteMove(HaliteMove::STILL, a->x, a->y));
+			presentMap.hMap[a->y][a->x] = HaliteLocation(myTag, true);
+		}
 	}
 }
 

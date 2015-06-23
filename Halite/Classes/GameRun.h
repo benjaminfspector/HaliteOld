@@ -5,6 +5,7 @@
 #include "LUtil.h"
 
 #include "AI_Template\YourName.h"
+#include "STD_AI_1\STD_AI_1.h"
 
 #include <iostream>
 #include <fstream>
@@ -16,10 +17,6 @@
 #include <thread>
 #include <algorithm>
 #include <map>
-
-//Temporary Constants
-static const unsigned char MAP_HEIGHT = 35;
-static const unsigned char MAP_WIDTH = 35;
 
 struct color
 {
@@ -36,7 +33,7 @@ static std::map<unsigned char, color> colorCodes; //Make 0.8 times as bright whe
 struct torender { unsigned short num; char value; bool sentience; };
 static std::list<torender> thisMap;
 static std::fstream input;
-static unsigned char mapWidth, mapHeight, numPlayers;
+static unsigned short mapWidth, mapHeight, numPlayers;
 
 //Variables for game creation
 
@@ -50,11 +47,12 @@ static std::fstream output;
 void initColorCodes();
 void outputPlayerColorCodes();
 
-void initPast();
+struct mapDimensions { unsigned short w, h; };
+mapDimensions initPast();
 bool getPast();
 void renderPast();
 
-void init();
+void init(unsigned short width, unsigned short height);
 void close();
 
 void initOutput();

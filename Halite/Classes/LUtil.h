@@ -11,8 +11,8 @@
 #include <sstream>
 
 ///Screen constants
-const int SCREEN_WIDTH = 1200;
-const int SCREEN_HEIGHT = 1000;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 800;
 const int SCREEN_FPS = 30;
 
 enum Job
@@ -23,7 +23,7 @@ enum Job
 	PAST
 };
 
-bool initGL(Job newAction);
+bool initGL(Job newAction, unsigned short width, unsigned short height);
 
 void render();
 

@@ -23,7 +23,7 @@ void HaliteMap::outputToFile(string fileName)
 	std::fstream out;
 	out.open(fileName, ios_base::app);
 	out << "1\n";
-	struct vecLoc { unsigned char x, y; };
+	struct vecLoc { unsigned short x, y; };
 	vecLoc presentPosition = { 0, 0 };
 	unsigned short lastValue = 255, numWrite = 0;
 	bool goOn = true, isSentient = false;
@@ -374,10 +374,10 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 	}
 	
 	//Punish players
-	for(unsigned short a = 0; a < punishments.size(); a++)
+	/*for(unsigned short a = 0; a < punishments.size(); a++)
 	{
 		punishPlayer(a+1, punishments[a]);
-	}
+	}*/
 
 	//Generate new soldiers
 	const unsigned short SPAWN_PROBABILITY = 200; // 1/SPAWN_PROBABILITY

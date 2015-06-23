@@ -5,7 +5,8 @@ using namespace std;
 void runPlayer(unsigned char playerToRun);
 
 //Here are the player objects
-YOURNAME Bob, Alice;
+YOURNAME Fred, Tim, Sam, John, Kate, Sara, Melissa;
+STD_AI_1 Bob, Alice, Jim;
 //End here
 
 void initColorCodes()
@@ -30,7 +31,7 @@ void outputPlayerColorCodes()
 	system("pause");
 }
 
-void initPast()
+mapDimensions initPast()
 {
 	cout << "What is the name of your file? Please include the file extension: ";
 	cin >> filename;
@@ -59,6 +60,7 @@ void initPast()
 		playerNames.push_back(in);
 	}
 	outputPlayerColorCodes();
+	return { mapWidth, mapHeight };
 }
 bool getPast()
 {
@@ -132,30 +134,44 @@ void renderPast()
 	glutSwapBuffers();
 }
 
-void init()
+void init(unsigned short width, unsigned short height)
 {
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
-	//playerNames.push_back("Jim");
-	//playerNames.push_back("Fred");
-	//playerNames.push_back("Tim");
-	//playerNames.push_back("Jane");
-	//playerNames.push_back("Sam");
-	//playerNames.push_back("John");
-	//playerNames.push_back("Kate");
-	//playerNames.push_back("Sara");
+	playerNames.push_back("Jim");
+	playerNames.push_back("Fred");
+	playerNames.push_back("Tim");
+	playerNames.push_back("Sam");
+	playerNames.push_back("John");
+	playerNames.push_back("Kate");
+	playerNames.push_back("Sara");
+	playerNames.push_back("Melissa");
+
+	mapWidth = width;
+	mapHeight = height;
+	myMap = HaliteMap(playerNames, mapWidth, mapHeight);
 
 	filename = "";
-	for(auto a = playerNames.begin(); a != playerNames.end(); a++) filename += *a;
+	for(auto a = playerNames.begin(); a != playerNames.end(); a++) filename += (*a)[0];
+	filename += "_";
+	filename += to_string(mapWidth);
+	filename += "_";
+	filename += to_string(mapHeight);
 	filename += ".hlt";
-
-	myMap = HaliteMap(playerNames, MAP_WIDTH, MAP_HEIGHT);
 
 	//Put in player objects here:
 
-	Bob = YOURNAME(1, myMap);
-	Alice = YOURNAME(2, myMap);
+	Bob = STD_AI_1(1, myMap);
+	Alice = STD_AI_1(2, myMap);
+	Jim = STD_AI_1(3, myMap);
+	Fred = YOURNAME(4, myMap);
+	Tim = YOURNAME(5, myMap);
+	Sam = YOURNAME(6, myMap);
+	John = YOURNAME(7, myMap);
+	Kate = YOURNAME(8, myMap);
+	Sara = YOURNAME(9, myMap);
+	Melissa = YOURNAME(10, myMap);
 }
 void close()
 {
@@ -167,7 +183,7 @@ void initOutput()
 {
 	output.open(filename, ios_base::out);
 	output << "Ht\n";
-	output << myMap.mapWidth << myMap.mapHeight << myMap.numberOfPlayers << "\n";
+	output << int(myMap.mapWidth) << " " << int(myMap.mapHeight) << " " << int(myMap.numberOfPlayers) << "\n";
 	for(auto a = playerNames.begin(); a != playerNames.end(); a++)
 	{
 		output << *a << "\n";
@@ -203,6 +219,14 @@ void runPlayers()
 	//Add player's moves back to playerMoves
 	playerMoves.push_back(&Bob.moves);
 	playerMoves.push_back(&Alice.moves);
+	playerMoves.push_back(&Jim.moves);
+	playerMoves.push_back(&Fred.moves);
+	playerMoves.push_back(&Tim.moves);
+	playerMoves.push_back(&Sam.moves);
+	playerMoves.push_back(&John.moves);
+	playerMoves.push_back(&Kate.moves);
+	playerMoves.push_back(&Sara.moves);
+	playerMoves.push_back(&Melissa.moves);
 
 	std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
@@ -253,6 +277,38 @@ void runPlayer(unsigned char playerToRun)
 	else if(playerToRun == 2)
 	{
 		Alice.getMoves(myMap);
+	}
+	else if(playerToRun == 3)
+	{
+		Jim.getMoves(myMap);
+	}
+	else if(playerToRun == 4)
+	{
+		Fred.getMoves(myMap);
+	}
+	else if(playerToRun == 5)
+	{
+		Tim.getMoves(myMap);
+	}
+	else if(playerToRun == 6)
+	{
+		Sam.getMoves(myMap);
+	}
+	else if(playerToRun == 7)
+	{
+		John.getMoves(myMap);
+	}
+	else if(playerToRun == 8)
+	{
+		Kate.getMoves(myMap);
+	}
+	else if(playerToRun == 9)
+	{
+		Sara.getMoves(myMap);
+	}
+	else if(playerToRun == 10)
+	{
+		Melissa.getMoves(myMap);
 	}
 }
 

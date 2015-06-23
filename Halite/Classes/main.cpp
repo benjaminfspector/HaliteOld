@@ -56,8 +56,48 @@ int main( int argc, char* args[] )
 			break;
 		}
 	}
+
+	unsigned short w, h;
+	if(myAction != PAST)
+	{
+		std::cout << "Please enter the width of the map: ";
+		while(true)
+		{
+			std::cin >> in;
+			try
+			{
+				w = std::stoi(in);
+				break;
+			}
+			catch(const std::invalid_argument& ia)
+			{
+				std::cout << "That is not an integer. Please enter an integer value: ";
+			}
+		}
+
+		std::cout << "Please enter the height of the map: ";
+		while(true)
+		{
+			std::cin >> in;
+			try
+			{
+				h = std::stoi(in);
+				break;
+			}
+			catch(const std::invalid_argument& ia)
+			{
+				std::cout << "That is not an integer. Please enter an integer value: ";
+			}
+		}
+	}
 	
 	initColorCodes();
+
+	mapDimensions pastMapD;
+	if(myAction == PAST)
+	{
+		pastMapD = initPast();
+	}
 
 	if(myAction != WRITE)
 	{
@@ -73,10 +113,21 @@ int main( int argc, char* args[] )
 		glutCreateWindow("Halite");
 
 		//Do post window/context creation initialization
-		if(!initGL(myAction))
+		if(myAction != PAST)
 		{
-			printf("Unable to initialize graphics library!\n");
-			return 1;
+			if(!initGL(myAction, w, h))
+			{
+				printf("Unable to initialize graphics library!\n");
+				return 1;
+			}
+		}
+		else
+		{
+			if(!initGL(myAction, pastMapD.w, pastMapD.h))
+			{
+				printf("Unable to initialize graphics library!\n");
+				return 1;
+			}
 		}
 
 		//Set leopard handler
@@ -98,12 +149,13 @@ int main( int argc, char* args[] )
 		//Set mouse motion handler
 		glutMotionFunc(handleMouseMotion);
 
-		//glutFullScreen();
+		glutFullScreen();
+		//system("pause");
 	}
 
 	if(myAction != PAST)
 	{
-		init();		
+		init(w, h);		
 	}
 	if(myAction == WRITE || myAction == BOTH)
 	{
@@ -118,7 +170,6 @@ int main( int argc, char* args[] )
 	else if(myAction == PAST)
 	{
 		//Set rendering function
-		initPast();
 		glutDisplayFunc(renderPast);
 		glutTimerFunc(1000 / SCREEN_FPS, pastLoop, 0);
 		glutMainLoop();

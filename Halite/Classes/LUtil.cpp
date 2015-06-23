@@ -2,14 +2,15 @@
 
 static Job utilAction = WRITE;
 
-bool initGL(Job newAction)
+bool initGL(Job newAction, unsigned short width, unsigned short height)
 {
 	utilAction = newAction;
 
     //Initialize Projection Matrix
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-	glOrtho(0, MAP_WIDTH, MAP_HEIGHT, 0, 1.0, -1.0);
+
+	glOrtho(0, width, height, 0, 1.0, -1.0);
 
     //Initialize Modelview Matrix
     glMatrixMode( GL_MODELVIEW );
@@ -77,11 +78,6 @@ void handleKeys( unsigned char key, int x, int y )
 	else if(key == 'p')
 	{
 		system("PAUSE");
-	}
-	else if(key == 'i')
-	{
-		close();
-		init();
 	}
 	else if(key == 'c')
 	{
