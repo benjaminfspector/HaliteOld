@@ -14,9 +14,9 @@ public:
     };
     
     moveTypes moveType;
-    unsigned char x, y;
+    short x, y;
     
-    HaliteMove(moveTypes m, unsigned char xx, unsigned char yy);
+    HaliteMove(moveTypes m, short xx, short yy);
     HaliteMove();
 };
 

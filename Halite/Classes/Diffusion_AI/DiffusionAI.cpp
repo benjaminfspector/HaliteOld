@@ -1,6 +1,6 @@
 #include "DiffusionAI.h"
 
-DiffusionAI::DiffusionAI(unsigned short givenTag, HaliteMap initialMap)
+DiffusionAI::DiffusionAI(short givenTag, HaliteMap initialMap)
 {
     myTag = givenTag;
 }
@@ -11,24 +11,17 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
 	moves.clear();
 
 	//Find list of HaliteLocations we need to move
-	struct loc { unsigned short x, y; };
+	struct loc { short x, y; };
 	std::list<loc> toMove;
-	for(unsigned char y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap.hMap.size(); y++)
 	{
-		for(unsigned char x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap.hMap[y].size(); x++)
 		{
 			if(presentMap.hMap[y][x].owner == myTag && presentMap.hMap[y][x].isSentient)
 			{
-				toMove.push_back({ x, y });
+               toMove.push_back({ x, y });
+               presentMap.hMap[y][x].isSentient = false;
 			}
-		}
-	}
-
-	for(unsigned char y = 0; y < presentMap.hMap.size(); y++)
-	{
-		for(unsigned char x = 0; x < presentMap.hMap[y].size(); x++)
-		{
-			presentMap.hMap[y][x].isSentient = false;
 		}
 	}
 
@@ -45,36 +38,43 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
 		
         
         bool foundBest = false;
-        int bestIndex = 0;
+       
         
-		for(unsigned short b = 0; b < 5; b++)
+		for(short b = 0; b < 5; b++)
 		{
 			if(around[b].owner != myTag) {
                 foundBest = true;
-                bestIndex = b;
                 break;
 			}
 		}
         if(foundBest == true) {
-            if(bestIndex == 0)
+           lastDirection++;
+           if(lastDirection >= 5) lastDirection = 0;
+           while(around[lastDirection].owner == myTag)
+           {
+              lastDirection++;
+              if(lastDirection >= 5) lastDirection = 0;
+           }
+           
+            if(lastDirection == 0)
         	{
     			moves.push_back(HaliteMove(HaliteMove::NORTH, a->x, a->y));
     			if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
     			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
     		}
-    		else if(bestIndex == 1)
+    		else if(lastDirection == 1)
     		{
     			moves.push_back(HaliteMove(HaliteMove::EAST, a->x, a->y));
     			if(a->x != presentMap.mapWidth - 1) presentMap.hMap[a->y][a->x + 1] = HaliteLocation(myTag, true);
     			else presentMap.hMap[a->y][0] = HaliteLocation(myTag, true);
     		}
-    		else if(bestIndex == 2)
+    		else if(lastDirection == 2)
     		{
     			moves.push_back(HaliteMove(HaliteMove::SOUTH, a->x, a->y));
     			if(a->y != presentMap.mapHeight - 1) presentMap.hMap[a->y + 1][a->x] = HaliteLocation(myTag, true);
     			else presentMap.hMap[0][a->x] = HaliteLocation(myTag, true);
     		}
-    		else if(bestIndex == 3)
+    		else if(lastDirection == 3)
     		{
     			moves.push_back(HaliteMove(HaliteMove::WEST, a->x, a->y));
     			if(a->x != 0) presentMap.hMap[a->y][a->x - 1] = HaliteLocation(myTag, true);
@@ -94,32 +94,32 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
                 int x = b->x;
 				int y = b->y;
                 if(a->x == x && a->y == y) continue;
-                
-                float angle = presentMap.getAngle(x, y, a->x, a->y);
+               
+                float angle = presentMap.getAngle(a->x, a->y, x, y);
     	        float mag = 1 / presentMap.getDistance(x, y, a->x, a->y);
+               
+               //if(a->x == 0) std::cout << "angle on the side " << angle << std::endl;
+               
 		        fieldX += mag * cos(angle);
 		        fieldY += mag * sin(angle);
             }
             float finalAngle = atan2(fieldY, fieldX);
-            float section = round(finalAngle / (3.141593f*0.5));
-            if(section == 0 || section == 4) {
-                moves.push_back(HaliteMove(HaliteMove::EAST, a->x, a->y));
+            float section = round(finalAngle / (3.141593f*0.5f));
+           //if(a->x == 0) std::cout << "section on the side " << section << std::endl;
+            if(section == 0 || section == -0) {
+                moves.push_back(HaliteMove(HaliteMove::WEST, a->x, a->y));
         		if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
     			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
             } else if(section == 1) {
                 moves.push_back(HaliteMove(HaliteMove::NORTH, a->x, a->y));
             	if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
     			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
-            } else if(section == 1) {
-                moves.push_back(HaliteMove(HaliteMove::WEST, a->x, a->y));
+            } else if(section == 2 || section == -2) {
+                moves.push_back(HaliteMove(HaliteMove::EAST, a->x, a->y));
                 if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
     			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
-            } else if(section == 1) {
+            } else if(section == -1) {
                 moves.push_back(HaliteMove(HaliteMove::SOUTH, a->x, a->y));
-                if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
-    			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
-            } else {
-                moves.push_back(HaliteMove(HaliteMove::STILL, a->x, a->y));
                 if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
     			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
             }

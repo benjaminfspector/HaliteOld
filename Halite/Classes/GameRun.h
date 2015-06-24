@@ -4,9 +4,9 @@
 #include "HaliteMap.h"
 #include "LUtil.h"
 
-#include "AI_Template\YourName.h"
-#include "STD_AI_1\STD_AI_1.h"
-//#include "Diffusion_AI\DiffusionAI.h"
+#include "AI_Template/YourName.h"
+#include "STD_AI_1/STD_AI_1.h"
+#include "Diffusion_AI/DiffusionAI.h"
 
 #include <iostream>
 #include <fstream>
@@ -28,13 +28,13 @@ struct color
 static int moveNumber = 0;
 static std::vector<std::string> playerNames;
 static std::string filename;
-static std::map<unsigned char, color> colorCodes; //Make 0.8 times as bright when unoccupied.
+static std::map<short, color> colorCodes; //Make 0.8 times as bright when unoccupied.
 
 //Variables for reading in file
-struct torender { unsigned short num; char value; bool sentience; };
+struct torender { short num; char value; bool sentience; };
 static std::list<torender> thisMap;
 static std::fstream input;
-static unsigned short mapWidth, mapHeight, numPlayers;
+static short mapWidth, mapHeight, numPlayers;
 
 //Variables for game creation
 
@@ -48,19 +48,19 @@ static std::fstream output;
 void initColorCodes();
 void outputPlayerColorCodes();
 
-struct mapDimensions { unsigned short w, h; };
+struct mapDimensions { short w, h; };
 mapDimensions initPast();
 bool getPast();
 void renderPast();
 
-void init(unsigned short width, unsigned short height);
+void init(short width, short height);
 void close();
 
 void initOutput();
-void doOutput(unsigned char lastResult);
+void doOutput(short lastResult);
 
 void runPlayers();
-unsigned char calculateResults(); /* 0 indicates continuation; other indicates playerTag */
+short calculateResults(); /* 0 indicates continuation; other indicates playerTag */
 
 void renderGame();
 

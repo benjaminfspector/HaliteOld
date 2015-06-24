@@ -1,6 +1,6 @@
 #include "STD_AI_1.h"
 
-STD_AI_1::STD_AI_1(unsigned short givenTag, HaliteMap initialMap)
+STD_AI_1::STD_AI_1(short givenTag, HaliteMap initialMap)
 {
 	presentDirection = rand()%5;
 	myTag = givenTag;
@@ -12,11 +12,11 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 	moves.clear();
 
 	//Find list of locations we need to move
-	struct loc { unsigned short x, y; };
+	struct loc { short x, y; };
 	std::list<loc> toMove;
-	for(unsigned char y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap.hMap.size(); y++)
 	{
-		for(unsigned char x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap.hMap[y].size(); x++)
 		{
 			if(presentMap.hMap[y][x].owner == myTag && presentMap.hMap[y][x].isSentient)
 			{
@@ -25,9 +25,9 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 		}
 	}
 
-	for(unsigned char y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap.hMap.size(); y++)
 	{
-		for(unsigned char x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap.hMap[y].size(); x++)
 		{
 			presentMap.hMap[y][x].isSentient = false;
 		}
@@ -44,7 +44,7 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 		around[3] = presentMap.getWestern(a->x, a->y);
 		around[4] = presentMap.hMap[a->y][a->x];
 		goodness possibilities[5];
-		for(unsigned short b = 0; b < 5; b++)
+		for(short b = 0; b < 5; b++)
 		{
 			if(around[b].owner != myTag) possibilities[b] = BEST;
 			else if(!around[b].isSentient) possibilities[b] = MID;
@@ -52,7 +52,7 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 		}
 
 		goodness bestPossible = BAD;
-		for(unsigned short b = 0; b < 5; b++)
+		for(short b = 0; b < 5; b++)
 		{
 			if(possibilities[b] == MID)
 			{

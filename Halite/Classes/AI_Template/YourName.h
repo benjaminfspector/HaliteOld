@@ -16,9 +16,9 @@ class YOURNAME
 {
 
 private:
-	unsigned short myTag;
+	short myTag;
 public:
-	YOURNAME(unsigned short givenTag, HaliteMap initialMap);
+	YOURNAME(short givenTag, HaliteMap initialMap);
 	YOURNAME();
 
 	void getMoves(HaliteMap presentMap);

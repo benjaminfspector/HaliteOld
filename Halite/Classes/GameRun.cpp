@@ -2,32 +2,33 @@
 
 using namespace std;
 
-void runPlayer(unsigned char playerToRun);
+void runPlayer(short playerToRun);
 
 //Here are the player objects
 //DiffusionAI Melissa;
-STD_AI_1 Bob, Alice, Jim, Fred, Tim, Sam, John, Kate, Sara, Melissa;
+DiffusionAI Bob;
+STD_AI_1 Alice, Jim, Fred;//, Tim, Sam, John, Kate, Sara, Melissa;
 //End here
 
 void initColorCodes()
 {
-	colorCodes = map<unsigned char, color>();
-	colorCodes.insert(pair<unsigned char, color>(0, { 100, 100, 100 }));
-	colorCodes.insert(pair<unsigned char, color>(1, { 255, 0, 0 }));
-	colorCodes.insert(pair<unsigned char, color>(2, { 0, 255, 0 }));
-	colorCodes.insert(pair<unsigned char, color>(3, { 0, 0, 255 }));
-	colorCodes.insert(pair<unsigned char, color>(4, { 255, 255, 0 }));
-	colorCodes.insert(pair<unsigned char, color>(5, { 255, 0, 255 }));
-	colorCodes.insert(pair<unsigned char, color>(6, { 0, 255, 255 }));
-	colorCodes.insert(pair<unsigned char, color>(7, { 255, 255, 255 }));
-	colorCodes.insert(pair<unsigned char, color>(8, { 222, 184, 135 }));
-	colorCodes.insert(pair<unsigned char, color>(9, { 255, 128, 128 }));
-	colorCodes.insert(pair<unsigned char, color>(10, { 255, 165, 0 }));
+	colorCodes = map<short, color>();
+	colorCodes.insert(pair<short, color>(0, { 100, 100, 100 }));
+	colorCodes.insert(pair<short, color>(1, { 255, 0, 0 }));
+	colorCodes.insert(pair<short, color>(2, { 0, 255, 0 }));
+	colorCodes.insert(pair<short, color>(3, { 0, 0, 255 }));
+	colorCodes.insert(pair<short, color>(4, { 255, 255, 0 }));
+	colorCodes.insert(pair<short, color>(5, { 255, 0, 255 }));
+	colorCodes.insert(pair<short, color>(6, { 0, 255, 255 }));
+	colorCodes.insert(pair<short, color>(7, { 255, 255, 255 }));
+	colorCodes.insert(pair<short, color>(8, { 222, 184, 135 }));
+	colorCodes.insert(pair<short, color>(9, { 255, 128, 128 }));
+	colorCodes.insert(pair<short, color>(10, { 255, 165, 0 }));
 }
 void outputPlayerColorCodes()
 {
 	cout << "Here are the " << int(playerNames.size()) << " players' color codes: \n";
-	for(unsigned char a = 0; a < playerNames.size(); a++) cout << "Player " << playerNames[a] << " has rgb { " << int(colorCodes[a+1].r) << ", " << int(colorCodes[a+1].g) << ", " << int(colorCodes[a+1].b) << " }\n";
+	for(short a = 0; a < playerNames.size(); a++) cout << "Player " << playerNames[a] << " has rgb { " << int(colorCodes[a+1].r) << ", " << int(colorCodes[a+1].g) << ", " << int(colorCodes[a+1].b) << " }\n";
 	system("pause");
 }
 
@@ -54,7 +55,7 @@ mapDimensions initPast()
 	input >> mapWidth >> mapHeight >> numPlayers;
 	playerNames = std::vector<string>(0);
 	getline(input, in);
-	for(unsigned char a = 0; a < numPlayers; a++) //Maybe still on last line? Check that as a possible error:
+	for(short a = 0; a < numPlayers; a++) //Maybe still on last line? Check that as a possible error:
 	{
 		getline(input, in);
 		playerNames.push_back(in);
@@ -69,13 +70,13 @@ bool getPast()
 	if(!answer) return false;
 
 	thisMap.clear();
-	unsigned short runningTotalGotten = 0;
+	short runningTotalGotten = 0;
 	while(runningTotalGotten < mapWidth * mapHeight)
 	{
-		unsigned short numberToRender, value;
+		short numberToRender, value;
 		bool sentience;
 		input >> numberToRender >> value >> sentience;
-		thisMap.push_back({ numberToRender, value, sentience });
+		thisMap.push_back({ numberToRender, char(value), sentience });
 		runningTotalGotten += numberToRender;
 	}
 
@@ -98,7 +99,7 @@ void renderPast()
 	glPointSize(pointSize);
 
 	glBegin(GL_POINTS);
-	unsigned char xLoc = 0, yLoc = 0;
+	short xLoc = 0, yLoc = 0;
 	const GLubyte DIMMING_FACTOR = 3;
 	for(auto a = thisMap.begin(); a != thisMap.end(); a++)
 	{
@@ -134,7 +135,7 @@ void renderPast()
 	glutSwapBuffers();
 }
 
-void init(unsigned short width, unsigned short height)
+void init(short width, short height)
 {
 	srand(time(NULL));
 
@@ -143,12 +144,12 @@ void init(unsigned short width, unsigned short height)
 	playerNames.push_back("Alice");
 	playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
-	playerNames.push_back("Tim");
+	/*playerNames.push_back("Tim");
 	playerNames.push_back("Sam");
 	playerNames.push_back("John");
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
-	playerNames.push_back("Melissa");
+	playerNames.push_back("Melissa");*/
 
 	mapWidth = width;
 	mapHeight = height;
@@ -164,16 +165,16 @@ void init(unsigned short width, unsigned short height)
 
 	//Put in player objects here:
 
-	Bob = STD_AI_1(1, myMap);
+	Bob = DiffusionAI(1, myMap);
 	Alice = STD_AI_1(2, myMap);
 	Jim = STD_AI_1(3, myMap);
 	Fred = STD_AI_1(4, myMap);
-	Tim = STD_AI_1(5, myMap);
+	/*Tim = STD_AI_1(5, myMap);
 	Sam = STD_AI_1(6, myMap);
 	John = STD_AI_1(7, myMap);
 	Kate = STD_AI_1(8, myMap);
 	Sara = STD_AI_1(9, myMap);
-	Melissa = STD_AI_1(10, myMap);
+	Melissa = STD_AI_1(10, myMap);*/
 }
 void close()
 {
@@ -192,7 +193,7 @@ void initOutput()
 	}
 	output.close();
 }
-void doOutput(unsigned char lastResult)
+void doOutput(short lastResult)
 {
 	myMap.outputToFile(filename);
 	output.open(filename, ios_base::app);
@@ -206,13 +207,13 @@ void runPlayers()
 	playerMoves.clear();
 
 	//Create moveThreads: 
-	for(unsigned char a = 0; a < myMap.numberOfPlayers; a++)
+	for(short a = 0; a < myMap.numberOfPlayers; a++)
 	{
 		moveThreads[a] = thread(&runPlayer, a + 1);
 	}
 
 	//Wait for completion.
-	for(unsigned char a = 0; a < myMap.numberOfPlayers; a++)
+	for(short a = 0; a < myMap.numberOfPlayers; a++)
 	{
 		moveThreads[a].join();
 	}
@@ -223,17 +224,17 @@ void runPlayers()
 	playerMoves.push_back(&Alice.moves);
 	playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
-	playerMoves.push_back(&Tim.moves);
+	/*playerMoves.push_back(&Tim.moves);
 	playerMoves.push_back(&Sam.moves);
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
 	playerMoves.push_back(&Sara.moves);
-	playerMoves.push_back(&Melissa.moves);
+	playerMoves.push_back(&Melissa.moves);*/
 
 	std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
 }
-unsigned char calculateResults()
+short calculateResults()
 {
 	myMap = myMap.calculateResults(&playerMoves);
 	return myMap.findWinner();
@@ -270,7 +271,7 @@ void renderGame()
 	glEnd();
 }
 
-void runPlayer(unsigned char playerToRun)
+void runPlayer(short playerToRun)
 {
 	if(playerToRun == 1)
 	{
@@ -288,7 +289,7 @@ void runPlayer(unsigned char playerToRun)
 	{
 		Fred.getMoves(myMap);
 	}
-	else if(playerToRun == 5)
+	/*else if(playerToRun == 5)
 	{
 		Tim.getMoves(myMap);
 	}
@@ -311,12 +312,12 @@ void runPlayer(unsigned char playerToRun)
 	else if(playerToRun == 10)
 	{
 		Melissa.getMoves(myMap);
-	}
+	}*/
 }
 
 void runPresentAnalysis()
 {
-	struct capability { unsigned short numSentient, numFactory; };
+	struct capability { short numSentient, numFactory; };
 	vector<capability> playerCapabilities(myMap.numberOfPlayers, { 0, 0 });
 	for(auto a = myMap.hMap.begin(); a != myMap.hMap.end(); a++)
 	{
@@ -336,7 +337,7 @@ void runPresentAnalysis()
 		}
 	}
 
-	for(unsigned short a = 0; a < myMap.numberOfPlayers; a++)
+	for(short a = 0; a < myMap.numberOfPlayers; a++)
 	{
 		std::cout << "Player " << playerNames[a] << " has " << playerCapabilities[a].numSentient << " sentient crystals and " << playerCapabilities[a].numFactory << " factory crystals.\n";
 	}
@@ -346,7 +347,7 @@ void runPresentAnalysis()
 void runPastAnalysis()
 {
 	std::cout << "Here!\n";
-	struct capability { unsigned short numSentient, numFactory; };
+	struct capability { short numSentient, numFactory; };
 	vector<capability> playerCapabilities(playerNames.size(), { 0, 0 });
 	for(auto a = thisMap.begin(); a != thisMap.end(); a++)
 	{
@@ -363,7 +364,7 @@ void runPastAnalysis()
 		}
 	}
 
-	for(unsigned short a = 0; a < playerNames.size(); a++)
+	for(short a = 0; a < playerNames.size(); a++)
 	{
 		std::cout << "Player " << playerNames[a] << " has " << playerCapabilities[a].numSentient << " sentient crystals and " << playerCapabilities[a].numFactory << " factory crystals.\n";
 	}

@@ -16,10 +16,10 @@ class STD_AI_1
 {
 
 private:
-	unsigned short myTag;
-	unsigned char presentDirection;
+	short myTag;
+	short presentDirection;
 public:
-	STD_AI_1(unsigned short givenTag, HaliteMap initialMap);
+	STD_AI_1(short givenTag, HaliteMap initialMap);
 	STD_AI_1();
 
 	void getMoves(HaliteMap presentMap);

@@ -1,6 +1,6 @@
 #include "HaliteLocation.h"
 
-HaliteLocation::HaliteLocation(unsigned char o, bool isO)
+HaliteLocation::HaliteLocation(short o, bool isO)
 {
     owner = o;
     isSentient = isO;

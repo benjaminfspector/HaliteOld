@@ -15,9 +15,10 @@
 class DiffusionAI
 {
 private:
-    unsigned short myTag;
+    short myTag;
+   unsigned short lastDirection = 0;
 public:
-	DiffusionAI(unsigned short givenTag, HaliteMap initialMap);
+	DiffusionAI(short givenTag, HaliteMap initialMap);
 	DiffusionAI();
 
 	void getMoves(HaliteMap presentMap);

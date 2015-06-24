@@ -2,7 +2,7 @@
 
 static Job utilAction = WRITE;
 
-bool initGL(Job newAction, unsigned short width, unsigned short height)
+bool initGL(Job newAction, short width, short height)
 {
 	utilAction = newAction;
 
@@ -96,7 +96,7 @@ void handleKeys( unsigned char key, int x, int y )
 	}
 }
 
-void handleKeysUp(unsigned char key, int x, int y)
+void handleKeysUp( unsigned char key, int x, int y)
 {
 
 }
