@@ -1,6 +1,6 @@
 #include "HaliteMove.h"
 
-HaliteMove::HaliteMove(moveTypes m, unsigned char xx, unsigned char yy)
+HaliteMove::HaliteMove(moveTypes m, short xx, short yy)
 {
     moveType = m;
     x = xx;

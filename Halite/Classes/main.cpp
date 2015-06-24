@@ -1,6 +1,6 @@
 #include "LUtil.h"
 
-#include <Windows.h>
+//#include <Windows.h>
 #include <time.h>
 #include <string>
 #include <thread>
@@ -9,7 +9,7 @@ static Job myAction;
 
 bool amDone = true;
 
-unsigned short result = 0;
+short result = 0;
 
 void renderLoop( int val );
 
@@ -22,7 +22,7 @@ void pastLoop( int val );
 int main( int argc, char* args[] )
 {
 	//Move console to second monitor
-	HWND consoleWindow = GetConsoleWindow();
+	//HWND consoleWindow = GetConsoleWindow();
 	//SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	//End moveConsole
 
@@ -61,7 +61,7 @@ int main( int argc, char* args[] )
 		}
 	}
 
-	unsigned short w, h;
+	short w, h;
 	if(myAction != PAST)
 	{
 		std::cout << "Please enter the width of the map: ";
@@ -137,7 +137,7 @@ int main( int argc, char* args[] )
 		//Set leopard handler
 		glutKeyboardFunc(handleKeys);
 
-		glutKeyboardUpFunc(handleKeysUp);
+        glutKeyboardUpFunc(handleKeysUp);
 
 		//Set special leopard handler
 		glutSpecialFunc(handleSpecialKeys);
@@ -217,7 +217,7 @@ void fileLoop()
 	while(true)
 	{
 		runPlayers();
-		unsigned char result = calculateResults();
+		short result = calculateResults();
 		doOutput(result);
 
 		if(result != 0)

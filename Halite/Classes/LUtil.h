@@ -23,13 +23,13 @@ enum Job
 	PAST
 };
 
-bool initGL(Job newAction, unsigned short width, unsigned short height);
+bool initGL(Job newAction, short width, short height);
 
 void render();
 
 void handleKeys( unsigned char key, int x, int y );
 
-void handleKeysUp(unsigned char key, int x, int y);
+void handleKeysUp( unsigned char key, int x, int y);
 
 void handleSpecialKeys(int key, int x, int y);
 

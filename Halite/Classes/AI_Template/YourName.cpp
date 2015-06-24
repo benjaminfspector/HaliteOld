@@ -1,6 +1,6 @@
 #include "YourName.h"
 
-YOURNAME::YOURNAME(unsigned short givenTag, HaliteMap initialMap)
+YOURNAME::YOURNAME(short givenTag, HaliteMap initialMap)
 {
 	myTag = givenTag;
 }
@@ -9,14 +9,14 @@ YOURNAME::YOURNAME(unsigned short givenTag, HaliteMap initialMap)
 void YOURNAME::getMoves(HaliteMap presentMap)
 {
 	moves = std::list<HaliteMove>(0);
-	for(unsigned char y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap.hMap.size(); y++)
 	{
-		for(unsigned char x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap.hMap[y].size(); x++)
 		{
 			//Sample program - simply HaliteMoves them all upwards. Not very effective.
 			if(presentMap.hMap[y][x].owner == myTag && presentMap.hMap[y][x].isSentient)
 			{
-				unsigned char m = rand() % 5;
+				short m = rand() % 5;
 				switch(m)
 				{
 				case 0:

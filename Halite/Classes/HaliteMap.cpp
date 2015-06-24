@@ -13,7 +13,7 @@ void HaliteMap::clearSentient()
 	}
 }
 
-bool HaliteMap::inBounds(unsigned char xx, unsigned char yy)
+bool HaliteMap::inBounds(short xx, short yy)
 {
 	return xx >= 0 && yy >= 0 && xx < mapWidth && yy < mapHeight;
 }
@@ -23,9 +23,9 @@ void HaliteMap::outputToFile(string fileName)
 	std::fstream out;
 	out.open(fileName, ios_base::app);
 	out << "1\n";
-	struct vecLoc { unsigned short x, y; };
+	struct vecLoc { short x, y; };
 	vecLoc presentPosition = { 0, 0 };
-	unsigned short lastValue = 255, numWrite = 0;
+	short lastValue = 255, numWrite = 0;
 	bool goOn = true, isSentient = false;
 	while(goOn)
 	{
@@ -71,53 +71,53 @@ float HaliteMap::getDistance(short x1, short y1, short x2, short y2)
 float HaliteMap::getAngle(short x1, short y1, short x2, short y2)
 {
 	short dx = x2 - x1, dy = y2 - y1;
-	if (abs(dx) > mapWidth - dx) dx = mapWidth - dx;
-	if (abs(dy) > mapHeight) dy = mapHeight - dy;
+	if (abs(dx) > mapWidth - dx) dx = dx - mapWidth;
+	if (abs(dy) > mapHeight - dy) dy = dy - mapHeight;
 	return atan2(dy, dx);
 }
 
-HaliteLocation HaliteMap::getNorthern(unsigned char xx, unsigned char yy)
+HaliteLocation HaliteMap::getNorthern(short xx, short yy)
 {
 	if(yy != 0) return hMap[yy - 1][xx];
 	return hMap[mapHeight - 1][xx];
 }
 
-HaliteLocation HaliteMap::getEastern(unsigned char xx, unsigned char yy)
+HaliteLocation HaliteMap::getEastern(short xx, short yy)
 {
 	if(xx != mapWidth - 1) return hMap[yy][xx + 1];
 	return hMap[yy][0];
 }
 
-HaliteLocation HaliteMap::getSouthern(unsigned char xx, unsigned char yy)
+HaliteLocation HaliteMap::getSouthern(short xx, short yy)
 {
 	if(yy != mapHeight - 1) return hMap[yy + 1][xx];
 	return hMap[0][xx];
 }
 
-HaliteLocation HaliteMap::getWestern(unsigned char xx, unsigned char yy)
+HaliteLocation HaliteMap::getWestern(short xx, short yy)
 {
 	if(xx != 0) return hMap[yy][xx - 1];
 	return hMap[yy][mapWidth - 1];
 }
 
-bool HaliteMap::haveNeighbors(unsigned char x, unsigned char y, unsigned char comparisonTag)
+bool HaliteMap::haveNeighbors(short x, short y, short comparisonTag)
 {
 	HaliteLocation n = getNorthern(x, y), e = getEastern(x, y), s = getSouthern(x, y), w = getWestern(x, y);
 	return (n.isSentient && n.owner != comparisonTag) || (e.isSentient && e.owner != comparisonTag) || (s.isSentient && s.owner != comparisonTag) || (w.isSentient && w.owner != comparisonTag);
 
 }
 
-bool HaliteMap::haveNeighbors(unsigned char x, unsigned char y)
+bool HaliteMap::haveNeighbors(short x, short y)
 {
 	HaliteLocation n = getNorthern(x, y), e = getEastern(x, y), s = getSouthern(x, y), w = getWestern(x, y);
-	unsigned char comparisonTag = hMap[y][x].owner;
+	short comparisonTag = hMap[y][x].owner;
 	return (n.isSentient && n.owner != comparisonTag) || (e.isSentient && e.owner != comparisonTag) || (s.isSentient && s.owner != comparisonTag) || (w.isSentient && w.owner != comparisonTag);
 }
 
-void HaliteMap::punishPlayers(vector<unsigned short> puns)
+void HaliteMap::punishPlayers(vector<short> puns)
 {
 	bool toContinue = false;
-	for(unsigned char a = 0; a < numberOfPlayers; a++) if(puns[a] != 0)
+	for(short a = 0; a < numberOfPlayers; a++) if(puns[a] != 0)
 	{
 		toContinue = true;
 		break;
@@ -125,15 +125,15 @@ void HaliteMap::punishPlayers(vector<unsigned short> puns)
 
 	if(!toContinue) return;
 
-	vector<unsigned short> numPieces(numberOfPlayers, 0);
-	for(unsigned short a = 0; a < mapHeight; a++) for(unsigned short b = 0; b < mapWidth; b++) if(hMap[a][b].owner != 0 && !hMap[a][b].isSentient) numPieces[hMap[a][b].owner - 1]++;
-	vector< list<unsigned short> > piecesToKill(numberOfPlayers, list<unsigned short>());
-	for(unsigned short a = 0; a < numberOfPlayers; a++)
+	vector<short> numPieces(numberOfPlayers, 0);
+	for(short a = 0; a < mapHeight; a++) for(short b = 0; b < mapWidth; b++) if(hMap[a][b].owner != 0 && !hMap[a][b].isSentient) numPieces[hMap[a][b].owner - 1]++;
+	vector< list<short> > piecesToKill(numberOfPlayers, list<short>());
+	for(short a = 0; a < numberOfPlayers; a++)
 	{
 		while(piecesToKill[a].size() < puns[a])
 		{
 			bool doAdd = true;
-			unsigned short toAdd = 1 + rand() % numPieces[a];
+			short toAdd = 1 + rand() % numPieces[a];
 			for(auto b = piecesToKill[a].begin(); b != piecesToKill[a].end(); b++) if(toAdd == *b)
 			{
 				doAdd = false;
@@ -143,12 +143,12 @@ void HaliteMap::punishPlayers(vector<unsigned short> puns)
 		}
 		if(!piecesToKill.empty()) piecesToKill[a].sort();
 	}
-	std::vector<unsigned short> piecesAtYet(numberOfPlayers, 0);
+	std::vector<short> piecesAtYet(numberOfPlayers, 0);
 	for(auto a = hMap.begin(); a != hMap.end(); a++)
 	{
 		for(auto b = a->begin(); b != a->end(); b++)
 		{
-			unsigned char oTag = b->owner;
+			short oTag = b->owner;
 			if(oTag != 0 && !piecesToKill[oTag - 1].empty())
 			{
 				piecesAtYet[oTag - 1]++;
@@ -165,10 +165,10 @@ void HaliteMap::punishPlayers(vector<unsigned short> puns)
 HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves)
 {
 	//List of squares to be deleted.
-	list< pair<unsigned char, unsigned char> > toDelete(0); //std::pair<x, y>
+	list< pair<short, short> > toDelete(0); //std::pair<x, y>
 
 	//List of punishments to dole out.
-	vector<unsigned short> punishments(numberOfPlayers, 0);
+	vector<short> punishments(numberOfPlayers, 0);
 
 	//Create second map. No soldiers on it, but colored tiles remain.
 	HaliteMap myDual = *this;
@@ -179,7 +179,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 	{
 		for(auto b = (*a)->begin(); b != (*a)->end(); b++)
 		{
-			unsigned char thisOwner = distance(playerMoves->begin(), a) + 1;
+			short thisOwner = distance(playerMoves->begin(), a) + 1;
 			if(inBounds(b->x, b->y) && hMap[b->y][b->x].owner == thisOwner && hMap[b->y][b->x].isSentient)
 			{
 				if(b->moveType == HaliteMove::STILL)
@@ -191,7 +191,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 					else if(myDual.hMap[b->y][b->x].owner != thisOwner)
 					{
 						//Mark square for deletion.
-						toDelete.push_back(pair<unsigned char, unsigned char>(b->x, b->y));
+						toDelete.push_back(pair<short, short>(b->x, b->y));
 						punishments[thisOwner - 1]++;
 					}
 				}
@@ -206,7 +206,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[b->y - 1][b->x].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(b->x, b->y - 1));
+							toDelete.push_back(pair<short, short>(b->x, b->y - 1));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -219,7 +219,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[mapHeight - 1][b->x].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(b->x, mapHeight - 1));
+							toDelete.push_back(pair<short, short>(b->x, mapHeight - 1));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -235,7 +235,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[b->y][b->x + 1].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(b->x + 1, b->y));
+							toDelete.push_back(pair<short, short>(b->x + 1, b->y));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -248,7 +248,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[b->y][0].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(0, b->y));
+							toDelete.push_back(pair<short, short>(0, b->y));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -264,7 +264,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[b->y + 1][b->x].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(b->x, b->y + 1));
+							toDelete.push_back(pair<short, short>(b->x, b->y + 1));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -277,7 +277,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[0][b->x].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(b->x, 0));
+							toDelete.push_back(pair<short, short>(b->x, 0));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -293,7 +293,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[b->y][b->x - 1].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(b->x - 1, b->y));
+							toDelete.push_back(pair<short, short>(b->x - 1, b->y));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -306,7 +306,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						else if(myDual.hMap[b->y][mapWidth - 1].owner != thisOwner)
 						{
 							//Mark square for deletion.
-							toDelete.push_back(pair<unsigned char, unsigned char>(mapWidth - 1, b->y));
+							toDelete.push_back(pair<short, short>(mapWidth - 1, b->y));
 							punishments[thisOwner - 1]++;
 						}
 					}
@@ -328,53 +328,53 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 	}
 
 	//Mark adjacent tiles for deletion. Make checkerboard pattern.
-	for(unsigned char a = 0; a < myDual.hMap.size(); a++)
+	for(short a = 0; a < myDual.hMap.size(); a++)
 	{
-		unsigned char b;
+		short b;
 		if(a % 2 == 0) b = 0;
 		else b = 1;
 		while(b < myDual.hMap[a].size())
 		{
 			if(myDual.hMap[a][b].isSentient)
 			{
-				unsigned char thisOwner = myDual.hMap[a][b].owner;
+				short thisOwner = myDual.hMap[a][b].owner;
 				if(a == mapHeight - 1)
 				{
 					if(myDual.hMap[a - 1][b].owner !=  thisOwner && myDual.hMap[a - 1][b].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a - 1));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b, a - 1));
 					}
 					if(myDual.hMap[0][b].owner !=  thisOwner && myDual.hMap[0][b].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, 0));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b, 0));
 					}
 				}
 				else if(a == 0)
 				{
 					if(myDual.hMap[a + 1][b].owner !=  thisOwner && myDual.hMap[a + 1][b].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
+						toDelete.push_back(pair<short, short>(b, a));
 						toDelete.push_back({ b, a + 1 });
 					}
 					if(myDual.hMap[mapHeight - 1][b].owner !=  thisOwner && myDual.hMap[mapHeight - 1][b].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, mapHeight - 1));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b, mapHeight - 1));
 					}
 				}
 				else
 				{
 					if(myDual.hMap[a + 1][b].owner !=  thisOwner && myDual.hMap[a + 1][b].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a + 1));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b, a + 1));
 					}
 					if(myDual.hMap[a - 1][b].owner !=  thisOwner && myDual.hMap[a - 1][b].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a - 1));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b, a - 1));
 					}
 				}
 
@@ -382,39 +382,39 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 				{
 					if(myDual.hMap[a][b - 1].owner !=  thisOwner && myDual.hMap[a][b - 1].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b - 1, a));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b - 1, a));
 					}
 					if(myDual.hMap[a][0].owner !=  thisOwner && myDual.hMap[a][0].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(0, a));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(0, a));
 					}
 				}
 				else if(b == 0)
 				{
 					if(myDual.hMap[a][b + 1].owner !=  thisOwner && myDual.hMap[a][b + 1].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b + 1, a));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b + 1, a));
 					}
 					if(myDual.hMap[a][mapWidth - 1].owner !=  thisOwner && myDual.hMap[a][mapWidth - 1].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(mapWidth - 1, a));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(mapWidth - 1, a));
 					}
 				}
 				else
 				{
 					if(myDual.hMap[a][b - 1].owner !=  thisOwner && myDual.hMap[a][b - 1].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b - 1, a));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b - 1, a));
 					}
 					if(myDual.hMap[a][b + 1].owner !=  thisOwner && myDual.hMap[a][b + 1].isSentient)
 					{
-						toDelete.push_back(pair<unsigned char, unsigned char>(b, a));
-						toDelete.push_back(pair<unsigned char, unsigned char>(b + 1, a));
+						toDelete.push_back(pair<short, short>(b, a));
+						toDelete.push_back(pair<short, short>(b + 1, a));
 					}
 				}
 			}
@@ -432,7 +432,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 	punishPlayers(punishments);
 
 	//Generate new soldiers
-	const unsigned short SPAWN_PROBABILITY = 200; // 1/SPAWN_PROBABILITY
+	const short SPAWN_PROBABILITY = 200; // 1/SPAWN_PROBABILITY
 	for(auto a = myDual.hMap.begin(); a != myDual.hMap.end(); a++)
 	{
 		for(auto b = a->begin(); b != a->end(); b++)
@@ -450,7 +450,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 	return myDual;
 }
 
-unsigned char HaliteMap::findWinner()
+short HaliteMap::findWinner()
 {
 	std::vector<bool> stillAlive(numberOfPlayers);
 	for(auto a = hMap.begin(); a != hMap.end(); a++)
@@ -461,7 +461,7 @@ unsigned char HaliteMap::findWinner()
 		}
 	}
 
-	unsigned char aliveCount = 0, aliveTag = 0;
+	short aliveCount = 0, aliveTag = 0;
 	for(auto a = stillAlive.begin(); a != stillAlive.end(); a++)
 	{
 		if(*a)
@@ -484,7 +484,7 @@ HaliteMap::HaliteMap()
 	srand(time(NULL));
 }
 
-HaliteMap::HaliteMap(vector<string> pNames, unsigned char mWidth, unsigned char mHeight)
+HaliteMap::HaliteMap(vector<string> pNames, short mWidth, short mHeight)
 {
 	srand(time(NULL));
 	playerNames = pNames;
@@ -494,13 +494,13 @@ HaliteMap::HaliteMap(vector<string> pNames, unsigned char mWidth, unsigned char 
 	hMap = vector< vector<HaliteLocation> >(mapHeight, vector<HaliteLocation>(mapWidth, HaliteLocation()));
 
 	//Scatter some colored squares.
-	list<pair<unsigned char, unsigned char> > takenSpots(0);
+	list<pair<short, short> > takenSpots(0);
 	float minDistance = sqrt(mapHeight*mapWidth) / 2;
 	for(int a = 1; a <= numberOfPlayers; a++)
 	{
 		bool bad = true;
 		int counter = 0;
-		unsigned char xPos, yPos;
+		short xPos, yPos;
 		while(bad)
 		{
 			bad = false;
@@ -522,6 +522,6 @@ HaliteMap::HaliteMap(vector<string> pNames, unsigned char mWidth, unsigned char 
 			}
 		}
 		hMap[yPos][xPos] = HaliteLocation(a, true);
-		takenSpots.push_back(pair<unsigned char, unsigned char>(xPos, yPos));
+		takenSpots.push_back(pair<short, short>(xPos, yPos));
 	}
 }

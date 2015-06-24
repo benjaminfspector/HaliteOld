@@ -7,10 +7,10 @@
 class HaliteLocation
 {
 public:
-    unsigned char owner; //0 = blank; other indicates playerTag;
+    short owner; //0 = blank; other indicates playerTag;
     bool isSentient;
     
-    HaliteLocation(unsigned char o, bool isO);
+    HaliteLocation(short o, bool isO);
     HaliteLocation();
 };
 
