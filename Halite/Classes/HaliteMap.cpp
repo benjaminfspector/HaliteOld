@@ -116,6 +116,15 @@ bool HaliteMap::haveNeighbors(unsigned char x, unsigned char y)
 
 void HaliteMap::punishPlayers(vector<unsigned short> puns)
 {
+	bool toContinue = false;
+	for(unsigned char a = 0; a < numberOfPlayers; a++) if(puns[a] != 0)
+	{
+		toContinue = true;
+		break;
+	}
+
+	if(!toContinue) return;
+
 	vector<unsigned short> numPieces(numberOfPlayers, 0);
 	for(unsigned short a = 0; a < mapHeight; a++) for(unsigned short b = 0; b < mapWidth; b++) if(hMap[a][b].owner != 0 && !hMap[a][b].isSentient) numPieces[hMap[a][b].owner - 1]++;
 	vector< list<unsigned short> > piecesToKill(numberOfPlayers, list<unsigned short>());
@@ -124,7 +133,7 @@ void HaliteMap::punishPlayers(vector<unsigned short> puns)
 		while(piecesToKill[a].size() < puns[a])
 		{
 			bool doAdd = true;
-			unsigned short toAdd = rand() % numPieces[a];
+			unsigned short toAdd = 1 + rand() % numPieces[a];
 			for(auto b = piecesToKill[a].begin(); b != piecesToKill[a].end(); b++) if(toAdd == *b)
 			{
 				doAdd = false;
@@ -132,7 +141,24 @@ void HaliteMap::punishPlayers(vector<unsigned short> puns)
 			}
 			if(doAdd) piecesToKill[a].push_back(toAdd);
 		}
-		std::sort(piecesToKill[a].begin(), piecesToKill[a].end());
+		if(!piecesToKill.empty()) piecesToKill[a].sort();
+	}
+	std::vector<unsigned short> piecesAtYet(numberOfPlayers, 0);
+	for(auto a = hMap.begin(); a != hMap.end(); a++)
+	{
+		for(auto b = a->begin(); b != a->end(); b++)
+		{
+			unsigned char oTag = b->owner;
+			if(oTag != 0 && !piecesToKill[oTag - 1].empty())
+			{
+				piecesAtYet[oTag - 1]++;
+				if(piecesAtYet[oTag - 1] == piecesToKill[oTag - 1].front())
+				{
+					*b = HaliteLocation();
+					piecesToKill[oTag - 1].pop_back();
+				}
+			}
+		}
 	}
 }
 
@@ -403,11 +429,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 		myDual.hMap[a->second][a->first] = HaliteLocation();
 	}
 	
-	//Punish players
-	for(unsigned short a = 0; a < punishments.size(); a++)
-	{
-		punishPlayers(punishments);
-	}
+	punishPlayers(punishments);
 
 	//Generate new soldiers
 	const unsigned short SPAWN_PROBABILITY = 200; // 1/SPAWN_PROBABILITY

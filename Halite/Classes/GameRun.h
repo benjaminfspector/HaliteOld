@@ -6,7 +6,7 @@
 
 #include "AI_Template\YourName.h"
 #include "STD_AI_1\STD_AI_1.h"
-#include "Diffusion_AI\DiffusionAI.h"
+//#include "Diffusion_AI\DiffusionAI.h"
 
 #include <iostream>
 #include <fstream>

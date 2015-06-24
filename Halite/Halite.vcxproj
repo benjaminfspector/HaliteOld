@@ -40,7 +40,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\basementlions\Documents\Halite\Halite\Classes;C:\freeglutMSVC\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\freeglutMSVC\Halite\Halite\Classes;C:\freeglutMSVC\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\freeglutMSVC\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

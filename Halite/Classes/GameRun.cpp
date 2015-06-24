@@ -5,8 +5,8 @@ using namespace std;
 void runPlayer(unsigned char playerToRun);
 
 //Here are the player objects
-DiffusionAI Melissa;
-YOURNAME Bob, Alice, Jim, Fred, Tim, Sam, John, Kate, Sara;
+//DiffusionAI Melissa;
+STD_AI_1 Bob, Alice, Jim, Fred, Tim, Sam, John, Kate, Sara, Melissa;
 //End here
 
 void initColorCodes()
@@ -164,16 +164,16 @@ void init(unsigned short width, unsigned short height)
 
 	//Put in player objects here:
 
-	Bob = YOURNAME(1, myMap);
-	Alice = YOURNAME(2, myMap);
-	Jim = YOURNAME(3, myMap);
-	Fred = YOURNAME(4, myMap);
-	Tim = YOURNAME(5, myMap);
-	Sam = YOURNAME(6, myMap);
-	John = YOURNAME(7, myMap);
-	Kate = YOURNAME(8, myMap);
-	Sara = YOURNAME(9, myMap);
-	Melissa = DiffusionAI(10, myMap);
+	Bob = STD_AI_1(1, myMap);
+	Alice = STD_AI_1(2, myMap);
+	Jim = STD_AI_1(3, myMap);
+	Fred = STD_AI_1(4, myMap);
+	Tim = STD_AI_1(5, myMap);
+	Sam = STD_AI_1(6, myMap);
+	John = STD_AI_1(7, myMap);
+	Kate = STD_AI_1(8, myMap);
+	Sara = STD_AI_1(9, myMap);
+	Melissa = STD_AI_1(10, myMap);
 }
 void close()
 {

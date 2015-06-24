@@ -125,7 +125,6 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
             }
         }
 		
-		
 	}
 }
 

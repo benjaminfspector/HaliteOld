@@ -14,7 +14,6 @@
 
 class DiffusionAI
 {
-
 private:
     unsigned short myTag;
 public:
