@@ -1,6 +1,8 @@
 #ifndef HALITEMAP_H
 #define HALITEMAP_H
 
+#include <time.h>
+#include <math.h>
 #include <list>
 #include <fstream>
 #include <vector>

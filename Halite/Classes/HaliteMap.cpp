@@ -114,6 +114,28 @@ bool HaliteMap::haveNeighbors(unsigned char x, unsigned char y)
 	return (n.isSentient && n.owner != comparisonTag) || (e.isSentient && e.owner != comparisonTag) || (s.isSentient && s.owner != comparisonTag) || (w.isSentient && w.owner != comparisonTag);
 }
 
+void HaliteMap::punishPlayers(vector<unsigned short> puns)
+{
+	vector<unsigned short> numPieces(numberOfPlayers, 0);
+	for(unsigned short a = 0; a < mapHeight; a++) for(unsigned short b = 0; b < mapWidth; b++) if(hMap[a][b].owner != 0 && !hMap[a][b].isSentient) numPieces[hMap[a][b].owner - 1]++;
+	vector< list<unsigned short> > piecesToKill(numberOfPlayers, list<unsigned short>());
+	for(unsigned short a = 0; a < numberOfPlayers; a++)
+	{
+		while(piecesToKill[a].size() < puns[a])
+		{
+			bool doAdd = true;
+			unsigned short toAdd = rand() % numPieces[a];
+			for(auto b = piecesToKill[a].begin(); b != piecesToKill[a].end(); b++) if(toAdd == *b)
+			{
+				doAdd = false;
+				break;
+			}
+			if(doAdd) piecesToKill[a].push_back(toAdd);
+		}
+		std::sort(piecesToKill[a].begin(), piecesToKill[a].end());
+	}
+}
+
 HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves)
 {
 	//List of squares to be deleted.
@@ -382,10 +404,10 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 	}
 	
 	//Punish players
-	/*for(unsigned short a = 0; a < punishments.size(); a++)
+	for(unsigned short a = 0; a < punishments.size(); a++)
 	{
-		punishPlayer(a+1, punishments[a]);
-	}*/
+		punishPlayers(punishments);
+	}
 
 	//Generate new soldiers
 	const unsigned short SPAWN_PROBABILITY = 200; // 1/SPAWN_PROBABILITY
@@ -437,10 +459,12 @@ HaliteMap::HaliteMap()
 	hMap = vector< vector<HaliteLocation> >(mapHeight, vector<HaliteLocation>(mapWidth, HaliteLocation()));
 	playerNames = vector<string>(0);
 	numberOfPlayers = 0;
+	srand(time(NULL));
 }
 
 HaliteMap::HaliteMap(vector<string> pNames, unsigned char mWidth, unsigned char mHeight)
 {
+	srand(time(NULL));
 	playerNames = pNames;
 	numberOfPlayers = playerNames.size();
 	mapWidth = mWidth;

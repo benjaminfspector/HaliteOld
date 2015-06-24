@@ -201,7 +201,7 @@ int main( int argc, char* args[] )
 
 void renderLoop( int val )
 {
-	if (result == 0)
+	if(result == 0)
 	{
 		runPlayers();
 		result = calculateResults();
@@ -231,7 +231,7 @@ void fileLoop()
 
 void bothLoop( int val )
 {
-	if (result == 0)
+	if(result == 0)
 	{
 		runPlayers();
 		result = calculateResults();
@@ -255,7 +255,7 @@ void bothLoop( int val )
 
 void pastLoop( int val )
 {
-	if (amDone)
+	if(amDone)
 	amDone = getPast();
 
 	renderPast();
