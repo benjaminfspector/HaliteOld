@@ -242,7 +242,7 @@ void bothLoop( int val )
 	{
 		runPlayers();
 		result = calculateResults();
-		if (result != 256)
+		if (result != 0)
 		{
 			doOutput(result);
 			result = 256;
