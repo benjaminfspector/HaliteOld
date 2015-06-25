@@ -94,9 +94,13 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
                 int x = b->x;
 				int y = b->y;
                 if(a->x == x && a->y == y) continue;
-               
+                
+                float distance = presentMap.getDistance(x, y, a->x, a->y);
+                if(distance > presentMap.mapHeight/4.0f) continue;
+                
+                
                 float angle = presentMap.getAngle(a->x, a->y, x, y);
-    	        float mag = 1.0f / pow(presentMap.getDistance(x, y, a->x, a->y), 2);
+    	        float mag = 1.0f / pow(distance, 2);
                
                //if(a->x == 0) std::cout << "angle on the side " << angle << std::endl;
                

@@ -18,6 +18,8 @@ void renderLoop( int val );
 
 void fileLoop();
 
+void commandLoop();
+
 void bothLoop( int val );
 
 void pastLoop( int val );
@@ -32,12 +34,12 @@ int main( int argc, char* args[] )
     srand(time(NULL));
 
 	std::string in;
-	std::cout << "Would you like to render a new game, output a new game to a file, do both, or render a past game? Please enter \"Render\", \"Output\", \"Both\", or \"Past\": ";
+	std::cout << "Would you like to render a new game, output a new game to a file, do both, or render a past game? Please enter \"Render\", \"Output\", \"Both\", \"Command\", or \"Past\": ";
 	std::cin >> in;
 	while(true)
 	{
 		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
-		if(in != "render" && in != "r" && in != "output" && in != "o" && in != "both" && in != "b" && in != "past" && in != "p")
+		if(in != "render" && in != "r" && in != "output" && in != "o" && in != "both" && in != "b" && in != "command" && in != "c" && in != "past" && in != "p")
 		{
 			std::cout << "That is not a valid response. Please enter \"Render\", \"Output\", \"Both\", or \"Read\": ";
 			std::cin >> in;
@@ -57,6 +59,11 @@ int main( int argc, char* args[] )
 			myAction = BOTH;
 			break;
 		}
+        else if(in == "command" || in == "c")
+        {
+            myAction = COMMAND;
+            break;
+        }
 		else
 		{
 			myAction = PAST;
@@ -110,7 +117,7 @@ int main( int argc, char* args[] )
 	fnum = getMoveNumberP();
 	initLUtil(myAction, &myFPS, &doPause, fnum);
 
-	if(myAction != WRITE)
+	if(myAction != WRITE && myAction != COMMAND)
 	{
 		//Initialize FreeGLUT
 		glutInit(&argc, args);
@@ -178,6 +185,9 @@ int main( int argc, char* args[] )
 	{
 		fileLoop();
 	}
+    else if(myAction == COMMAND) {
+        commandLoop();
+    }
 	else if(myAction == PAST)
 	{
 		//Set rendering function
@@ -234,6 +244,21 @@ void fileLoop()
 			exit(0);
 		}
 	}
+}
+
+void commandLoop() {
+    while(true)
+    {
+        runPlayers();
+        short result = calculateResults();
+        
+        if(result != 0)
+        {
+            std::cout << "the winner is " << result << std::endl;
+            //system("pause");
+            exit(0);
+        }
+    }
 }
 
 void bothLoop( int val )

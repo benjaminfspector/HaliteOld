@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		62199CDA1B3B5AD2004360C1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62199CD91B3B5AD2004360C1 /* OpenGL.framework */; };
-		624CAC9B1B3B8DCC0051429B /* DiffusionAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 624CAC991B3B8DCC0051429B /* DiffusionAI.cpp */; };
 		627A5B911B3B5C5F002CEABE /* YourName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B7D1B3B5C5F002CEABE /* YourName.cpp */; };
 		627A5B931B3B5C5F002CEABE /* GameRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B821B3B5C5F002CEABE /* GameRun.cpp */; };
 		627A5B941B3B5C5F002CEABE /* HaliteLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B841B3B5C5F002CEABE /* HaliteLocation.cpp */; };
@@ -17,6 +16,7 @@
 		627A5B971B3B5C5F002CEABE /* LUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8B1B3B5C5F002CEABE /* LUtil.cpp */; };
 		627A5B981B3B5C5F002CEABE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8D1B3B5C5F002CEABE /* main.cpp */; };
 		627A5B991B3B5C5F002CEABE /* STD_AI_1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8F1B3B5C5F002CEABE /* STD_AI_1.cpp */; };
+		62B76C3B1B3C2D1900FD17F0 /* DiffusionAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,8 +34,6 @@
 /* Begin PBXFileReference section */
 		62199CCF1B3B59AC004360C1 /* HaliteMac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HaliteMac; sourceTree = BUILT_PRODUCTS_DIR; };
 		62199CD91B3B5AD2004360C1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		624CAC991B3B8DCC0051429B /* DiffusionAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DiffusionAI.cpp; path = Classes/DiffusionAI.cpp; sourceTree = SOURCE_ROOT; };
-		624CAC9A1B3B8DCC0051429B /* DiffusionAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffusionAI.h; path = Classes/DiffusionAI.h; sourceTree = SOURCE_ROOT; };
 		627A5B7D1B3B5C5F002CEABE /* YourName.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YourName.cpp; sourceTree = "<group>"; };
 		627A5B7E1B3B5C5F002CEABE /* YourName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YourName.h; sourceTree = "<group>"; };
 		627A5B821B3B5C5F002CEABE /* GameRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameRun.cpp; path = Classes/GameRun.cpp; sourceTree = SOURCE_ROOT; };
@@ -52,6 +50,8 @@
 		627A5B8D1B3B5C5F002CEABE /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = Classes/main.cpp; sourceTree = SOURCE_ROOT; };
 		627A5B8F1B3B5C5F002CEABE /* STD_AI_1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = STD_AI_1.cpp; sourceTree = "<group>"; };
 		627A5B901B3B5C5F002CEABE /* STD_AI_1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STD_AI_1.h; sourceTree = "<group>"; };
+		62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiffusionAI.cpp; sourceTree = "<group>"; };
+		62B76C3A1B3C2D1900FD17F0 /* DiffusionAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiffusionAI.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,8 +86,7 @@
 		62199CD11B3B59AC004360C1 /* HaliteMac */ = {
 			isa = PBXGroup;
 			children = (
-				624CAC991B3B8DCC0051429B /* DiffusionAI.cpp */,
-				624CAC9A1B3B8DCC0051429B /* DiffusionAI.h */,
+				62B76C381B3C2D1900FD17F0 /* Diffusion_AI */,
 				627A5B7C1B3B5C5F002CEABE /* AI_Template */,
 				627A5B821B3B5C5F002CEABE /* GameRun.cpp */,
 				627A5B831B3B5C5F002CEABE /* GameRun.h */,
@@ -124,6 +123,16 @@
 			);
 			name = STD_AI_1;
 			path = Classes/STD_AI_1;
+			sourceTree = SOURCE_ROOT;
+		};
+		62B76C381B3C2D1900FD17F0 /* Diffusion_AI */ = {
+			isa = PBXGroup;
+			children = (
+				62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */,
+				62B76C3A1B3C2D1900FD17F0 /* DiffusionAI.h */,
+			);
+			name = Diffusion_AI;
+			path = Classes/Diffusion_AI;
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
@@ -182,7 +191,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				624CAC9B1B3B8DCC0051429B /* DiffusionAI.cpp in Sources */,
+				62B76C3B1B3C2D1900FD17F0 /* DiffusionAI.cpp in Sources */,
 				627A5B911B3B5C5F002CEABE /* YourName.cpp in Sources */,
 				627A5B931B3B5C5F002CEABE /* GameRun.cpp in Sources */,
 				627A5B971B3B5C5F002CEABE /* LUtil.cpp in Sources */,

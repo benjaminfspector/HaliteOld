@@ -19,6 +19,7 @@ enum Job
 {
 	RENDER,
 	WRITE,
+    COMMAND,
 	BOTH,
 	PAST
 };
