@@ -30,10 +30,10 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
 	for(auto a = toMove.begin(); a != toMove.end(); a++)
 	{
 		HaliteLocation around[5];
-		around[0] = presentMap.getNorthern(a->x, a->y);
-		around[1] = presentMap.getEastern(a->x, a->y);
-		around[2] = presentMap.getSouthern(a->x, a->y);
-		around[3] = presentMap.getWestern(a->x, a->y);
+		around[0] = presentMap.getSouthern(a->x, a->y);
+		around[1] = presentMap.getWestern(a->x, a->y);
+		around[2] = presentMap.getNorthern(a->x, a->y);
+		around[3] = presentMap.getEastern(a->x, a->y);
 		around[4] = presentMap.hMap[a->y][a->x];
 		
         
@@ -55,6 +55,32 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
               lastDirection++;
               if(lastDirection >= 5) lastDirection = 0;
            }
+            
+            /*float fieldX = 0;
+            float fieldY = 0;
+            
+            for(auto b = toMove.begin(); b != toMove.end(); b++)
+            {
+                int x = b->x;
+                int y = b->y;
+                if(a->x == x && a->y == y) continue;
+                
+                float angle = presentMap.getAngle(a->x, a->y, x, y);
+                float mag = 1.0f / pow(presentMap.getDistance(x, y, a->x, a->y), 2);
+                
+                //if(a->x == 0) std::cout << "angle on the side " << angle << std::endl;
+                
+                fieldX += mag * cos(angle);
+                fieldY += mag * sin(angle);
+            }
+            float finalAngle = atan2(fieldY, fieldX);
+            float section = round(finalAngle / (3.141593f*0.5f));
+            //ugly converting section into something that corresponds
+            //to the around array's indecies
+            if(section == -2) section = 2;
+            
+            float bestDistanceFromSection = 10;
+            float bestDirection = 0;*/
            
             if(lastDirection == 0)
         	{

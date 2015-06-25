@@ -5,10 +5,8 @@ using namespace std;
 void runPlayer(short playerToRun);
 
 //Here are the player objects
-//DiffusionAI Melissa;
-YOURNAME Bob;
-STD_AI_1 Alice;
-//Sam, John, Kate, Sara, Melissa;
+DiffusionAI Alice;
+STD_AI_1 Bob, Jim, Fred, Tim; //Sam, John; Kate, Sara, Melissa;
 //End here
 
 void initColorCodes()
@@ -158,9 +156,9 @@ void init(short width, short height)
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
-	//playerNames.push_back("Jim");
-	//playerNames.push_back("Fred");
-	//playerNames.push_back("Tim");
+	playerNames.push_back("Jim");
+	playerNames.push_back("Fred");
+	playerNames.push_back("Tim");
 	/*playerNames.push_back("Sam");
 	playerNames.push_back("John");
 	playerNames.push_back("Kate");
@@ -181,11 +179,11 @@ void init(short width, short height)
 
 	//Put in player objects here:
 
-	Bob = YOURNAME(1, myMap);
-	Alice = STD_AI_1(2, myMap);
-	//Jim = STD_AI_1(3, myMap);
-	//Fred = STD_AI_1(4, myMap);
-	//Tim = STD_AI_1(5, myMap);
+	Bob = STD_AI_1(1, myMap);
+	Alice = DiffusionAI(2, myMap);
+	Jim = STD_AI_1(3, myMap);
+	Fred = STD_AI_1(4, myMap);
+	Tim = STD_AI_1(5, myMap);
 	/*Sam = STD_AI_1(6, myMap);
 	John = STD_AI_1(7, myMap);
 	Kate = STD_AI_1(8, myMap);
@@ -238,9 +236,9 @@ void runPlayers()
 	//Add player's moves back to playerMoves
 	playerMoves.push_back(&Bob.moves);
 	playerMoves.push_back(&Alice.moves);
-	//playerMoves.push_back(&Jim.moves);
-	//playerMoves.push_back(&Fred.moves);
-	//playerMoves.push_back(&Tim.moves);
+	playerMoves.push_back(&Jim.moves);
+	playerMoves.push_back(&Fred.moves);
+	playerMoves.push_back(&Tim.moves);
 	/*playerMoves.push_back(&Sam.moves);
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
@@ -297,7 +295,7 @@ void runPlayer(short playerToRun)
 	{
 		Alice.getMoves(myMap);
 	}
-	/*else if(playerToRun == 3)
+	else if(playerToRun == 3)
 	{
 		Jim.getMoves(myMap);
 	}

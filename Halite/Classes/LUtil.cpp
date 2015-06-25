@@ -86,7 +86,7 @@ void handleKeys( unsigned char key, int x, int y )
     }
 	else if(key == 'p')
 	{
-		system("PAUSE");
+		//system("PAUSE");
 	}
 	else if(key == 'c')
 	{

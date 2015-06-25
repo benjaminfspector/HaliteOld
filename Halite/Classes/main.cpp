@@ -1,13 +1,12 @@
 #include "LUtil.h"
-
-#include <Windows.h>
+//#include <Windows.h>
 #include <time.h>
 #include <string>
 #include <thread>
 
 static Job myAction;
 
-int myFPS = 5;
+int myFPS = 6;
 bool doPause = false;
 int * fnum;
 
@@ -26,8 +25,8 @@ void pastLoop( int val );
 int main( int argc, char* args[] )
 {
 	//Move console to second monitor
-	HWND consoleWindow = GetConsoleWindow();
-	SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	//HWND consoleWindow = GetConsoleWindow();
+	//SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	//End moveConsole
 
     srand(time(NULL));
@@ -162,7 +161,7 @@ int main( int argc, char* args[] )
 		glutMotionFunc(handleMouseMotion);
 
 		glutFullScreen();
-		//system("pause");
+		////system("pause");
 	}
 
 	if(myAction != PAST)
@@ -231,7 +230,7 @@ void fileLoop()
 		if(result != 0)
 		{
 			close();
-			system("pause");
+			//system("pause");
 			exit(0);
 		}
 	}
