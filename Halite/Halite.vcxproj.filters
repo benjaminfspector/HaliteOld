@@ -22,6 +22,9 @@
     <Filter Include="Diffusion_AI">
       <UniqueIdentifier>{efb7c32a-8298-4a75-a5d8-8d6ca628c219}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LEGION_AI">
+      <UniqueIdentifier>{ae8e5640-f961-479d-b412-a47147072a73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\LUtil.cpp">
@@ -48,8 +51,11 @@
     <ClCompile Include="Classes\STD_AI_1\STD_AI_1.cpp">
       <Filter>STD_AI_1</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\DiffusionAI.cpp">
+    <ClCompile Include="Classes\Diffusion_AI\DiffusionAI.cpp">
       <Filter>Diffusion_AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Leigon_AI.cpp">
+      <Filter>LEGION_AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,8 +83,11 @@
     <ClInclude Include="Classes\STD_AI_1\STD_AI_1.h">
       <Filter>STD_AI_1</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\DiffusionAI.h">
+    <ClInclude Include="Classes\Diffusion_AI\DiffusionAI.h">
       <Filter>Diffusion_AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Leigon_AI.h">
+      <Filter>LEGION_AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
