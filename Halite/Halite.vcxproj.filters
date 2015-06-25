@@ -54,7 +54,7 @@
     <ClCompile Include="Classes\Diffusion_AI\DiffusionAI.cpp">
       <Filter>Diffusion_AI</Filter>
     </ClCompile>
-    <ClCompile Include="Leigon_AI.cpp">
+    <ClCompile Include="Classes\Leigon_AI\Leigon_AI.cpp">
       <Filter>LEGION_AI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,7 +86,7 @@
     <ClInclude Include="Classes\Diffusion_AI\DiffusionAI.h">
       <Filter>Diffusion_AI</Filter>
     </ClInclude>
-    <ClInclude Include="Leigon_AI.h">
+    <ClInclude Include="Classes\Leigon_AI\Leigon_AI.h">
       <Filter>LEGION_AI</Filter>
     </ClInclude>
   </ItemGroup>
