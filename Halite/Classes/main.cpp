@@ -1,11 +1,15 @@
 #include "LUtil.h"
 
-//#include <Windows.h>
+#include <Windows.h>
 #include <time.h>
 #include <string>
 #include <thread>
 
 static Job myAction;
+
+int myFPS = 5;
+bool doPause = false;
+int * fnum;
 
 bool amDone = true;
 
@@ -22,8 +26,8 @@ void pastLoop( int val );
 int main( int argc, char* args[] )
 {
 	//Move console to second monitor
-	//HWND consoleWindow = GetConsoleWindow();
-	//SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	HWND consoleWindow = GetConsoleWindow();
+	SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	//End moveConsole
 
     srand(time(NULL));
@@ -101,7 +105,11 @@ int main( int argc, char* args[] )
 	if(myAction == PAST)
 	{
 		pastMapD = initPast();
+		getPast();
 	}
+
+	fnum = getMoveNumberP();
+	initLUtil(myAction, &myFPS, &doPause, fnum);
 
 	if(myAction != WRITE)
 	{
@@ -119,7 +127,7 @@ int main( int argc, char* args[] )
 		//Do post window/context creation initialization
 		if(myAction != PAST)
 		{
-			if(!initGL(myAction, w, h))
+			if(!initGL(w, h))
 			{
 				printf("Unable to initialize graphics library!\n");
 				return 1;
@@ -127,7 +135,7 @@ int main( int argc, char* args[] )
 		}
 		else
 		{
-			if(!initGL(myAction, pastMapD.w, pastMapD.h))
+			if(!initGL(pastMapD.w, pastMapD.h))
 			{
 				printf("Unable to initialize graphics library!\n");
 				return 1;
@@ -175,18 +183,18 @@ int main( int argc, char* args[] )
 	{
 		//Set rendering function
 		glutDisplayFunc(renderPast);
-		glutTimerFunc(1000 / SCREEN_FPS, pastLoop, 0);
+		glutTimerFunc(1000 / SCREEN_FPSS[myFPS], pastLoop, 0);
 		glutMainLoop();
 	}
 	else
 	{
 		if(myAction == RENDER)
 		{
-			glutTimerFunc(1000 / SCREEN_FPS, renderLoop, 0);
+			glutTimerFunc(1000 / SCREEN_FPSS[myFPS], renderLoop, 0);
 		}
 		else if(myAction == BOTH)
 		{
-			glutTimerFunc(1000 / SCREEN_FPS, bothLoop, 0);
+			glutTimerFunc(1000 / SCREEN_FPSS[myFPS], bothLoop, 0);
 		}
 
 		//Set rendering function
@@ -209,7 +217,7 @@ void renderLoop( int val )
 	render();
 
     //Run frame one more time
-    glutTimerFunc( 1000 / SCREEN_FPS, renderLoop, val );
+    glutTimerFunc( 1000 / SCREEN_FPSS[myFPS], renderLoop, val );
 }
 
 void fileLoop()
@@ -250,16 +258,14 @@ void bothLoop( int val )
 	render();
 
 	//Run frame one more time
-	glutTimerFunc(1000 / SCREEN_FPS, bothLoop, val);
+	glutTimerFunc(1000 / SCREEN_FPSS[myFPS], bothLoop, val);
 }
 
 void pastLoop( int val )
 {
-	if(amDone)
-	amDone = getPast();
-
 	renderPast();
+	if(!doPause) (*fnum)++;
 
 	//Run frame one more time
-	glutTimerFunc(1000 / SCREEN_FPS, pastLoop, val);
+	glutTimerFunc(1000 / SCREEN_FPSS[myFPS], pastLoop, val);
 }

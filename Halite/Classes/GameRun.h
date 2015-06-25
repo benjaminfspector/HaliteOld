@@ -6,7 +6,7 @@
 
 #include "AI_Template/YourName.h"
 #include "STD_AI_1/STD_AI_1.h"
-#include "Diffusion_AI/DiffusionAI.h"
+#include "DiffusionAI.h"
 
 #include <iostream>
 #include <fstream>
@@ -32,7 +32,7 @@ static std::map<short, color> colorCodes; //Make 0.8 times as bright when unoccu
 
 //Variables for reading in file
 struct torender { short num; char value; bool sentience; };
-static std::list<torender> thisMap;
+static std::vector< std::list<torender> > theseMaps;
 static std::fstream input;
 static short mapWidth, mapHeight, numPlayers;
 
@@ -50,7 +50,7 @@ void outputPlayerColorCodes();
 
 struct mapDimensions { short w, h; };
 mapDimensions initPast();
-bool getPast();
+void getPast();
 void renderPast();
 
 void init(short width, short height);
@@ -66,5 +66,10 @@ void renderGame();
 
 void runPresentAnalysis();
 void runPastAnalysis();
+
+
+//shh
+int * getMoveNumberP();
+//endshh
 
 #endif

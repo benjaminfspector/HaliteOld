@@ -71,6 +71,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\AI_Template\YourName.cpp" />
+    <ClCompile Include="Classes\DiffusionAI.cpp" />
     <ClCompile Include="Classes\GameRun.cpp" />
     <ClCompile Include="Classes\HaliteMap.cpp" />
     <ClCompile Include="Classes\HaliteLocation.cpp" />
@@ -81,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\AI_Template\YourName.h" />
+    <ClInclude Include="Classes\DiffusionAI.h" />
     <ClInclude Include="Classes\GameRun.h" />
     <ClInclude Include="Classes\HaliteMap.h" />
     <ClInclude Include="Classes\HaliteLocation.h" />
@@ -88,10 +90,6 @@
     <ClInclude Include="Classes\LUtil.h" />
     <ClInclude Include="Classes\HaliteMove.h" />
     <ClInclude Include="Classes\STD_AI_1\STD_AI_1.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Classes\Diffusion_AI\DiffusionAI.cpp" />
-    <Text Include="Classes\Diffusion_AI\DiffusionAI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

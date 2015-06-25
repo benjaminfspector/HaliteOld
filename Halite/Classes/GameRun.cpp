@@ -6,7 +6,8 @@ void runPlayer(short playerToRun);
 
 //Here are the player objects
 //DiffusionAI Melissa;
-DiffusionAI Bob, Alice, Jim, Fred, Tim;
+YOURNAME Bob;
+STD_AI_1 Alice;// , Jim, Fred, Tim;
 //Sam, John, Kate, Sara, Melissa;
 //End here
 
@@ -61,29 +62,44 @@ mapDimensions initPast()
 		playerNames.push_back(in);
 	}
 	outputPlayerColorCodes();
+	theseMaps = vector< list<torender> >(0, list<torender>());
 	return { mapWidth, mapHeight };
 }
-bool getPast()
+void getPast()
 {
 	bool answer;
 	input >> answer;
-	if(!answer) return false;
-
-	thisMap.clear();
-	short runningTotalGotten = 0;
-	while(runningTotalGotten < mapWidth * mapHeight)
+	short gotten = 1;
+	while(answer)
 	{
-		short numberToRender, value;
-		bool sentience;
-		input >> numberToRender >> value >> sentience;
-		thisMap.push_back({ numberToRender, char(value), sentience });
-		runningTotalGotten += numberToRender;
+		//if(gotten % 10 == 0)
+		std::cout << "Gotten frame number " << gotten << "!\n";
+		list<torender> thisMap = list<torender>();
+		int runningTotalGotten = 0;
+		while(runningTotalGotten < mapWidth * mapHeight)
+		{
+			short numberToRender, value;
+			bool sentience;
+			input >> numberToRender >> value >> sentience;
+			thisMap.push_back({ numberToRender, char(value), sentience });
+			runningTotalGotten += numberToRender;
+		}
+		theseMaps.push_back(thisMap);
+		input >> answer;
+		gotten++;
 	}
-
-	return true;
 }
 void renderPast()
 {
+	if(moveNumber < 0)
+	{
+		moveNumber = 0;
+	}
+	else if(moveNumber > theseMaps.size() - 1)
+	{
+		moveNumber = theseMaps.size() - 1;
+	}
+
 	//Clear color buffer
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -101,7 +117,7 @@ void renderPast()
 	glBegin(GL_POINTS);
 	short xLoc = 0, yLoc = 0;
 	const GLubyte DIMMING_FACTOR = 3;
-	for(auto a = thisMap.begin(); a != thisMap.end(); a++)
+	for(auto a = theseMaps[moveNumber].begin(); a != theseMaps[moveNumber].end(); a++)
 	{
 		torender b = *a;
 		color c = colorCodes[b.value];
@@ -142,9 +158,9 @@ void init(short width, short height)
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
-	playerNames.push_back("Jim");
-	playerNames.push_back("Fred");
-	playerNames.push_back("Tim");
+	//playerNames.push_back("Jim");
+	//playerNames.push_back("Fred");
+	//playerNames.push_back("Tim");
 	/*playerNames.push_back("Sam");
 	playerNames.push_back("John");
 	playerNames.push_back("Kate");
@@ -165,11 +181,11 @@ void init(short width, short height)
 
 	//Put in player objects here:
 
-	Bob = DiffusionAI(1, myMap);
-	Alice = DiffusionAI(2, myMap);
-	Jim = DiffusionAI(3, myMap);
-	Fred = DiffusionAI(4, myMap);
-	Tim = DiffusionAI(5, myMap);
+	Bob = YOURNAME(1, myMap);
+	Alice = STD_AI_1(2, myMap);
+	//Jim = STD_AI_1(3, myMap);
+	//Fred = STD_AI_1(4, myMap);
+	//Tim = STD_AI_1(5, myMap);
 	/*Sam = STD_AI_1(6, myMap);
 	John = STD_AI_1(7, myMap);
 	Kate = STD_AI_1(8, myMap);
@@ -222,9 +238,9 @@ void runPlayers()
 	//Add player's moves back to playerMoves
 	playerMoves.push_back(&Bob.moves);
 	playerMoves.push_back(&Alice.moves);
-	playerMoves.push_back(&Jim.moves);
-	playerMoves.push_back(&Fred.moves);
-	playerMoves.push_back(&Tim.moves);
+	//playerMoves.push_back(&Jim.moves);
+	//playerMoves.push_back(&Fred.moves);
+	//playerMoves.push_back(&Tim.moves);
 	/*playerMoves.push_back(&Sam.moves);
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
@@ -281,7 +297,7 @@ void runPlayer(short playerToRun)
 	{
 		Alice.getMoves(myMap);
 	}
-	else if(playerToRun == 3)
+	/*else if(playerToRun == 3)
 	{
 		Jim.getMoves(myMap);
 	}
@@ -346,10 +362,9 @@ void runPresentAnalysis()
 }
 void runPastAnalysis()
 {
-	std::cout << "Here!\n";
 	struct capability { short numSentient, numFactory; };
 	vector<capability> playerCapabilities(playerNames.size(), { 0, 0 });
-	for(auto a = thisMap.begin(); a != thisMap.end(); a++)
+	for(auto a = theseMaps[moveNumber].begin(); a != theseMaps[moveNumber].end(); a++)
 	{
 		if(a->value != 0)
 		{
@@ -371,3 +386,8 @@ void runPastAnalysis()
 
 	system("pause");
 }
+
+
+//shh
+int * getMoveNumberP() { return &moveNumber; };
+//endshh

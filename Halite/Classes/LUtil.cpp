@@ -2,10 +2,12 @@
 
 static Job utilAction = WRITE;
 
-bool initGL(Job newAction, short width, short height)
-{
-	utilAction = newAction;
+int * fps;
+bool * pause;
+int * framenumber;
 
+bool initGL(short width, short height)
+{
     //Initialize Projection Matrix
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
@@ -33,6 +35,13 @@ bool initGL(Job newAction, short width, short height)
     return true;
 }
 
+void initLUtil(Job newAction, int * nfps, bool * p, int * framenum)
+{
+	utilAction = newAction;
+	fps = nfps;
+	pause = p;
+	framenumber = framenum;
+}
 
 void render()
 {
@@ -71,7 +80,7 @@ void handleKeys( unsigned char key, int x, int y )
 		close();
         exit(0);
     }
-    else if(key == ' ')
+    else if(key == 'f')
     {
         glutFullScreenToggle();
     }
@@ -94,6 +103,18 @@ void handleKeys( unsigned char key, int x, int y )
 			runPresentAnalysis();
 		}
 	}
+	else if(key >= '1' && key <= '9')
+	{
+		*fps = key - 49;
+	}
+	else if(key == '0')
+	{
+		*fps = 9;
+	}
+	else if(key == ' ')
+	{
+		*pause = !(*pause);
+	}
 }
 
 void handleKeysUp( unsigned char key, int x, int y)
@@ -103,7 +124,16 @@ void handleKeysUp( unsigned char key, int x, int y)
 
 void handleSpecialKeys(int key, int x, int y)
 {
-
+	if(key == GLUT_KEY_LEFT)
+	{
+		(*framenumber)--;
+		*pause = true;
+	}
+	else if(key == GLUT_KEY_RIGHT)
+	{
+		(*framenumber)++;
+		*pause = true;
+	}
 }
 
 void handleSpecialKeysUp(int key, int x, int y)

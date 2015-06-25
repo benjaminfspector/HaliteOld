@@ -25,7 +25,8 @@ void HaliteMap::outputToFile(string fileName)
 	out << "1\n";
 	struct vecLoc { short x, y; };
 	vecLoc presentPosition = { 0, 0 };
-	short lastValue = 255, numWrite = 0;
+	short lastValue = 255;
+	int numWrite = 0;
 	bool goOn = true, isSentient = false;
 	while(goOn)
 	{

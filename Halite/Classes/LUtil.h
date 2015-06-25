@@ -13,7 +13,7 @@
 ///Screen constants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
-const int SCREEN_FPS = 30;
+const int SCREEN_FPSS[] = {1, 2, 3, 4, 6, 8, 12, 20, 30, 60};
 
 enum Job
 {
@@ -23,7 +23,9 @@ enum Job
 	PAST
 };
 
-bool initGL(Job newAction, short width, short height);
+bool initGL(short width, short height);
+
+void initLUtil(Job newAction, int * nfps, bool * p, int * framenum);
 
 void render();
 
