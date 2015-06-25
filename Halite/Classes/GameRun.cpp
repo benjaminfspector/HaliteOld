@@ -5,9 +5,14 @@ using namespace std;
 void runPlayer(short playerToRun);
 
 //Here are the player objects
+<<<<<<< HEAD
 //DiffusionAI Melissa;
 YOURNAME Bob;
 STD_AI_1 Alice;// , Jim, Fred, Tim;
+=======
+
+DiffusionAI Bob, Alice, Jim, Fred, Tim;
+>>>>>>> origin/master
 //Sam, John, Kate, Sara, Melissa;
 //End here
 
