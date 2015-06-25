@@ -5,16 +5,17 @@ using namespace std;
 void runPlayer(short playerToRun);
 
 //Here are the player objects
-DiffusionAI Bob;
-STD_AI_1 Alice, Jim, Fred, Tim; //Sam, John; Kate, Sara, Melissa;
+DiffusionAI Alice;
+STD_AI_1 Bob, Jim, Fred, Tim; //Sam, John; Kate, Sara, Melissa;
 //End here
 
 void initColorCodes()
 {
+    srand(time(NULL));
 	colorCodes = map<short, color>();
 	colorCodes.insert(pair<short, color>(0, { 100, 100, 100 }));
 	colorCodes.insert(pair<short, color>(1, { 255, 0, 0 }));
-	colorCodes.insert(pair<short, color>(2, { 0, 255, 0 }));
+	colorCodes.insert(pair<short, color>(2, { 255, 255, 255 }));
 	colorCodes.insert(pair<short, color>(3, { 0, 0, 255 }));
 	colorCodes.insert(pair<short, color>(4, { 255, 255, 0 }));
 	colorCodes.insert(pair<short, color>(5, { 255, 0, 255 }));
@@ -151,7 +152,8 @@ void renderPast()
 
 void init(short width, short height)
 {
-	srand(time(NULL));
+    moveNumber = 0;
+	srand(rand());
 
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
@@ -179,16 +181,16 @@ void init(short width, short height)
 
 	//Put in player objects here:
 
-	Alice = STD_AI_1(1, myMap);
-	Bob = DiffusionAI(2, myMap);
+	Bob = STD_AI_1(1, myMap);
+	Alice = DiffusionAI(2, myMap);
 	Jim = STD_AI_1(3, myMap);
 	Fred = STD_AI_1(4, myMap);
 	Tim = STD_AI_1(5, myMap);
-	/*Sam = STD_AI_1(6, myMap);
-	John = STD_AI_1(7, myMap);
-	Kate = STD_AI_1(8, myMap);
-	Sara = STD_AI_1(9, myMap);
-	Melissa = STD_AI_1(10, myMap);*/
+	/*Sam = DiffusionAI(6, myMap);
+	John = DiffusionAI(7, myMap);
+	Kate = DiffusionAI(8, myMap);
+	Sara = DiffusionAI(9, myMap);
+	Melissa = DiffusionAI(10, myMap);*/
 }
 void close()
 {
@@ -388,4 +390,5 @@ void runPastAnalysis()
 
 //shh
 int * getMoveNumberP() { return &moveNumber; };
+std::vector<std::string> * getPlayerNames() { return &playerNames; };
 //endshh

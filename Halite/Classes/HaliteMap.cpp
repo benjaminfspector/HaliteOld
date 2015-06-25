@@ -131,18 +131,28 @@ void HaliteMap::punishPlayers(vector<short> puns)
 	vector< list<short> > piecesToKill(numberOfPlayers, list<short>());
 	for(short a = 0; a < numberOfPlayers; a++)
 	{
-		while(piecesToKill[a].size() < puns[a])
-		{
-			bool doAdd = true;
-			short toAdd = 1 + rand() % numPieces[a];
-			for(auto b = piecesToKill[a].begin(); b != piecesToKill[a].end(); b++) if(toAdd == *b)
-			{
-				doAdd = false;
-				break;
-			}
-			if(doAdd) piecesToKill[a].push_back(toAdd);
-		}
-		if(!piecesToKill.empty()) piecesToKill[a].sort();
+        if(puns[a] > numPieces[a])
+        {
+            for(short b = 0; b < numPieces[a]; b++)
+            {
+                piecesToKill[a].push_back(b);
+            }
+        }
+        else
+        {
+            while(piecesToKill[a].size() < puns[a])
+            {
+                bool doAdd = true;
+                short toAdd = 1 + rand() % numPieces[a];
+                for(auto b = piecesToKill[a].begin(); b != piecesToKill[a].end(); b++) if(toAdd == *b)
+                {
+                    doAdd = false;
+                    break;
+                }
+                if(doAdd) piecesToKill[a].push_back(toAdd);
+            }
+            if(!piecesToKill.empty()) piecesToKill[a].sort();
+        }
 	}
 	std::vector<short> piecesAtYet(numberOfPlayers, 0);
 	for(auto a = hMap.begin(); a != hMap.end(); a++)

@@ -7,8 +7,12 @@
 static Job myAction;
 
 int myFPS = 6;
+int numberOfGames = 0;
 bool doPause = false;
 int * fnum;
+std::vector<std::string> * pNames;
+std::vector<std::string> winners;
+short w, h;
 
 bool amDone = true;
 
@@ -18,7 +22,7 @@ void renderLoop( int val );
 
 void fileLoop();
 
-void commandLoop();
+void commandLoop(int timeThrough);
 
 void bothLoop( int val );
 
@@ -41,7 +45,7 @@ int main( int argc, char* args[] )
 		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
 		if(in != "render" && in != "r" && in != "output" && in != "o" && in != "both" && in != "b" && in != "command" && in != "c" && in != "past" && in != "p")
 		{
-			std::cout << "That is not a valid response. Please enter \"Render\", \"Output\", \"Both\", or \"Read\": ";
+			std::cout << "That is not a valid response. Please enter \"Render\", \"Output\", \"Both\", \"Command\", or \"Read\": ";
 			std::cin >> in;
 		}
 		else if(in == "render" || in == "r")
@@ -71,7 +75,6 @@ int main( int argc, char* args[] )
 		}
 	}
 
-	short w, h;
 	if(myAction != PAST)
 	{
 		std::cout << "Please enter the width of the map: ";
@@ -170,8 +173,27 @@ int main( int argc, char* args[] )
 		glutFullScreen();
 		////system("pause");
 	}
+    
+    if(myAction == COMMAND)
+    {
+        std::cout << "Please enter the number of games: ";
+        while(true)
+        {
+            std::cin >> in;
+            try
+            {
+                numberOfGames = std::stoi(in);
+                break;
+            }
+            catch(const std::invalid_argument& ia)
+            {
+                std::cout << "That is not an integer. Please enter an integer value: ";
+            }
+        }
+        winners = std::vector<std::string> (numberOfGames);
+    }
 
-	if(myAction != PAST)
+	if(myAction != PAST && myAction != COMMAND)
 	{
 		init(w, h);		
 	}
@@ -185,8 +207,17 @@ int main( int argc, char* args[] )
 	{
 		fileLoop();
 	}
-    else if(myAction == COMMAND) {
-        commandLoop();
+    else if(myAction == COMMAND)
+    {
+        pNames = getPlayerNames();
+        for(int a = 0; a < numberOfGames; a++)
+        {
+            commandLoop(a);
+        }
+        for(int a = 0; a < numberOfGames; a++)
+        {
+            std::cout << "The winner of game " << a + 1 << " was " << winners[a] << "\n";
+        }
     }
 	else if(myAction == PAST)
 	{
@@ -246,7 +277,8 @@ void fileLoop()
 	}
 }
 
-void commandLoop() {
+void commandLoop(int timeThrough) {
+    init(w, h);
     while(true)
     {
         runPlayers();
@@ -254,9 +286,8 @@ void commandLoop() {
         
         if(result != 0)
         {
-            std::cout << "the winner is " << result << std::endl;
-            //system("pause");
-            exit(0);
+            winners[timeThrough] = (*pNames)[result-1];
+            break;
         }
     }
 }

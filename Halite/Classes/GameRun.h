@@ -70,6 +70,7 @@ void runPastAnalysis();
 
 //shh
 int * getMoveNumberP();
+std::vector<std::string> * getPlayerNames();
 //endshh
 
 #endif
