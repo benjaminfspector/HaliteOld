@@ -5,8 +5,10 @@ using namespace std;
 void runPlayer(short playerToRun);
 
 //Here are the player objects
-DiffusionAI Alice;
-STD_AI_1 Bob, Jim, Fred, Tim; //Sam, John; Kate, Sara, Melissa;
+
+LEIGON_AI Bob;
+STD_AI_1 Alice, Jim, Fred, Tim; //Sam, John; Kate, Sara, Melissa;
+
 //End here
 
 void initColorCodes()
@@ -181,8 +183,10 @@ void init(short width, short height)
 
 	//Put in player objects here:
 
-	Bob = STD_AI_1(1, myMap);
-	Alice = DiffusionAI(2, myMap);
+
+	Bob = LEIGON_AI(1, myMap);
+	Alice = STD_AI_1(2, myMap);
+
 	Jim = STD_AI_1(3, myMap);
 	Fred = STD_AI_1(4, myMap);
 	Tim = STD_AI_1(5, myMap);
