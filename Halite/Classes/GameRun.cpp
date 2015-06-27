@@ -255,7 +255,7 @@ void runPlayers()
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
 	playerMoves.push_back(&Sara.moves);
-	playerMoves.push_back(&Melissa.moves);
+	playerMoves.push_back(&Melissa.moves);*/
 
 	if(moveNumber % 100 == 1)std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
@@ -339,7 +339,7 @@ void runPlayer(short playerToRun)
 	else if(playerToRun == 10)
 	{
 		Melissa.getMoves(myMap);
-	}
+	}*/
 }
 
 void runPresentAnalysis()
