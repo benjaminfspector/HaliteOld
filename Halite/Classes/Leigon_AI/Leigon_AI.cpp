@@ -15,6 +15,7 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 	struct loc { short x, y; };
 	std::list<loc> toMove;
 	std::list<loc> nearestLocs;
+	std::list<loc> singleSquares;
 	for(short y = 0; y < presentMap.hMap.size(); y++)
 	{
 		for(short x = 0; x < presentMap.hMap[y].size(); x++)
@@ -29,30 +30,33 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 				HaliteLocation n = presentMap.getNorthern(x, y), e = presentMap.getEastern(x, y), s = presentMap.getSouthern(x, y), w = presentMap.getWestern(x, y);
 				if(n.owner == myTag || e.owner == myTag || s.owner == myTag || w.owner == myTag)
 				{
-					nearestLocs.push_back({ x, y });
+					if(n.owner == myTag && e.owner == myTag && s.owner == myTag && w.owner == myTag)
+					{
+						if(!(n.isSentient || e.isSentient || s.isSentient || w.isSentient)) singleSquares.push_back({ x, y });
+					}
+					else nearestLocs.push_back({ x, y });
 				}
 			}
 		}
 	}
 
-	for(auto a = toMove.begin(); a != toMove.end(); a++)
+	for(auto a = toMove.begin(); !toMove.empty() && a != toMove.end();)
 	{
 		enum Goodness { BEST, MID, BAD };
-		HaliteLocation around[5];
+		HaliteLocation around[4];
 		around[0] = presentMap.getNorthern(a->x, a->y);
 		around[1] = presentMap.getEastern(a->x, a->y);
 		around[2] = presentMap.getSouthern(a->x, a->y);
 		around[3] = presentMap.getWestern(a->x, a->y);
-		around[4] = presentMap.hMap[a->y][a->x];
-		Goodness possibilities[5];
-		for(short b = 0; b < 5; b++)
+		Goodness possibilities[4];
+		for(short b = 0; b < 4; b++)
 		{
 			if(around[b].owner != myTag) possibilities[b] = BEST;
 			else if(!around[b].isSentient) possibilities[b] = MID;
 			else possibilities[b] = BAD;
 		}
 		Goodness bestPossible = BAD;
-		for(short b = 0; b < 5; b++)
+		for(short b = 0; b < 4; b++)
 		{
 			if(possibilities[b] == MID)
 			{
@@ -65,14 +69,15 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 			}
 		}
 
+		bool doIncrement = true;;
 		if(bestPossible == BEST)
 		{
 			lastDirection++;
-			if(lastDirection >= 4) lastDirection = 0;
+			if(lastDirection > 3) lastDirection = 0;
 			while(around[lastDirection].owner == myTag)
 			{
 				lastDirection++;
-				if(lastDirection >= 4) lastDirection = 0;
+				if(lastDirection > 3) lastDirection = 0;
 			}
 			if(lastDirection == 0)
 			{
@@ -90,54 +95,126 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 			{
 				addWest(a->x, a->y, &presentMap);
 			}
+			
+			auto b = a;
+			if(distance(toMove.begin(), a) != 0) a--;
+			else doIncrement = false;
+			toMove.erase(b);
+		}
+
+		if(doIncrement) a++;
+		else a = toMove.begin();
+	}
+
+	for(auto a = singleSquares.begin(); a != singleSquares.end() && !toMove.empty(); a++)
+	{
+		double bestDistance = 1000000;
+		std::list<loc>::iterator location;
+		for(auto b = toMove.begin(); b != toMove.end(); b++)
+		{
+			double thisDist = presentMap.getDistance(a->x, a->y, b->x, b->y);
+			if(thisDist < bestDistance)
+			{
+				location = b;
+				bestDistance = thisDist;
+			}
+		}
+		float angle = 2 * presentMap.getAngle(location->x, location->y, a->x, a->y) / M_PI;
+		HaliteLocation around[5];
+		around[0] = presentMap.getNorthern(location->x, location->y);
+		around[1] = presentMap.getEastern(location->x, location->y);
+		around[2] = presentMap.getSouthern(location->x, location->y);
+		around[3] = presentMap.getWestern(location->x, location->y);
+		around[4] = presentMap.hMap[location->y][location->x];
+		int answer = round(angle);
+		if(answer == 0 || answer == -0) answer = 1;
+		else if(answer == 1) answer = 2;
+		else if(answer == 2 || answer == -2) answer = 3;
+		else if(answer == -1) answer = 0;
+		else answer = 5;
+		lastDirection = answer;
+		while(around[lastDirection].isSentient)
+		{
+			lastDirection++;
+			if(lastDirection > 4) lastDirection = 0;
+			if(answer == lastDirection) break;
+		}
+		if(lastDirection == 0)
+		{
+			addNorth(location->x, location->y, &presentMap);
+		}
+		else if(lastDirection == 1)
+		{
+			addEast(location->x, location->y, &presentMap);
+		}
+		else if(lastDirection == 2)
+		{
+			addSouth(location->x, location->y, &presentMap);
+		}
+		else if(lastDirection == 3)
+		{
+			addWest(location->x, location->y, &presentMap);
 		}
 		else
 		{
-			double bestDistance = 1000000;
-			loc location;
-			for(auto b = nearestLocs.begin(); b != nearestLocs.end(); b++)
+			addStill(location->x, location->y, &presentMap);
+		}
+
+		toMove.erase(location);
+	}
+
+	for(auto a = toMove.begin(); a != toMove.end(); a++)
+	{
+		HaliteLocation around[5];
+		around[0] = presentMap.getNorthern(a->x, a->y);
+		around[1] = presentMap.getEastern(a->x, a->y);
+		around[2] = presentMap.getSouthern(a->x, a->y);
+		around[3] = presentMap.getWestern(a->x, a->y);
+		around[4] = presentMap.hMap[a->y][a->x];
+		double bestDistance = 1000000;
+		loc location;
+		for(auto b = nearestLocs.begin(); b != nearestLocs.end(); b++)
+		{
+			double thisDist = presentMap.getDistance(a->x, a->y, b->x, b->y);
+			if(thisDist < bestDistance)
 			{
-				double thisDist = presentMap.getDistance(a->x, a->y, b->x, b->y);
-				if(thisDist < bestDistance)
-				{
-					location = *b;
-					bestDistance = thisDist;
-				}
+				location = *b;
+				bestDistance = thisDist;
 			}
-			float angle = 2 * presentMap.getAngle(a->x, a->y, location.x, location.y) / M_PI;
-			int answer = round(angle);
-			if(answer == 0 || answer == -0) answer = 1;
-			else if(answer == 1) answer = 2;
-			else if(answer == 2 || answer == -2) answer = 3;
-			else if(answer == -1) answer = 0;
-			else answer = 5;
-			lastDirection = answer;
-			while(around[lastDirection].isSentient)
-			{
-				lastDirection++;
-				if(lastDirection > 4) lastDirection = 0;
-				if(answer == lastDirection) break;
-			}
-			if(lastDirection == 0)
-			{
-				addNorth(a->x, a->y, &presentMap);
-			}
-			else if(lastDirection == 1)
-			{
-				addEast(a->x, a->y, &presentMap);
-			}
-			else if(lastDirection == 2)
-			{
-				addSouth(a->x, a->y, &presentMap);
-			}
-			else if(lastDirection == 3)
-			{
-				addWest(a->x, a->y, &presentMap);
-			}
-			else
-			{
-				addStill(a->x, a->y, &presentMap);
-			}
+		}
+		float angle = 2 * presentMap.getAngle(a->x, a->y, location.x, location.y) / M_PI;
+		int answer = round(angle);
+		if(answer == 0 || answer == -0) answer = 1;
+		else if(answer == 1) answer = 2;
+		else if(answer == 2 || answer == -2) answer = 3;
+		else if(answer == -1) answer = 0;
+		else answer = 5;
+		lastDirection = answer;
+		while(around[lastDirection].isSentient)
+		{
+			lastDirection++;
+			if(lastDirection > 4) lastDirection = 0;
+			if(answer == lastDirection) break;
+		}
+		if(lastDirection == 0)
+		{
+			addNorth(a->x, a->y, &presentMap);
+		}
+		else if(lastDirection == 1)
+		{
+			addEast(a->x, a->y, &presentMap);
+		}
+		else if(lastDirection == 2)
+		{
+			addSouth(a->x, a->y, &presentMap);
+		}
+		else if(lastDirection == 3)
+		{
+			addWest(a->x, a->y, &presentMap);
+		}
+		else
+		{
+			addStill(a->x, a->y, &presentMap);
 		}
 	}
 }

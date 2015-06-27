@@ -273,6 +273,7 @@ void fileLoop()
 		if(result != 0)
 		{
 			close();
+			std::cout << "Done!";
 			getchar();
 			getchar();
 			exit(0);

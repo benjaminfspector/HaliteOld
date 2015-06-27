@@ -19,7 +19,7 @@ void initColorCodes()
 	colorCodes = map<short, color>();
 	colorCodes.insert(pair<short, color>(0, { 100, 100, 100 }));
 	colorCodes.insert(pair<short, color>(1, { 255, 0, 0 }));
-	colorCodes.insert(pair<short, color>(2, { 255, 255, 255 }));
+	colorCodes.insert(pair<short, color>(2, { 0, 255, 0 }));
 	colorCodes.insert(pair<short, color>(3, { 0, 0, 255 }));
 	colorCodes.insert(pair<short, color>(4, { 255, 255, 0 }));
 	colorCodes.insert(pair<short, color>(5, { 255, 0, 255 }));

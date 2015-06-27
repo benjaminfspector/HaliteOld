@@ -72,8 +72,10 @@ float HaliteMap::getDistance(short x1, short y1, short x2, short y2)
 float HaliteMap::getAngle(short x1, short y1, short x2, short y2)
 {
 	short dx = x2 - x1, dy = y2 - y1;
-	if (abs(dx) > mapWidth - dx) dx = dx - mapWidth;
-	if (abs(dy) > mapHeight - dy) dy = dy - mapHeight;
+	if (dx > mapWidth - dx) dx -= mapWidth;
+	else if(-dx > mapWidth + dx) dx += mapWidth;
+	if (dy > mapHeight - dy) dy -= mapHeight;
+	else if(-dy > mapHeight + dy) dy += mapHeight;
 	return atan2(dy, dx);
 }
 
@@ -127,46 +129,56 @@ void HaliteMap::punishPlayers(vector<short> puns)
 	if(!toContinue) return;
 
 	vector<short> numPieces(numberOfPlayers, 0);
-	for(short a = 0; a < mapHeight; a++) for(short b = 0; b < mapWidth; b++) if(hMap[a][b].owner != 0 && !hMap[a][b].isSentient) numPieces[hMap[a][b].owner - 1]++;
+	for(short a = 0; a < mapHeight; a++)
+	{
+		for(short b = 0; b < mapWidth; b++)
+		{
+			if(hMap[a][b].owner != 0 && !hMap[a][b].isSentient)
+			{
+				numPieces[hMap[a][b].owner - 1]++;
+			}
+		}
+	}
 	vector< list<short> > piecesToKill(numberOfPlayers, list<short>());
 	for(short a = 0; a < numberOfPlayers; a++)
 	{
-        if(puns[a] > numPieces[a])
-        {
-            for(short b = 0; b < numPieces[a]; b++)
-            {
-                piecesToKill[a].push_back(b);
-            }
-        }
-        else
-        {
-            while(piecesToKill[a].size() < puns[a])
-            {
-                bool doAdd = true;
-                short toAdd = 1 + rand() % numPieces[a];
-                for(auto b = piecesToKill[a].begin(); b != piecesToKill[a].end(); b++) if(toAdd == *b)
-                {
-                    doAdd = false;
-                    break;
-                }
-                if(doAdd) piecesToKill[a].push_back(toAdd);
-            }
-            if(!piecesToKill.empty()) piecesToKill[a].sort();
-        }
+		if(puns[a] > numPieces[a])
+		{
+			for(short b = 1; b <= numPieces[a]; b++)
+			{
+				piecesToKill[a].push_back(b);
+			}
+		}
+		else
+		{
+			while(piecesToKill[a].size() < puns[a])
+			{
+				bool doAdd = true;
+				short toAdd = 1 + rand() % numPieces[a];
+				for(auto b = piecesToKill[a].begin(); b != piecesToKill[a].end(); b++) if(toAdd == *b)
+				{
+					doAdd = false;
+					break;
+				}
+				if(doAdd) piecesToKill[a].push_back(toAdd);
+			}
+			if(!piecesToKill.empty()) piecesToKill[a].sort();
+		}
 	}
+
 	std::vector<short> piecesAtYet(numberOfPlayers, 0);
 	for(auto a = hMap.begin(); a != hMap.end(); a++)
 	{
 		for(auto b = a->begin(); b != a->end(); b++)
 		{
 			short oTag = b->owner;
-			if(oTag != 0 && !piecesToKill[oTag - 1].empty())
+			if(oTag != 0 && !b->isSentient && !piecesToKill[oTag - 1].empty())
 			{
 				piecesAtYet[oTag - 1]++;
 				if(piecesAtYet[oTag - 1] == piecesToKill[oTag - 1].front())
 				{
-					*b = HaliteLocation();
-					piecesToKill[oTag - 1].pop_back();
+					b->owner = 0;
+					piecesToKill[oTag - 1].pop_front();
 				}
 			}
 		}
@@ -449,10 +461,10 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 		myDual.hMap[a->second][a->first] = HaliteLocation();
 	}
 	
-	punishPlayers(punishments);
+	myDual.punishPlayers(punishments);
 
 	//Generate new soldiers
-	const short SPAWN_PROBABILITY = 200; // 1/SPAWN_PROBABILITY
+	const short SPAWN_PROBABILITY = 300; // 1/SPAWN_PROBABILITY
 	for(auto a = myDual.hMap.begin(); a != myDual.hMap.end(); a++)
 	{
 		for(auto b = a->begin(); b != a->end(); b++)
