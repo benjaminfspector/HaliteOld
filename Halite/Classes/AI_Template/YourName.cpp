@@ -6,15 +6,15 @@ YOURNAME::YOURNAME(short givenTag, HaliteMap initialMap)
 }
 
 //Random move AI
-void YOURNAME::getMoves(HaliteMap presentMap)
+void YOURNAME::getMoves(HaliteMap * presentMap)
 {
 	moves = std::list<HaliteMove>(0);
-	for(short y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap->hMap.size(); y++)
 	{
-		for(short x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap->hMap[y].size(); x++)
 		{
 			//Sample program - simply HaliteMoves them all upwards. Not very effective.
-			if(presentMap.hMap[y][x].owner == myTag && presentMap.hMap[y][x].isSentient)
+			if(presentMap->hMap[y][x].owner == myTag && presentMap->hMap[y][x].isSentient)
 			{
 				short m = rand() % 5;
 				switch(m)
@@ -44,4 +44,9 @@ void YOURNAME::getMoves(HaliteMap presentMap)
 YOURNAME::YOURNAME()
 {
 	myTag = 0;
+}
+
+void YOURNAME::threadPackage(YOURNAME * ai, HaliteMap presentMap)
+{
+	ai->getMoves(&presentMap);
 }

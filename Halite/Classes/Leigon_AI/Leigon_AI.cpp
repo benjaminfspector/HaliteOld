@@ -7,7 +7,7 @@ LEIGON_AI::LEIGON_AI(short givenTag, HaliteMap initialMap)
 }
 
 //Random move AI
-void LEIGON_AI::getMoves(HaliteMap presentMap)
+void LEIGON_AI::getMoves(HaliteMap * presentMap)
 {
 	moves.clear();
 
@@ -16,18 +16,18 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 	std::list<loc> toMove;
 	std::list<loc> nearestLocs;
 	std::list<loc> singleSquares;
-	for(short y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap->hMap.size(); y++)
 	{
-		for(short x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap->hMap[y].size(); x++)
 		{
-			if(presentMap.hMap[y][x].owner == myTag && presentMap.hMap[y][x].isSentient)
+			if(presentMap->hMap[y][x].owner == myTag && presentMap->hMap[y][x].isSentient)
 			{
 				toMove.push_back({ x, y });
-				presentMap.hMap[y][x].isSentient = false;
+				presentMap->hMap[y][x].isSentient = false;
 			}
-			else if(presentMap.hMap[y][x].owner != myTag)
+			else if(presentMap->hMap[y][x].owner != myTag)
 			{
-				HaliteLocation n = presentMap.getNorthern(x, y), e = presentMap.getEastern(x, y), s = presentMap.getSouthern(x, y), w = presentMap.getWestern(x, y);
+				HaliteLocation n = presentMap->getNorthern(x, y), e = presentMap->getEastern(x, y), s = presentMap->getSouthern(x, y), w = presentMap->getWestern(x, y);
 				if(n.owner == myTag || e.owner == myTag || s.owner == myTag || w.owner == myTag)
 				{
 					if(n.owner == myTag && e.owner == myTag && s.owner == myTag && w.owner == myTag)
@@ -44,10 +44,10 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 	{
 		enum Goodness { BEST, MID, BAD };
 		HaliteLocation around[4];
-		around[0] = presentMap.getNorthern(a->x, a->y);
-		around[1] = presentMap.getEastern(a->x, a->y);
-		around[2] = presentMap.getSouthern(a->x, a->y);
-		around[3] = presentMap.getWestern(a->x, a->y);
+		around[0] = presentMap->getNorthern(a->x, a->y);
+		around[1] = presentMap->getEastern(a->x, a->y);
+		around[2] = presentMap->getSouthern(a->x, a->y);
+		around[3] = presentMap->getWestern(a->x, a->y);
 		Goodness possibilities[4];
 		for(short b = 0; b < 4; b++)
 		{
@@ -81,19 +81,19 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 			}
 			if(lastDirection == 0)
 			{
-				addNorth(a->x, a->y, &presentMap);
+				addNorth(a->x, a->y, presentMap);
 			}
 			else if(lastDirection == 1)
 			{
-				addEast(a->x, a->y, &presentMap);
+				addEast(a->x, a->y, presentMap);
 			}
 			else if(lastDirection == 2)
 			{
-				addSouth(a->x, a->y, &presentMap);
+				addSouth(a->x, a->y, presentMap);
 			}
 			else if(lastDirection == 3)
 			{
-				addWest(a->x, a->y, &presentMap);
+				addWest(a->x, a->y, presentMap);
 			}
 			
 			auto b = a;
@@ -112,20 +112,20 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 		std::list<loc>::iterator location;
 		for(auto b = toMove.begin(); b != toMove.end(); b++)
 		{
-			double thisDist = presentMap.getDistance(a->x, a->y, b->x, b->y);
+			double thisDist = presentMap->getDistance(a->x, a->y, b->x, b->y);
 			if(thisDist < bestDistance)
 			{
 				location = b;
 				bestDistance = thisDist;
 			}
 		}
-		float angle = 2 * presentMap.getAngle(location->x, location->y, a->x, a->y) / M_PI;
+		float angle = 2 * presentMap->getAngle(location->x, location->y, a->x, a->y) / M_PI;
 		HaliteLocation around[5];
-		around[0] = presentMap.getNorthern(location->x, location->y);
-		around[1] = presentMap.getEastern(location->x, location->y);
-		around[2] = presentMap.getSouthern(location->x, location->y);
-		around[3] = presentMap.getWestern(location->x, location->y);
-		around[4] = presentMap.hMap[location->y][location->x];
+		around[0] = presentMap->getNorthern(location->x, location->y);
+		around[1] = presentMap->getEastern(location->x, location->y);
+		around[2] = presentMap->getSouthern(location->x, location->y);
+		around[3] = presentMap->getWestern(location->x, location->y);
+		around[4] = presentMap->hMap[location->y][location->x];
 		int answer = round(angle);
 		if(answer == 0 || answer == -0) answer = 1;
 		else if(answer == 1) answer = 2;
@@ -141,23 +141,23 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 		}
 		if(lastDirection == 0)
 		{
-			addNorth(location->x, location->y, &presentMap);
+			addNorth(location->x, location->y, presentMap);
 		}
 		else if(lastDirection == 1)
 		{
-			addEast(location->x, location->y, &presentMap);
+			addEast(location->x, location->y, presentMap);
 		}
 		else if(lastDirection == 2)
 		{
-			addSouth(location->x, location->y, &presentMap);
+			addSouth(location->x, location->y, presentMap);
 		}
 		else if(lastDirection == 3)
 		{
-			addWest(location->x, location->y, &presentMap);
+			addWest(location->x, location->y, presentMap);
 		}
 		else
 		{
-			addStill(location->x, location->y, &presentMap);
+			addStill(location->x, location->y, presentMap);
 		}
 
 		toMove.erase(location);
@@ -166,23 +166,23 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 	for(auto a = toMove.begin(); a != toMove.end(); a++)
 	{
 		HaliteLocation around[5];
-		around[0] = presentMap.getNorthern(a->x, a->y);
-		around[1] = presentMap.getEastern(a->x, a->y);
-		around[2] = presentMap.getSouthern(a->x, a->y);
-		around[3] = presentMap.getWestern(a->x, a->y);
-		around[4] = presentMap.hMap[a->y][a->x];
+		around[0] = presentMap->getNorthern(a->x, a->y);
+		around[1] = presentMap->getEastern(a->x, a->y);
+		around[2] = presentMap->getSouthern(a->x, a->y);
+		around[3] = presentMap->getWestern(a->x, a->y);
+		around[4] = presentMap->hMap[a->y][a->x];
 		double bestDistance = 1000000;
 		loc location;
 		for(auto b = nearestLocs.begin(); b != nearestLocs.end(); b++)
 		{
-			double thisDist = presentMap.getDistance(a->x, a->y, b->x, b->y);
+			double thisDist = presentMap->getDistance(a->x, a->y, b->x, b->y);
 			if(thisDist < bestDistance)
 			{
 				location = *b;
 				bestDistance = thisDist;
 			}
 		}
-		float angle = 2 * presentMap.getAngle(a->x, a->y, location.x, location.y) / M_PI;
+		float angle = 2 * presentMap->getAngle(a->x, a->y, location.x, location.y) / M_PI;
 		int answer = round(angle);
 		if(answer == 0 || answer == -0) answer = 1;
 		else if(answer == 1) answer = 2;
@@ -198,23 +198,23 @@ void LEIGON_AI::getMoves(HaliteMap presentMap)
 		}
 		if(lastDirection == 0)
 		{
-			addNorth(a->x, a->y, &presentMap);
+			addNorth(a->x, a->y, presentMap);
 		}
 		else if(lastDirection == 1)
 		{
-			addEast(a->x, a->y, &presentMap);
+			addEast(a->x, a->y, presentMap);
 		}
 		else if(lastDirection == 2)
 		{
-			addSouth(a->x, a->y, &presentMap);
+			addSouth(a->x, a->y, presentMap);
 		}
 		else if(lastDirection == 3)
 		{
-			addWest(a->x, a->y, &presentMap);
+			addWest(a->x, a->y, presentMap);
 		}
 		else
 		{
-			addStill(a->x, a->y, &presentMap);
+			addStill(a->x, a->y, presentMap);
 		}
 	}
 }
@@ -258,4 +258,9 @@ void LEIGON_AI::addStill(short x, short y, HaliteMap * map)
 LEIGON_AI::LEIGON_AI()
 {
 	myTag = 0;
+}
+
+void LEIGON_AI::threadPackage(LEIGON_AI * ai, HaliteMap presentMap)
+{
+	ai->getMoves(&presentMap);
 }

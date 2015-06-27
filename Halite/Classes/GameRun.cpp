@@ -2,14 +2,14 @@
 
 using namespace std;
 
-void runPlayer(short playerToRun);
+//void runPlayer(short playerToRun);
 
 //Here are the player objects
 
-LEIGON_AI Bob;
-STD_AI_1 Alice;
-DiffusionAI Jim;
-YOURNAME Fred;// Tim; //Sam, John; Kate, Sara, Melissa;
+LEIGON_AI Bob, Alice, Jim, Fred, Tim;
+//STD_AI_1 ;
+DiffusionAI Sam, John, Kate, Sara, Melissa;
+//YOURNAME 
 
 //End here
 
@@ -164,12 +164,12 @@ void init(short width, short height)
 	playerNames.push_back("Alice");
 	playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
-	//playerNames.push_back("Tim");
-	/*playerNames.push_back("Sam");
+	playerNames.push_back("Tim");
+	playerNames.push_back("Sam");
 	playerNames.push_back("John");
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
-	playerNames.push_back("Melissa");*/
+	playerNames.push_back("Melissa");
 
 	mapWidth = width;
 	mapHeight = height;
@@ -187,15 +187,15 @@ void init(short width, short height)
 
 
 	Bob = LEIGON_AI(1, myMap);
-	Alice = STD_AI_1(2, myMap);
-	Jim = DiffusionAI(3, myMap);
-	Fred = YOURNAME(4, myMap);
-	//Tim = STD_AI_1(5, myMap);
-	/*Sam = DiffusionAI(6, myMap);
+	Alice = LEIGON_AI(2, myMap);
+	Jim = LEIGON_AI(3, myMap);
+	Fred = LEIGON_AI(4, myMap);
+	Tim = LEIGON_AI(5, myMap);
+	Sam = DiffusionAI(6, myMap);
 	John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
-	Melissa = DiffusionAI(10, myMap);*/
+	Melissa = DiffusionAI(10, myMap);
 }
 void close()
 {
@@ -228,10 +228,16 @@ void runPlayers()
 	playerMoves.clear();
 
 	//Create moveThreads: 
-	for(short a = 0; a < myMap.numberOfPlayers; a++)
-	{
-		moveThreads[a] = thread(&runPlayer, a + 1);
-	}
+	moveThreads[0] = thread(&LEIGON_AI::threadPackage, &Bob, myMap);
+	moveThreads[1] = thread(&LEIGON_AI::threadPackage, &Alice, myMap);
+	moveThreads[2] = thread(&LEIGON_AI::threadPackage, &Jim, myMap);
+	moveThreads[3] = thread(&LEIGON_AI::threadPackage, &Fred, myMap);
+	moveThreads[4] = thread(&LEIGON_AI::threadPackage, &Tim, myMap);
+	moveThreads[5] = thread(&DiffusionAI::threadPackage, &Sam, myMap);
+	moveThreads[6] = thread(&DiffusionAI::threadPackage, &John, myMap);
+	moveThreads[7] = thread(&DiffusionAI::threadPackage, &Kate, myMap);
+	moveThreads[8] = thread(&DiffusionAI::threadPackage, &Sara, myMap);
+	moveThreads[9] = thread(&DiffusionAI::threadPackage, &Melissa, myMap);
 
 	//Wait for completion.
 	for(short a = 0; a < myMap.numberOfPlayers; a++)
@@ -245,12 +251,13 @@ void runPlayers()
 	playerMoves.push_back(&Alice.moves);
 	playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
-	//playerMoves.push_back(&Tim.moves);
-	/*playerMoves.push_back(&Sam.moves);
+	playerMoves.push_back(&Tim.moves);
+	playerMoves.push_back(&Sam.moves);
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
 	playerMoves.push_back(&Sara.moves);
-	playerMoves.push_back(&Melissa.moves);*/
+	playerMoves.push_back(&Melissa.moves);
+	
 
 	std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
@@ -292,7 +299,7 @@ void renderGame()
 	glEnd();
 }
 
-void runPlayer(short playerToRun)
+/*void runPlayer(short playerToRun)
 {
 	if(playerToRun == 1)
 	{
@@ -310,11 +317,11 @@ void runPlayer(short playerToRun)
 	{
 		Fred.getMoves(myMap);
 	}
-	//else if(playerToRun == 5)
-	//{
-	//	Tim.getMoves(myMap);
-	//}
-	/*else if(playerToRun == 6)
+	else if(playerToRun == 5)
+	{
+		Tim.getMoves(myMap);
+	}
+	else if(playerToRun == 6)
 	{
 		Sam.getMoves(myMap);
 	}
@@ -333,8 +340,8 @@ void runPlayer(short playerToRun)
 	else if(playerToRun == 10)
 	{
 		Melissa.getMoves(myMap);
-	}*/
-}
+	}
+}*/
 
 void runPresentAnalysis()
 {

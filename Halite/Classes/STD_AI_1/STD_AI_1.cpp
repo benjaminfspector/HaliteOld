@@ -7,29 +7,29 @@ STD_AI_1::STD_AI_1(short givenTag, HaliteMap initialMap)
 }
 
 //Random move AI
-void STD_AI_1::getMoves(HaliteMap presentMap)
+void STD_AI_1::getMoves(HaliteMap * presentMap)
 {
 	moves.clear();
 
 	//Find list of locations we need to move
 	struct loc { short x, y; };
 	std::list<loc> toMove;
-	for(short y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap->hMap.size(); y++)
 	{
-		for(short x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap->hMap[y].size(); x++)
 		{
-			if(presentMap.hMap[y][x].owner == myTag && presentMap.hMap[y][x].isSentient)
+			if(presentMap->hMap[y][x].owner == myTag && presentMap->hMap[y][x].isSentient)
 			{
 				toMove.push_back({ x, y });
 			}
 		}
 	}
 
-	for(short y = 0; y < presentMap.hMap.size(); y++)
+	for(short y = 0; y < presentMap->hMap.size(); y++)
 	{
-		for(short x = 0; x < presentMap.hMap[y].size(); x++)
+		for(short x = 0; x < presentMap->hMap[y].size(); x++)
 		{
-			presentMap.hMap[y][x].isSentient = false;
+			presentMap->hMap[y][x].isSentient = false;
 		}
 	}
 
@@ -38,11 +38,11 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 	for(auto a = toMove.begin(); a != toMove.end(); a++)
 	{
 		HaliteLocation around[5];
-		around[0] = presentMap.getNorthern(a->x, a->y);
-		around[1] = presentMap.getEastern(a->x, a->y);
-		around[2] = presentMap.getSouthern(a->x, a->y);
-		around[3] = presentMap.getWestern(a->x, a->y);
-		around[4] = presentMap.hMap[a->y][a->x];
+		around[0] = presentMap->getNorthern(a->x, a->y);
+		around[1] = presentMap->getEastern(a->x, a->y);
+		around[2] = presentMap->getSouthern(a->x, a->y);
+		around[3] = presentMap->getWestern(a->x, a->y);
+		around[4] = presentMap->hMap[a->y][a->x];
 		goodness possibilities[5];
 		for(short b = 0; b < 5; b++)
 		{
@@ -76,31 +76,31 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 		if(presentDirection == 0)
 		{
 			moves.push_back(HaliteMove(HaliteMove::NORTH, a->x, a->y));
-			if(a->y != 0) presentMap.hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
-			else presentMap.hMap[presentMap.mapHeight - 1][a->x] = HaliteLocation(myTag, true);
+			if(a->y != 0) presentMap->hMap[a->y - 1][a->x] = HaliteLocation(myTag, true);
+			else presentMap->hMap[presentMap->mapHeight - 1][a->x] = HaliteLocation(myTag, true);
 		}
 		else if(presentDirection == 1)
 		{
 			moves.push_back(HaliteMove(HaliteMove::EAST, a->x, a->y));
-			if(a->x != presentMap.mapWidth - 1) presentMap.hMap[a->y][a->x + 1] = HaliteLocation(myTag, true);
-			else presentMap.hMap[a->y][0] = HaliteLocation(myTag, true);
+			if(a->x != presentMap->mapWidth - 1) presentMap->hMap[a->y][a->x + 1] = HaliteLocation(myTag, true);
+			else presentMap->hMap[a->y][0] = HaliteLocation(myTag, true);
 		}
 		else if(presentDirection == 2)
 		{
 			moves.push_back(HaliteMove(HaliteMove::SOUTH, a->x, a->y));
-			if(a->y != presentMap.mapHeight - 1) presentMap.hMap[a->y + 1][a->x] = HaliteLocation(myTag, true);
-			else presentMap.hMap[0][a->x] = HaliteLocation(myTag, true);
+			if(a->y != presentMap->mapHeight - 1) presentMap->hMap[a->y + 1][a->x] = HaliteLocation(myTag, true);
+			else presentMap->hMap[0][a->x] = HaliteLocation(myTag, true);
 		}
 		else if(presentDirection == 3)
 		{
 			moves.push_back(HaliteMove(HaliteMove::WEST, a->x, a->y));
-			if(a->x != 0) presentMap.hMap[a->y][a->x - 1] = HaliteLocation(myTag, true);
-			else presentMap.hMap[a->y][presentMap.mapWidth - 1] = HaliteLocation(myTag, true);
+			if(a->x != 0) presentMap->hMap[a->y][a->x - 1] = HaliteLocation(myTag, true);
+			else presentMap->hMap[a->y][presentMap->mapWidth - 1] = HaliteLocation(myTag, true);
 		}
 		else
 		{
 			moves.push_back(HaliteMove(HaliteMove::STILL, a->x, a->y));
-			presentMap.hMap[a->y][a->x] = HaliteLocation(myTag, true);
+			presentMap->hMap[a->y][a->x] = HaliteLocation(myTag, true);
 		}
 	}
 }
@@ -110,4 +110,9 @@ void STD_AI_1::getMoves(HaliteMap presentMap)
 STD_AI_1::STD_AI_1()
 {
 	myTag = 0;
+}
+
+void STD_AI_1::threadPackage(STD_AI_1 * ai, HaliteMap presentMap)
+{
+	ai->getMoves(&presentMap);
 }

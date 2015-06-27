@@ -23,8 +23,9 @@ private:
 public:
 	LEIGON_AI(short givenTag, HaliteMap initialMap);
 	LEIGON_AI();
+	static void threadPackage(LEIGON_AI * ai, HaliteMap presentMap);
+	void getMoves(HaliteMap * presentMap);
 
-	void getMoves(HaliteMap presentMap);
 
 	void addNorth(short x, short y, HaliteMap * map);
 	void addEast(short x, short y, HaliteMap * map);
