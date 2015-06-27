@@ -171,7 +171,7 @@ void init(short width, short height)
     playerNames.push_back("John");
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
-	playerNames.push_back("Melissa");
+	playerNames.push_back("Melissa");*/
 
 	mapWidth = width;
 	mapHeight = height;
@@ -188,7 +188,7 @@ void init(short width, short height)
 	//Put in player objects here:
 
 
-	Bob = DiffusionAI(1, myMap);
+	Bob = LEIGON_AI(1, myMap);
 	Alice = STD_AI_1(2, myMap);
 	Jim = DiffusionAI(3, myMap);
 	Fred = YOURNAME(4, myMap);
@@ -197,7 +197,7 @@ void init(short width, short height)
 	John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
-	Melissa = DiffusionAI(10, myMap);*/
+	Melissa = DiffusionAI(10, myMap);
 
 }
 void close()
