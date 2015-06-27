@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>793D5BC1-B287-4EEC-BC9C-9D002AEA5AB4</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>HaliteMac</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>A88329549F6F697429E70631B07D81B82E687802</key>
 		<string>https://github.com/NuclearPi/Halite.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Halite/HaliteMac.xcodeproj/project.xcworkspace</string>
+	<string>Halite/HaliteMac.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>A88329549F6F697429E70631B07D81B82E687802</key>

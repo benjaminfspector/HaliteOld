@@ -17,6 +17,7 @@
 		627A5B981B3B5C5F002CEABE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8D1B3B5C5F002CEABE /* main.cpp */; };
 		627A5B991B3B5C5F002CEABE /* STD_AI_1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8F1B3B5C5F002CEABE /* STD_AI_1.cpp */; };
 		62B76C3B1B3C2D1900FD17F0 /* DiffusionAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */; };
+		62D618A61B3CCB4900D61B67 /* Leigon_AI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D618A41B3CCB4900D61B67 /* Leigon_AI.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,6 +53,8 @@
 		627A5B901B3B5C5F002CEABE /* STD_AI_1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STD_AI_1.h; sourceTree = "<group>"; };
 		62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiffusionAI.cpp; sourceTree = "<group>"; };
 		62B76C3A1B3C2D1900FD17F0 /* DiffusionAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiffusionAI.h; sourceTree = "<group>"; };
+		62D618A41B3CCB4900D61B67 /* Leigon_AI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Leigon_AI.cpp; sourceTree = "<group>"; };
+		62D618A51B3CCB4900D61B67 /* Leigon_AI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leigon_AI.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +89,7 @@
 		62199CD11B3B59AC004360C1 /* HaliteMac */ = {
 			isa = PBXGroup;
 			children = (
+				62D618A31B3CCB4900D61B67 /* Leigon_AI */,
 				62B76C381B3C2D1900FD17F0 /* Diffusion_AI */,
 				627A5B7C1B3B5C5F002CEABE /* AI_Template */,
 				627A5B821B3B5C5F002CEABE /* GameRun.cpp */,
@@ -133,6 +137,16 @@
 			);
 			name = Diffusion_AI;
 			path = Classes/Diffusion_AI;
+			sourceTree = SOURCE_ROOT;
+		};
+		62D618A31B3CCB4900D61B67 /* Leigon_AI */ = {
+			isa = PBXGroup;
+			children = (
+				62D618A41B3CCB4900D61B67 /* Leigon_AI.cpp */,
+				62D618A51B3CCB4900D61B67 /* Leigon_AI.h */,
+			);
+			name = Leigon_AI;
+			path = Classes/Leigon_AI;
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
@@ -196,6 +210,7 @@
 				627A5B931B3B5C5F002CEABE /* GameRun.cpp in Sources */,
 				627A5B971B3B5C5F002CEABE /* LUtil.cpp in Sources */,
 				627A5B991B3B5C5F002CEABE /* STD_AI_1.cpp in Sources */,
+				62D618A61B3CCB4900D61B67 /* Leigon_AI.cpp in Sources */,
 				627A5B951B3B5C5F002CEABE /* HaliteMap.cpp in Sources */,
 				627A5B941B3B5C5F002CEABE /* HaliteLocation.cpp in Sources */,
 				627A5B981B3B5C5F002CEABE /* main.cpp in Sources */,

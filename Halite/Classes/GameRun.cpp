@@ -6,10 +6,19 @@ using namespace std;
 
 //Here are the player objects
 
+<<<<<<< HEAD
 LEIGON_AI Bob, Alice, Jim, Fred, Tim;
 //STD_AI_1 ;
 DiffusionAI Sam, John, Kate, Sara, Melissa;
 //YOURNAME 
+=======
+
+LEIGON_AI Bob;
+STD_AI_1 Alice;
+DiffusionAI Jim;
+YOURNAME Fred;// Tim; //Sam, John; Kate, Sara, Melissa;
+>>>>>>> origin/master
+
 
 //End here
 
@@ -164,9 +173,15 @@ void init(short width, short height)
 	playerNames.push_back("Alice");
 	playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
+<<<<<<< HEAD
 	playerNames.push_back("Tim");
 	playerNames.push_back("Sam");
 	playerNames.push_back("John");
+=======
+	//playerNames.push_back("Tim");
+	/*playerNames.push_back("Sam");
+    playerNames.push_back("John");
+>>>>>>> origin/master
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
 	playerNames.push_back("Melissa");
@@ -195,7 +210,12 @@ void init(short width, short height)
 	John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
+<<<<<<< HEAD
 	Melissa = DiffusionAI(10, myMap);
+=======
+	Melissa = DiffusionAI(10, myMap);*/
+
+>>>>>>> origin/master
 }
 void close()
 {
@@ -251,15 +271,22 @@ void runPlayers()
 	playerMoves.push_back(&Alice.moves);
 	playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
+<<<<<<< HEAD
 	playerMoves.push_back(&Tim.moves);
 	playerMoves.push_back(&Sam.moves);
+=======
+
+	//playerMoves.push_back(&Tim.moves);
+	/*playerMoves.push_back(&Sam.moves);
+
+>>>>>>> origin/master
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
 	playerMoves.push_back(&Sara.moves);
 	playerMoves.push_back(&Melissa.moves);
 	
 
-	std::cout << "At runPlayers, time #" << moveNumber << "\n";
+	if(moveNumber % 100 == 1)std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
 }
 short calculateResults()
@@ -317,11 +344,20 @@ void renderGame()
 	{
 		Fred.getMoves(myMap);
 	}
+<<<<<<< HEAD
 	else if(playerToRun == 5)
 	{
 		Tim.getMoves(myMap);
 	}
 	else if(playerToRun == 6)
+=======
+
+	//else if(playerToRun == 5)
+	//{
+	//	Tim.getMoves(myMap);
+	//}
+	/*else if(playerToRun == 6)
+>>>>>>> origin/master
 	{
 		Sam.getMoves(myMap);
 	}
