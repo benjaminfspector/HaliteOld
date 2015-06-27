@@ -2,22 +2,12 @@
 
 using namespace std;
 
-//void runPlayer(short playerToRun);
-
 //Here are the player objects
 
-<<<<<<< HEAD
 LEIGON_AI Bob, Alice, Jim, Fred, Tim;
 //STD_AI_1 ;
 DiffusionAI Sam, John, Kate, Sara, Melissa;
 //YOURNAME 
-=======
-
-LEIGON_AI Bob;
-STD_AI_1 Alice;
-DiffusionAI Jim;
-YOURNAME Fred;// Tim; //Sam, John; Kate, Sara, Melissa;
->>>>>>> origin/master
 
 
 //End here
@@ -173,15 +163,9 @@ void init(short width, short height)
 	playerNames.push_back("Alice");
 	playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
-<<<<<<< HEAD
 	playerNames.push_back("Tim");
 	playerNames.push_back("Sam");
 	playerNames.push_back("John");
-=======
-	//playerNames.push_back("Tim");
-	/*playerNames.push_back("Sam");
-    playerNames.push_back("John");
->>>>>>> origin/master
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
 	playerNames.push_back("Melissa");
@@ -200,7 +184,6 @@ void init(short width, short height)
 
 	//Put in player objects here:
 
-
 	Bob = LEIGON_AI(1, myMap);
 	Alice = LEIGON_AI(2, myMap);
 	Jim = LEIGON_AI(3, myMap);
@@ -210,12 +193,7 @@ void init(short width, short height)
 	John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
-<<<<<<< HEAD
 	Melissa = DiffusionAI(10, myMap);
-=======
-	Melissa = DiffusionAI(10, myMap);*/
-
->>>>>>> origin/master
 }
 void close()
 {
@@ -271,22 +249,15 @@ void runPlayers()
 	playerMoves.push_back(&Alice.moves);
 	playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
-<<<<<<< HEAD
 	playerMoves.push_back(&Tim.moves);
 	playerMoves.push_back(&Sam.moves);
-=======
-
-	//playerMoves.push_back(&Tim.moves);
-	/*playerMoves.push_back(&Sam.moves);
-
->>>>>>> origin/master
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
 	playerMoves.push_back(&Sara.moves);
 	playerMoves.push_back(&Melissa.moves);
 	
 
-	if(moveNumber % 100 == 1)std::cout << "At runPlayers, time #" << moveNumber << "\n";
+	if(moveNumber % 20 == 1) std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
 }
 short calculateResults()
@@ -325,59 +296,6 @@ void renderGame()
 	}
 	glEnd();
 }
-
-/*void runPlayer(short playerToRun)
-{
-	if(playerToRun == 1)
-	{
-		Bob.getMoves(myMap);
-	}
-	else if(playerToRun == 2)
-	{
-		Alice.getMoves(myMap);
-	}
-	else if(playerToRun == 3)
-	{
-		Jim.getMoves(myMap);
-	}
-	else if(playerToRun == 4)
-	{
-		Fred.getMoves(myMap);
-	}
-<<<<<<< HEAD
-	else if(playerToRun == 5)
-	{
-		Tim.getMoves(myMap);
-	}
-	else if(playerToRun == 6)
-=======
-
-	//else if(playerToRun == 5)
-	//{
-	//	Tim.getMoves(myMap);
-	//}
-	/*else if(playerToRun == 6)
->>>>>>> origin/master
-	{
-		Sam.getMoves(myMap);
-	}
-	else if(playerToRun == 7)
-	{
-		John.getMoves(myMap);
-	}
-	else if(playerToRun == 8)
-	{
-		Kate.getMoves(myMap);
-	}
-	else if(playerToRun == 9)
-	{
-		Sara.getMoves(myMap);
-	}
-	else if(playerToRun == 10)
-	{
-		Melissa.getMoves(myMap);
-	}
-}*/
 
 void runPresentAnalysis()
 {
