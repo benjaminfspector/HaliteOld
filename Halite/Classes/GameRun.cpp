@@ -6,10 +6,12 @@ void runPlayer(short playerToRun);
 
 //Here are the player objects
 
+
 LEIGON_AI Bob;
 STD_AI_1 Alice;
 DiffusionAI Jim;
 YOURNAME Fred;// Tim; //Sam, John; Kate, Sara, Melissa;
+
 
 //End here
 
@@ -166,10 +168,10 @@ void init(short width, short height)
 	playerNames.push_back("Fred");
 	//playerNames.push_back("Tim");
 	/*playerNames.push_back("Sam");
-	playerNames.push_back("John");
+    playerNames.push_back("John");
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
-	playerNames.push_back("Melissa");*/
+	playerNames.push_back("Melissa");
 
 	mapWidth = width;
 	mapHeight = height;
@@ -186,7 +188,7 @@ void init(short width, short height)
 	//Put in player objects here:
 
 
-	Bob = LEIGON_AI(1, myMap);
+	Bob = DiffusionAI(1, myMap);
 	Alice = STD_AI_1(2, myMap);
 	Jim = DiffusionAI(3, myMap);
 	Fred = YOURNAME(4, myMap);
@@ -196,6 +198,7 @@ void init(short width, short height)
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
 	Melissa = DiffusionAI(10, myMap);*/
+
 }
 void close()
 {
@@ -245,14 +248,16 @@ void runPlayers()
 	playerMoves.push_back(&Alice.moves);
 	playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
+
 	//playerMoves.push_back(&Tim.moves);
 	/*playerMoves.push_back(&Sam.moves);
+
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
 	playerMoves.push_back(&Sara.moves);
-	playerMoves.push_back(&Melissa.moves);*/
+	playerMoves.push_back(&Melissa.moves);
 
-	std::cout << "At runPlayers, time #" << moveNumber << "\n";
+	if(moveNumber % 100 == 1)std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
 }
 short calculateResults()
@@ -310,6 +315,7 @@ void runPlayer(short playerToRun)
 	{
 		Fred.getMoves(myMap);
 	}
+
 	//else if(playerToRun == 5)
 	//{
 	//	Tim.getMoves(myMap);
@@ -333,7 +339,7 @@ void runPlayer(short playerToRun)
 	else if(playerToRun == 10)
 	{
 		Melissa.getMoves(myMap);
-	}*/
+	}
 }
 
 void runPresentAnalysis()
