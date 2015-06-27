@@ -197,7 +197,7 @@ void init(short width, short height)
 	John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
-	Melissa = DiffusionAI(10, myMap);
+	Melissa = DiffusionAI(10, myMap);*/
 
 }
 void close()
