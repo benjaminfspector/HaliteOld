@@ -170,7 +170,7 @@ int main( int argc, char* args[] )
 		//Set mouse motion handler
 		glutMotionFunc(handleMouseMotion);
 
-		glutFullScreen();
+		//glutFullScreen();
 		////system("pause");
 	}
     
@@ -218,6 +218,8 @@ int main( int argc, char* args[] )
         {
             std::cout << "The winner of game " << a + 1 << " was " << winners[a] << "\n";
         }
+		getchar();
+		getchar();
     }
 	else if(myAction == PAST)
 	{
@@ -271,7 +273,8 @@ void fileLoop()
 		if(result != 0)
 		{
 			close();
-			//system("pause");
+			getchar();
+			getchar();
 			exit(0);
 		}
 	}

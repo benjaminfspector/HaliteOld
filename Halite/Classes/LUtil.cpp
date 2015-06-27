@@ -2,6 +2,9 @@
 
 static Job utilAction = WRITE;
 
+bool lShift = false;
+bool rShift = false;
+
 int * fps;
 bool * pause;
 int * framenumber;
@@ -115,6 +118,10 @@ void handleKeys( unsigned char key, int x, int y )
 	{
 		*pause = !(*pause);
 	}
+	else if(key == 'i')
+	{
+		(*framenumber) = 0;
+	}
 }
 
 void handleKeysUp( unsigned char key, int x, int y)
@@ -124,21 +131,38 @@ void handleKeysUp( unsigned char key, int x, int y)
 
 void handleSpecialKeys(int key, int x, int y)
 {
-	if(key == GLUT_KEY_LEFT)
+	if(key == GLUT_KEY_SHIFT_L)
 	{
-		(*framenumber)--;
+		lShift = true;
+	}
+	else if(key == GLUT_KEY_SHIFT_R)
+	{
+		rShift = true;
+	}
+	else if(key == GLUT_KEY_LEFT)
+	{
+		if(lShift || rShift) (*framenumber) -= 15;
+		else (*framenumber)--;
 		*pause = true;
 	}
 	else if(key == GLUT_KEY_RIGHT)
 	{
-		(*framenumber)++;
+		if(lShift || rShift) (*framenumber) += 15;
+		else (*framenumber)++;
 		*pause = true;
 	}
 }
 
 void handleSpecialKeysUp(int key, int x, int y)
 {
-
+	if(key == GLUT_KEY_SHIFT_L)
+	{
+		lShift = false;
+	}
+	else if(key == GLUT_KEY_SHIFT_R)
+	{
+		rShift = false;
+	}
 }
 
 void handleMouse(int button, int state, int x, int y)

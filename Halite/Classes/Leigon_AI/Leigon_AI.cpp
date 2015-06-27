@@ -2,41 +2,178 @@
 
 LEIGON_AI::LEIGON_AI(short givenTag, HaliteMap initialMap)
 {
+	lastDirection = rand() % 5;
 	myTag = givenTag;
 }
 
 //Random move AI
 void LEIGON_AI::getMoves(HaliteMap presentMap)
 {
-	moves = std::list<HaliteMove>(0);
+	moves.clear();
+
+	//Find list of locations we need to move
+	struct loc { short x, y; };
+	std::list<loc> toMove;
+	std::list<loc> nearestLocs;
 	for(short y = 0; y < presentMap.hMap.size(); y++)
 	{
 		for(short x = 0; x < presentMap.hMap[y].size(); x++)
 		{
-			//Sample program - simply HaliteMoves them all upwards. Not very effective.
 			if(presentMap.hMap[y][x].owner == myTag && presentMap.hMap[y][x].isSentient)
 			{
-				short m = rand() % 5;
-				switch(m)
+				toMove.push_back({ x, y });
+				presentMap.hMap[y][x].isSentient = false;
+			}
+			else if(presentMap.hMap[y][x].owner != myTag)
+			{
+				HaliteLocation n = presentMap.getNorthern(x, y), e = presentMap.getEastern(x, y), s = presentMap.getSouthern(x, y), w = presentMap.getWestern(x, y);
+				if(n.owner == myTag || e.owner == myTag || s.owner == myTag || w.owner == myTag)
 				{
-				case 0:
-					moves.push_back(HaliteMove(HaliteMove::STILL, x, y));
-					break;
-				case 1:
-					moves.push_back(HaliteMove(HaliteMove::NORTH, x, y));
-					break;
-				case 2:
-					moves.push_back(HaliteMove(HaliteMove::EAST, x, y));
-					break;
-				case 3:
-					moves.push_back(HaliteMove(HaliteMove::SOUTH, x, y));
-					break;
-				case 4:
-					moves.push_back(HaliteMove(HaliteMove::WEST, x, y));
+					nearestLocs.push_back({ x, y });
 				}
 			}
 		}
 	}
+
+	for(auto a = toMove.begin(); a != toMove.end(); a++)
+	{
+		enum Goodness { BEST, MID, BAD };
+		HaliteLocation around[5];
+		around[0] = presentMap.getNorthern(a->x, a->y);
+		around[1] = presentMap.getEastern(a->x, a->y);
+		around[2] = presentMap.getSouthern(a->x, a->y);
+		around[3] = presentMap.getWestern(a->x, a->y);
+		around[4] = presentMap.hMap[a->y][a->x];
+		Goodness possibilities[5];
+		for(short b = 0; b < 5; b++)
+		{
+			if(around[b].owner != myTag) possibilities[b] = BEST;
+			else if(!around[b].isSentient) possibilities[b] = MID;
+			else possibilities[b] = BAD;
+		}
+		Goodness bestPossible = BAD;
+		for(short b = 0; b < 5; b++)
+		{
+			if(possibilities[b] == MID)
+			{
+				bestPossible = MID;
+			}
+			else if(possibilities[b] == BEST)
+			{
+				bestPossible = BEST;
+				break;
+			}
+		}
+
+		if(bestPossible == BEST)
+		{
+			lastDirection++;
+			if(lastDirection >= 4) lastDirection = 0;
+			while(around[lastDirection].owner == myTag)
+			{
+				lastDirection++;
+				if(lastDirection >= 4) lastDirection = 0;
+			}
+			if(lastDirection == 0)
+			{
+				addNorth(a->x, a->y, &presentMap);
+			}
+			else if(lastDirection == 1)
+			{
+				addEast(a->x, a->y, &presentMap);
+			}
+			else if(lastDirection == 2)
+			{
+				addSouth(a->x, a->y, &presentMap);
+			}
+			else if(lastDirection == 3)
+			{
+				addWest(a->x, a->y, &presentMap);
+			}
+		}
+		else
+		{
+			double bestDistance = 1000000;
+			loc location;
+			for(auto b = nearestLocs.begin(); b != nearestLocs.end(); b++)
+			{
+				double thisDist = presentMap.getDistance(a->x, a->y, b->x, b->y);
+				if(thisDist < bestDistance)
+				{
+					location = *b;
+					bestDistance = thisDist;
+				}
+			}
+			float angle = 2 * presentMap.getAngle(a->x, a->y, location.x, location.y) / M_PI;
+			int answer = round(angle);
+			if(answer == 0 || answer == -0) answer = 1;
+			else if(answer == 1) answer = 2;
+			else if(answer == 2 || answer == -2) answer = 3;
+			else if(answer == -1) answer = 0;
+			else answer = 5;
+			lastDirection = answer;
+			while(around[lastDirection].isSentient)
+			{
+				lastDirection++;
+				if(lastDirection > 4) lastDirection = 0;
+				if(answer == lastDirection) break;
+			}
+			if(lastDirection == 0)
+			{
+				addNorth(a->x, a->y, &presentMap);
+			}
+			else if(lastDirection == 1)
+			{
+				addEast(a->x, a->y, &presentMap);
+			}
+			else if(lastDirection == 2)
+			{
+				addSouth(a->x, a->y, &presentMap);
+			}
+			else if(lastDirection == 3)
+			{
+				addWest(a->x, a->y, &presentMap);
+			}
+			else
+			{
+				addStill(a->x, a->y, &presentMap);
+			}
+		}
+	}
+}
+
+void LEIGON_AI::addNorth(short x, short y, HaliteMap * map)
+{
+	moves.push_back(HaliteMove(HaliteMove::NORTH, x, y));
+	if(y != 0) map->hMap[y - 1][x] = HaliteLocation(myTag, true);
+	else map->hMap[map->mapHeight - 1][x] = HaliteLocation(myTag, true); 
+}
+
+void LEIGON_AI::addEast(short x, short y, HaliteMap * map)
+{
+	moves.push_back(HaliteMove(HaliteMove::EAST, x, y));
+	if(x != map->mapWidth - 1) map->hMap[y][x + 1] = HaliteLocation(myTag, true);
+	else map->hMap[y][0] = HaliteLocation(myTag, true);
+}
+
+void LEIGON_AI::addSouth(short x, short y, HaliteMap * map)
+{
+	moves.push_back(HaliteMove(HaliteMove::SOUTH, x, y));
+	if(y != map->mapHeight - 1) map->hMap[y + 1][x] = HaliteLocation(myTag, true);
+	else map->hMap[0][x] = HaliteLocation(myTag, true);
+}
+
+void LEIGON_AI::addWest(short x, short y, HaliteMap * map)
+{
+	moves.push_back(HaliteMove(HaliteMove::WEST, x, y));
+	if(x != 0) map->hMap[y][x - 1] = HaliteLocation(myTag, true);
+	else map->hMap[y][map->mapWidth - 1] = HaliteLocation(myTag, true);
+}
+
+void LEIGON_AI::addStill(short x, short y, HaliteMap * map)
+{
+	moves.push_back(HaliteMove(HaliteMove::STILL, x, y));
+	map->hMap[y][x] = HaliteLocation(myTag, true);
 }
 
 

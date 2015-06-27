@@ -7,7 +7,9 @@ void runPlayer(short playerToRun);
 //Here are the player objects
 
 LEIGON_AI Bob;
-STD_AI_1 Alice, Jim, Fred, Tim; //Sam, John; Kate, Sara, Melissa;
+STD_AI_1 Alice;
+DiffusionAI Jim;
+YOURNAME Fred;// Tim; //Sam, John; Kate, Sara, Melissa;
 
 //End here
 
@@ -162,7 +164,7 @@ void init(short width, short height)
 	playerNames.push_back("Alice");
 	playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
-	playerNames.push_back("Tim");
+	//playerNames.push_back("Tim");
 	/*playerNames.push_back("Sam");
 	playerNames.push_back("John");
 	playerNames.push_back("Kate");
@@ -186,10 +188,9 @@ void init(short width, short height)
 
 	Bob = LEIGON_AI(1, myMap);
 	Alice = STD_AI_1(2, myMap);
-
-	Jim = STD_AI_1(3, myMap);
-	Fred = STD_AI_1(4, myMap);
-	Tim = STD_AI_1(5, myMap);
+	Jim = DiffusionAI(3, myMap);
+	Fred = YOURNAME(4, myMap);
+	//Tim = STD_AI_1(5, myMap);
 	/*Sam = DiffusionAI(6, myMap);
 	John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
@@ -244,7 +245,7 @@ void runPlayers()
 	playerMoves.push_back(&Alice.moves);
 	playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
-	playerMoves.push_back(&Tim.moves);
+	//playerMoves.push_back(&Tim.moves);
 	/*playerMoves.push_back(&Sam.moves);
 	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
@@ -309,10 +310,10 @@ void runPlayer(short playerToRun)
 	{
 		Fred.getMoves(myMap);
 	}
-	else if(playerToRun == 5)
-	{
-		Tim.getMoves(myMap);
-	}
+	//else if(playerToRun == 5)
+	//{
+	//	Tim.getMoves(myMap);
+	//}
 	/*else if(playerToRun == 6)
 	{
 		Sam.getMoves(myMap);

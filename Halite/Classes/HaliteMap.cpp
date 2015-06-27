@@ -205,6 +205,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 						toDelete.push_back(pair<short, short>(b->x, b->y));
 						punishments[thisOwner - 1]++;
 					}
+					//else cout << "Mistake made by player " << thisOwner << ".\n";
 				}
 				else if(b->moveType == HaliteMove::NORTH)
 				{
@@ -220,6 +221,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(b->x, b->y - 1));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 					else
 					{
@@ -233,6 +235,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(b->x, mapHeight - 1));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 				}
 				else if(b->moveType == HaliteMove::EAST)
@@ -249,6 +252,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(b->x + 1, b->y));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 					else
 					{
@@ -262,6 +266,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(0, b->y));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 				}
 				else if(b->moveType == HaliteMove::SOUTH)
@@ -278,6 +283,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(b->x, b->y + 1));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 					else
 					{
@@ -291,6 +297,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(b->x, 0));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 				}
 				else if(b->moveType == HaliteMove::WEST)
@@ -307,6 +314,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(b->x - 1, b->y));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 					else
 					{
@@ -320,6 +328,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 							toDelete.push_back(pair<short, short>(mapWidth - 1, b->y));
 							punishments[thisOwner - 1]++;
 						}
+						//else cout << "Mistake made by player " << thisOwner << ".\n";
 					}
 				}
 				else

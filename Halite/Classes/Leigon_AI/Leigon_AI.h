@@ -8,6 +8,8 @@
 #include <vector>
 #include <list>
 
+#define M_PI 3.14159265358979323;
+
 //DO NOT TOUCH THESE
 #include <thread>
 //END
@@ -17,11 +19,19 @@ class LEIGON_AI
 
 private:
 	short myTag;
+	short lastDirection;
 public:
 	LEIGON_AI(short givenTag, HaliteMap initialMap);
 	LEIGON_AI();
 
 	void getMoves(HaliteMap presentMap);
+
+	void addNorth(short x, short y, HaliteMap * map);
+	void addEast(short x, short y, HaliteMap * map);
+	void addSouth(short x, short y, HaliteMap * map);
+	void addWest(short x, short y, HaliteMap * map);
+	void addStill(short x, short y, HaliteMap * map);
+
 
 	std::list<HaliteMove> moves;
 };
