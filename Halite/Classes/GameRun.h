@@ -7,8 +7,8 @@
 #include "AI_Template/YourName.h"
 #include "STD_AI_1/STD_AI_1.h"
 #include "Diffusion_AI/DiffusionAI.h"
-#include "Diffusion_AI/DiffusionAI2.h"
-#include "Diffusion_AI/TestDiffusionAI2.h"
+#include "Hybrid_AI\Hybrid_AI.h"
+#include "Hybrid_AI/TestHybrid_AI.h"
 #include "Leigon_AI/Leigon_AI.h"
 
 #include <iostream>

@@ -25,6 +25,9 @@
     <Filter Include="LEGION_AI">
       <UniqueIdentifier>{ae8e5640-f961-479d-b412-a47147072a73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hybrid_AI">
+      <UniqueIdentifier>{ec559a16-aafd-4eaa-b20f-a6b9a4d63ac5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\LUtil.cpp">
@@ -57,6 +60,12 @@
     <ClCompile Include="Classes\Leigon_AI\Leigon_AI.cpp">
       <Filter>LEGION_AI</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Hybrid_AI\TestHybrid_AI.cpp">
+      <Filter>Hybrid_AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Hybrid_AI\Hybrid_AI.cpp">
+      <Filter>Hybrid_AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\LOpenGL.h">
@@ -88,6 +97,12 @@
     </ClInclude>
     <ClInclude Include="Classes\Leigon_AI\Leigon_AI.h">
       <Filter>LEGION_AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Hybrid_AI\TestHybrid_AI.h">
+      <Filter>Hybrid_AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Hybrid_AI\Hybrid_AI.h">
+      <Filter>Hybrid_AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

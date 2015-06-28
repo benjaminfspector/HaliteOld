@@ -1,5 +1,5 @@
-#ifndef TESTDIFFUSIONAI2_H
-#define TESTDIFFUSIONAI2_H
+#ifndef HYBRID_AI_H
+#define HYBRID_AI_H
 
 #include "HaliteLocation.h"
 #include "HaliteMove.h"
@@ -8,19 +8,21 @@
 #include <vector>
 #include <list>
 
+#define M_PI 3.14149265358979323
+
 //DO NOT TOUCH THESE
 #include <thread>
 //END
 
-class TestDiffusionAI2
+class Hybrid_AI
 {
 private:
     short myTag;
    unsigned short lastDirection = 0;
 public:
-	TestDiffusionAI2(short givenTag, HaliteMap initialMap);
-	TestDiffusionAI2();
-	static void threadPackage(TestDiffusionAI2 * ai, HaliteMap presentMap);
+	Hybrid_AI(short givenTag, HaliteMap initialMap);
+	Hybrid_AI();
+	static void threadPackage(Hybrid_AI * ai, HaliteMap presentMap);
 	void getMoves(HaliteMap * presentMap);
     void moveWithAngle(float angle, short x, short y, HaliteMap * map);
     

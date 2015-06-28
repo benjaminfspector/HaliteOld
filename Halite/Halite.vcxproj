@@ -142,6 +142,8 @@
     <ClCompile Include="Classes\GameRun.cpp" />
     <ClCompile Include="Classes\HaliteMap.cpp" />
     <ClCompile Include="Classes\HaliteLocation.cpp" />
+    <ClCompile Include="Classes\Hybrid_AI\Hybrid_AI.cpp" />
+    <ClCompile Include="Classes\Hybrid_AI\TestHybrid_AI.cpp" />
     <ClCompile Include="Classes\Leigon_AI\Leigon_AI.cpp" />
     <ClCompile Include="Classes\LUtil.cpp" />
     <ClCompile Include="Classes\main.cpp" />
@@ -154,6 +156,8 @@
     <ClInclude Include="Classes\GameRun.h" />
     <ClInclude Include="Classes\HaliteMap.h" />
     <ClInclude Include="Classes\HaliteLocation.h" />
+    <ClInclude Include="Classes\Hybrid_AI\Hybrid_AI.h" />
+    <ClInclude Include="Classes\Hybrid_AI\TestHybrid_AI.h" />
     <ClInclude Include="Classes\Leigon_AI\Leigon_AI.h" />
     <ClInclude Include="Classes\LOpenGL.h" />
     <ClInclude Include="Classes\LUtil.h" />
