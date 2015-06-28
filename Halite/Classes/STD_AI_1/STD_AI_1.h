@@ -21,8 +21,8 @@ private:
 public:
 	STD_AI_1(short givenTag, HaliteMap initialMap);
 	STD_AI_1();
-
-	void getMoves(HaliteMap presentMap);
+	static void threadPackage(STD_AI_1 * ai, HaliteMap presentMap);
+	void getMoves(HaliteMap * presentMap);
 
 	std::list<HaliteMove> moves;
 };

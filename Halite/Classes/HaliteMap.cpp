@@ -464,7 +464,7 @@ HaliteMap HaliteMap::calculateResults(vector< list<HaliteMove> * > * playerMoves
 	myDual.punishPlayers(punishments);
 
 	//Generate new soldiers
-	const short SPAWN_PROBABILITY = 300; // 1/SPAWN_PROBABILITY
+	const short SPAWN_PROBABILITY = 250; // 1/SPAWN_PROBABILITY
 	for(auto a = myDual.hMap.begin(); a != myDual.hMap.end(); a++)
 	{
 		for(auto b = a->begin(); b != a->end(); b++)

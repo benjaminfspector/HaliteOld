@@ -20,8 +20,8 @@ private:
 public:
 	YOURNAME(short givenTag, HaliteMap initialMap);
 	YOURNAME();
-
-	void getMoves(HaliteMap presentMap);
+	static void threadPackage(YOURNAME * ai, HaliteMap presentMap);
+	void getMoves(HaliteMap * presentMap);
 
 	std::list<HaliteMove> moves;
 };

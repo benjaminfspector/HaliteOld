@@ -20,8 +20,8 @@ private:
 public:
 	DiffusionAI(short givenTag, HaliteMap initialMap);
 	DiffusionAI();
-
-	void getMoves(HaliteMap presentMap);
+	static void threadPackage(DiffusionAI * ai, HaliteMap presentMap);
+	void getMoves(HaliteMap * presentMap);
 
 	std::list<HaliteMove> moves;
 };
