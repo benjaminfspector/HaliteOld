@@ -29,18 +29,17 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
 	enum goodness { BEST, MID, BAD };
 	for(auto a = toMove.begin(); a != toMove.end(); a++)
 	{
-		HaliteLocation around[5];
+		HaliteLocation around[4];
 		around[0] = presentMap.getNorthern(a->x, a->y);
 		around[1] = presentMap.getEastern(a->x, a->y);
 		around[2] = presentMap.getSouthern(a->x, a->y);
 		around[3] = presentMap.getWestern(a->x, a->y);
-		around[4] = presentMap.hMap[a->y][a->x];
 		
         
         bool foundBest = false;
        
         
-		for(short b = 0; b < 5; b++)
+		for(short b = 0; b < 4; b++)
 		{
 			if(around[b].owner != myTag) {
                 foundBest = true;
@@ -49,11 +48,11 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
 		}
         if(foundBest == true) {
            lastDirection++;
-           if(lastDirection >= 5) lastDirection = 0;
+           if(lastDirection >= 4) lastDirection = 0;
            while(around[lastDirection].owner == myTag)
            {
               lastDirection++;
-              if(lastDirection >= 5) lastDirection = 0;
+              if(lastDirection >= 4) lastDirection = 0;
            }
 
             if(lastDirection == 0)
@@ -80,11 +79,7 @@ void DiffusionAI::getMoves(HaliteMap presentMap)
     			if(a->x != 0) presentMap.hMap[a->y][a->x - 1] = HaliteLocation(myTag, true);
     			else presentMap.hMap[a->y][presentMap.mapWidth - 1] = HaliteLocation(myTag, true);
     		}
-    		else
-    		{
-    			moves.push_back(HaliteMove(HaliteMove::STILL, a->x, a->y));
-    			presentMap.hMap[a->y][a->x] = HaliteLocation(myTag, true);
-    		}
+    		
         } else {
             float fieldX = 0;
             float fieldY = 0;
