@@ -13,6 +13,7 @@ void TestHybrid_AI::getMoves(HaliteMap * presentMap)
 	struct loc { short x, y; };
 	std::list<loc> mySentients;
     std::list<loc> nearestLocs;
+    std::list<loc> singleSquares;
 	for(short y = 0; y < presentMap->hMap.size(); y++) {
 		for(short x = 0; x < presentMap->hMap[y].size(); x++) {
 			if(presentMap->hMap[y][x].owner == myTag && presentMap->hMap[y][x].isSentient) {
@@ -20,14 +21,34 @@ void TestHybrid_AI::getMoves(HaliteMap * presentMap)
                presentMap->hMap[y][x].isSentient = false;
             } else if(presentMap->hMap[y][x].owner != myTag) {
                 HaliteLocation n = presentMap->getNorthern(x, y), e = presentMap->getEastern(x, y), s = presentMap->getSouthern(x, y), w = presentMap->getWestern(x, y);
-                if(n.owner == myTag || e.owner == myTag || s.owner == myTag || w.owner == myTag) {
-                    if(!(n.owner == myTag && e.owner == myTag && s.owner == myTag && w.owner == myTag)){
-                        nearestLocs.push_back({ x, y });
-                    }
+                if(n.owner == myTag || e.owner == myTag || s.owner == myTag || w.owner == myTag){
+                    if(n.owner == myTag && e.owner == myTag && s.owner == myTag && w.owner == myTag) {
+                        if(!(n.isSentient || e.isSentient || s.isSentient || w.isSentient)) singleSquares.push_back({ x, y });
+                    } else nearestLocs.push_back({ x, y });
                 }
             }
 		}
 	}
+    
+    for(auto a = singleSquares.begin(); a != singleSquares.end() && !mySentients.empty(); a++)
+    {
+        double bestDistance = 1000000;
+        std::list<loc>::iterator location;
+        for(auto b = mySentients.begin(); b != mySentients.end(); b++)
+        {
+            double thisDist = presentMap->getDistance(a->x, a->y, b->x, b->y);
+            if(thisDist < bestDistance)
+            {
+                location = b;
+                bestDistance = thisDist;
+            }
+        }
+        if(bestDistance != 1000000) {
+            float angle = presentMap->getAngle(location->x, location->y, a->x, a->y);
+            moveWithAngle(angle, location->x, location->y, presentMap);
+            mySentients.erase(location);
+        }
+    }
     
     
 	for(auto a = mySentients.begin(); a != mySentients.end(); a++) {
@@ -36,9 +57,6 @@ void TestHybrid_AI::getMoves(HaliteMap * presentMap)
 		around[1] = presentMap->getEastern(a->x, a->y);
 		around[2] = presentMap->getSouthern(a->x, a->y);
 		around[3] = presentMap->getWestern(a->x, a->y);
-        
-        
-        
         
         
         bool foundBest = false;

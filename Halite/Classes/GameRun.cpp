@@ -5,12 +5,15 @@ using namespace std;
 //Here are the player objects
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 LEIGON_AI Bob; //, Alice, Jim, Fred, Tim;
 STD_AI_1 Alice;
 Hybrid_AI Tim;//, John, Kate, Sara, Melissa;
 YOURNAME Jim;
 DiffusionAI Fred;
 =======
+=======
+>>>>>>> origin/master
 DiffusionAI2 Bob;
 TestDiffusionAI2 Alice; //Jim, Fred, Tim;
 //STD_AI_1 ;
@@ -31,7 +34,11 @@ void initColorCodes()
 	colorCodes.insert(pair<short, color>(1, { 255, 0, 0 }));
 	colorCodes.insert(pair<short, color>(2, { 0, 255, 0 }));
 <<<<<<< HEAD
+<<<<<<< HEAD
 	colorCodes.insert(pair<short, color>(3, { 0, 0, 255 }));
+=======
+	/*colorCodes.insert(pair<short, color>(3, { 0, 0, 255 }));
+>>>>>>> origin/master
 =======
 	/*colorCodes.insert(pair<short, color>(3, { 0, 0, 255 }));
 >>>>>>> origin/master
@@ -185,10 +192,17 @@ void init(short width, short height)
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
 <<<<<<< HEAD
+<<<<<<< HEAD
 	playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
 	playerNames.push_back("Tim");
 	/*playerNames.push_back("Sam");
+=======
+	/*playerNames.push_back("Jim");
+	playerNames.push_back("Fred");
+	playerNames.push_back("Tim");
+	playerNames.push_back("Sam");
+>>>>>>> origin/master
 =======
 	/*playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
@@ -230,6 +244,9 @@ void init(short width, short height)
 	Tim = DiffusionAI2(5, myMap);
 	Sam = TestDiffusionAI2(6, myMap);
 	John = DiffusionAI(7, myMap);
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
@@ -282,6 +299,9 @@ void runPlayers()
 	moveThreads[4] = thread(&DiffusionAI2::threadPackage, &Tim, myMap);
 	moveThreads[5] = thread(&TestDiffusionAI2::threadPackage, &Sam, myMap);
 	moveThreads[6] = thread(&DiffusionAI::threadPackage, &John, myMap);
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 	moveThreads[7] = thread(&DiffusionAI::threadPackage, &Kate, myMap);
 	moveThreads[8] = thread(&DiffusionAI::threadPackage, &Sara, myMap);
@@ -298,11 +318,19 @@ void runPlayers()
 	playerMoves.push_back(&Bob.moves);
 	playerMoves.push_back(&Alice.moves);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
 	playerMoves.push_back(&Tim.moves);
 	//playerMoves.push_back(&Sam.moves);
 	/*playerMoves.push_back(&John.moves);
+=======
+	/*playerMoves.push_back(&Jim.moves);
+	playerMoves.push_back(&Fred.moves);
+	playerMoves.push_back(&Tim.moves);
+	playerMoves.push_back(&Sam.moves);
+	playerMoves.push_back(&John.moves);
+>>>>>>> origin/master
 =======
 	/*playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
