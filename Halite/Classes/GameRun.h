@@ -34,8 +34,8 @@ static std::string filename;
 static std::map<short, color> colorCodes; //Make 0.8 times as bright when unoccupied.
 
 //Variables for reading in file
-struct torender { short num; char value; bool sentience; };
-static std::vector< std::list<torender> > theseMaps;
+struct torender { int num; char value; bool sentience; };
+static std::vector< std::vector<torender> > theseMaps;
 static std::fstream input;
 static short mapWidth, mapHeight, numPlayers;
 
