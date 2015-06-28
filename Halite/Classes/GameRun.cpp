@@ -6,7 +6,7 @@ using namespace std;
 
 DiffusionAI2 Bob; //, Alice, Jim, Fred, Tim;
 //STD_AI_1 ;
-LEIGON_AI Sam;//, John, Kate, Sara, Melissa;
+TestDiffusionAI2 Sam;//, John, Kate, Sara, Melissa;
 //YOURNAME
 
 // 5, 11, 5, 4, 4
@@ -191,7 +191,7 @@ void init(short width, short height)
 	Jim = DiffusionAI2(3, myMap);
 	Fred = DiffusionAI2(4, myMap);
 	Tim = DiffusionAI2(5, myMap);*/
-	Sam = LEIGON_AI(2, myMap);
+	Sam = TestDiffusionAI2(2, myMap);
 	/*John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
@@ -233,7 +233,7 @@ void runPlayers()
 	moveThreads[2] = thread(&DiffusionAI2::threadPackage, &Jim, myMap);
 	moveThreads[3] = thread(&DiffusionAI2::threadPackage, &Fred, myMap);
 	moveThreads[4] = thread(&DiffusionAI2::threadPackage, &Tim, myMap);*/
-	moveThreads[1] = thread(&LEIGON_AI::threadPackage, &Sam, myMap);
+	moveThreads[1] = thread(&TestDiffusionAI2::threadPackage, &Sam, myMap);
 	/*moveThreads[6] = thread(&DiffusionAI::threadPackage, &John, myMap);
 	moveThreads[7] = thread(&DiffusionAI::threadPackage, &Kate, myMap);
 	moveThreads[8] = thread(&DiffusionAI::threadPackage, &Sara, myMap);

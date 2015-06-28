@@ -1,12 +1,12 @@
-#include "DiffusionAI2.h"
+#include "TestDiffusionAI2.h"
 
-DiffusionAI2::DiffusionAI2(short givenTag, HaliteMap initialMap)
+TestDiffusionAI2::TestDiffusionAI2(short givenTag, HaliteMap initialMap)
 {
     myTag = givenTag;
 }
 
 //Random move AI
-void DiffusionAI2::getMoves(HaliteMap * presentMap)
+void TestDiffusionAI2::getMoves(HaliteMap * presentMap)
 {
 	moves.clear();
 
@@ -150,7 +150,7 @@ void DiffusionAI2::getMoves(HaliteMap * presentMap)
 	}
 }
 
-void DiffusionAI2::moveWithAngle(float angle, short x, short y, HaliteMap * map) {
+void TestDiffusionAI2::moveWithAngle(float angle, short x, short y, HaliteMap * map) {
     HaliteLocation around[5];
     around[0] = map->getNorthern(x, y);
     around[1] = map->getEastern(x, y);
@@ -193,35 +193,35 @@ void DiffusionAI2::moveWithAngle(float angle, short x, short y, HaliteMap * map)
     }
 }
 
-void DiffusionAI2::addNorth(short x, short y, HaliteMap * map)
+void TestDiffusionAI2::addNorth(short x, short y, HaliteMap * map)
 {
     moves.push_back(HaliteMove(HaliteMove::NORTH, x, y));
     if(y != 0) map->hMap[y - 1][x] = HaliteLocation(myTag, true);
     else map->hMap[map->mapHeight - 1][x] = HaliteLocation(myTag, true);
 }
 
-void DiffusionAI2::addEast(short x, short y, HaliteMap * map)
+void TestDiffusionAI2::addEast(short x, short y, HaliteMap * map)
 {
     moves.push_back(HaliteMove(HaliteMove::EAST, x, y));
     if(x != map->mapWidth - 1) map->hMap[y][x + 1] = HaliteLocation(myTag, true);
     else map->hMap[y][0] = HaliteLocation(myTag, true);
 }
 
-void DiffusionAI2::addSouth(short x, short y, HaliteMap * map)
+void TestDiffusionAI2::addSouth(short x, short y, HaliteMap * map)
 {
     moves.push_back(HaliteMove(HaliteMove::SOUTH, x, y));
     if(y != map->mapHeight - 1) map->hMap[y + 1][x] = HaliteLocation(myTag, true);
     else map->hMap[0][x] = HaliteLocation(myTag, true);
 }
 
-void DiffusionAI2::addWest(short x, short y, HaliteMap * map)
+void TestDiffusionAI2::addWest(short x, short y, HaliteMap * map)
 {
     moves.push_back(HaliteMove(HaliteMove::WEST, x, y));
     if(x != 0) map->hMap[y][x - 1] = HaliteLocation(myTag, true);
     else map->hMap[y][map->mapWidth - 1] = HaliteLocation(myTag, true);
 }
 
-void DiffusionAI2::addStill(short x, short y, HaliteMap * map)
+void TestDiffusionAI2::addStill(short x, short y, HaliteMap * map)
 {
     moves.push_back(HaliteMove(HaliteMove::STILL, x, y));
     map->hMap[y][x] = HaliteLocation(myTag, true);
@@ -229,12 +229,12 @@ void DiffusionAI2::addStill(short x, short y, HaliteMap * map)
 
 
 //DO NOT TOUCH THESE
-DiffusionAI2::DiffusionAI2()
+TestDiffusionAI2::TestDiffusionAI2()
 {
 	myTag = 0;
 }
 
-void DiffusionAI2::threadPackage(DiffusionAI2 * ai, HaliteMap presentMap)
+void TestDiffusionAI2::threadPackage(TestDiffusionAI2 * ai, HaliteMap presentMap)
 {
 	ai->getMoves(&presentMap);
 }
