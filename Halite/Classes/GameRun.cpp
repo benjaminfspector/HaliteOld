@@ -66,7 +66,7 @@ mapDimensions initPast()
 		playerNames.push_back(in);
 	}
 	outputPlayerColorCodes();
-	theseMaps = vector< list<torender> >(0, list<torender>());
+	theseMaps = vector< vector<torender> >(0, vector<torender>());
 	return { mapWidth, mapHeight };
 }
 void getPast()
@@ -82,13 +82,21 @@ void getPast()
 		int runningTotalGotten = 0;
 		while(runningTotalGotten < mapWidth * mapHeight)
 		{
-			short numberToRender, value;
+			int numberToRender;
+			short value;
 			bool sentience;
 			input >> numberToRender >> value >> sentience;
 			thisMap.push_back({ numberToRender, char(value), sentience });
 			runningTotalGotten += numberToRender;
 		}
-		theseMaps.push_back(thisMap);
+		std::vector<torender> thisMapV = std::vector<torender>(thisMap.size());
+		int aD = 0;
+		for(auto a = thisMap.begin(); a != thisMap.end(); a++)
+		{
+			thisMapV[aD] = *a;
+			aD++;
+		}
+		theseMaps.push_back(thisMapV);
 		input >> answer;
 		gotten++;
 	}
@@ -259,7 +267,8 @@ void runPlayers()
 	playerMoves.push_back(&Melissa.moves);*/
 	
 
-	if(moveNumber % 20 == 1) std::cout << "At runPlayers, time #" << moveNumber << "\n";
+	//if(moveNumber % 20 == 1)
+		std::cout << "At runPlayers, time #" << moveNumber << "\n";
 	moveNumber++;
 }
 short calculateResults()
