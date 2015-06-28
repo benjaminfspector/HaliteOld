@@ -5,11 +5,20 @@ using namespace std;
 //Here are the player objects
 
 
+
 Hybrid_AI Bob;
 TestHybrid_AI Alice; //Jim, Fred, Tim;
 //STD_AI_1 ;
 //TestDiffusionAI2 Sam, John, Kate, Sara, Melissa;
 //YOURNAME
+
+/*
+LEIGON_AI Bob; //, Alice, Jim, Fred, Tim;
+STD_AI_1 Alice;
+Hybrid_AI Tim;//, John, Kate, Sara, Melissa;
+YOURNAME Jim;
+DiffusionAI Fred;
+ */
 
 
 // 5, 11, 5, 4, 4
@@ -174,6 +183,7 @@ void init(short width, short height)
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
+
 	/*playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
 	playerNames.push_back("Tim");
@@ -239,7 +249,7 @@ void runPlayers()
 	vector<thread> moveThreads (myMap.numberOfPlayers);
 	playerMoves.clear();
 
-	//Create moveThreads: 
+	//Create moveThreads:
 
 	moveThreads[0] = thread(&Hybrid_AI::threadPackage, &Bob, myMap);
 	moveThreads[1] = thread(&TestHybrid_AI::threadPackage, &Alice, myMap);
@@ -262,6 +272,7 @@ void runPlayers()
 	//Add player's moves back to playerMoves
 	playerMoves.push_back(&Bob.moves);
 	playerMoves.push_back(&Alice.moves);
+
 	/*playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
 	playerMoves.push_back(&Tim.moves);
