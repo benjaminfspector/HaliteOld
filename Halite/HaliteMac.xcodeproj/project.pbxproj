@@ -16,6 +16,7 @@
 		627A5B971B3B5C5F002CEABE /* LUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8B1B3B5C5F002CEABE /* LUtil.cpp */; };
 		627A5B981B3B5C5F002CEABE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8D1B3B5C5F002CEABE /* main.cpp */; };
 		627A5B991B3B5C5F002CEABE /* STD_AI_1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627A5B8F1B3B5C5F002CEABE /* STD_AI_1.cpp */; };
+		62A75C081B3F7C6600DB5627 /* DiffusionAI2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62A75C061B3F7C6600DB5627 /* DiffusionAI2.cpp */; };
 		62B76C3B1B3C2D1900FD17F0 /* DiffusionAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */; };
 		62D618A61B3CCB4900D61B67 /* Leigon_AI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D618A41B3CCB4900D61B67 /* Leigon_AI.cpp */; };
 /* End PBXBuildFile section */
@@ -51,6 +52,8 @@
 		627A5B8D1B3B5C5F002CEABE /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = Classes/main.cpp; sourceTree = SOURCE_ROOT; };
 		627A5B8F1B3B5C5F002CEABE /* STD_AI_1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = STD_AI_1.cpp; sourceTree = "<group>"; };
 		627A5B901B3B5C5F002CEABE /* STD_AI_1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STD_AI_1.h; sourceTree = "<group>"; };
+		62A75C061B3F7C6600DB5627 /* DiffusionAI2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiffusionAI2.cpp; sourceTree = "<group>"; };
+		62A75C071B3F7C6600DB5627 /* DiffusionAI2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiffusionAI2.h; sourceTree = "<group>"; };
 		62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiffusionAI.cpp; sourceTree = "<group>"; };
 		62B76C3A1B3C2D1900FD17F0 /* DiffusionAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiffusionAI.h; sourceTree = "<group>"; };
 		62D618A41B3CCB4900D61B67 /* Leigon_AI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Leigon_AI.cpp; sourceTree = "<group>"; };
@@ -132,6 +135,8 @@
 		62B76C381B3C2D1900FD17F0 /* Diffusion_AI */ = {
 			isa = PBXGroup;
 			children = (
+				62A75C061B3F7C6600DB5627 /* DiffusionAI2.cpp */,
+				62A75C071B3F7C6600DB5627 /* DiffusionAI2.h */,
 				62B76C391B3C2D1900FD17F0 /* DiffusionAI.cpp */,
 				62B76C3A1B3C2D1900FD17F0 /* DiffusionAI.h */,
 			);
@@ -205,6 +210,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62A75C081B3F7C6600DB5627 /* DiffusionAI2.cpp in Sources */,
 				62B76C3B1B3C2D1900FD17F0 /* DiffusionAI.cpp in Sources */,
 				627A5B911B3B5C5F002CEABE /* YourName.cpp in Sources */,
 				627A5B931B3B5C5F002CEABE /* GameRun.cpp in Sources */,
