@@ -4,7 +4,7 @@ LEIGON_AI::LEIGON_AI(short givenTag, HaliteMap initialMap)
 {
 	lastDirection = rand() % 5;
 	myTag = givenTag;
-	probGoodOverBad = pow((initialMap.mapWidth * initialMap.mapHeight), 0.4);
+	probGoodOverBad = pow((initialMap.mapWidth * initialMap.mapHeight), 0.4)/5;
 	if(probGoodOverBad < 2) probGoodOverBad = 2;
 }
 
