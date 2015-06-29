@@ -35,6 +35,7 @@ public:
 	void addStill(short x, short y, HaliteMap * map);
 	short nextAround(short num);
 	short lastAround(short num);
+	short oppositeSquare(short num);
 
 
 	std::list<HaliteMove> moves;
