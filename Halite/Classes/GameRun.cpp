@@ -3,11 +3,23 @@
 using namespace std;
 
 //Here are the player objects
+
+
+
+Hybrid_AI Bob;
+TestHybrid_AI Alice; //Jim, Fred, Tim;
+//STD_AI_1 ;
+//TestDiffusionAI2 Sam, John, Kate, Sara, Melissa;
+//YOURNAME
+
+/*
 LEIGON_AI Bob; //, Alice, Jim, Fred, Tim;
 STD_AI_1 Alice;
 Hybrid_AI Tim;//, John, Kate, Sara, Melissa;
 YOURNAME Jim;
 DiffusionAI Fred;
+ */
+
 
 // 5, 11, 5, 4, 4
 
@@ -168,10 +180,11 @@ void initPlayerNames()
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
-	playerNames.push_back("Jim");
+
+	/*playerNames.push_back("Jim");
 	playerNames.push_back("Fred");
 	playerNames.push_back("Tim");
-	/*playerNames.push_back("Sam");
+	playerNames.push_back("Sam");
 	playerNames.push_back("John");
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
@@ -194,13 +207,15 @@ void init(short width, short height)
 	filename += ".hlt";
 
 	//Put in player objects here:
-	Bob = LEIGON_AI(1, myMap);
-	Alice = STD_AI_1(2, myMap);
-	Jim = YOURNAME(3, myMap);
+
+
+	Bob = Hybrid_AI(1, myMap);
+	Alice = TestHybrid_AI(2, myMap);
+	/*Jim = YOURNAME(3, myMap);
 	Fred = DiffusionAI(4, myMap);
 	Tim = Hybrid_AI(5, myMap);
-	//Sam = Hybrid_AI(6, myMap);
-	/*John = DiffusionAI(7, myMap);
+	Sam = TestDiffusionAI2(6, myMap);
+	John = DiffusionAI(7, myMap);
 	Kate = DiffusionAI(8, myMap);
 	Sara = DiffusionAI(9, myMap);
 	Melissa = DiffusionAI(10, myMap);*/
@@ -235,15 +250,16 @@ void runPlayers()
 	vector<thread> moveThreads (myMap.numberOfPlayers);
 	playerMoves.clear();
 
-	//Create moveThreads: 
-	moveThreads[0] = thread(&LEIGON_AI::threadPackage, &Bob, myMap);
-	moveThreads[1] = thread(&STD_AI_1::threadPackage, &Alice, myMap);
-	moveThreads[2] = thread(&YOURNAME::threadPackage, &Jim, myMap);
+	//Create moveThreads:
+
+	moveThreads[0] = thread(&Hybrid_AI::threadPackage, &Bob, myMap);
+	moveThreads[1] = thread(&TestHybrid_AI::threadPackage, &Alice, myMap);
+	/*moveThreads[2] = thread(&YOURNAME::threadPackage, &Jim, myMap);
 	moveThreads[3] = thread(&DiffusionAI::threadPackage, &Fred, myMap);
 	moveThreads[4] = thread(&Hybrid_AI::threadPackage, &Tim, myMap);
-	//moveThreads[5] = thread(&Hybrid_AI::threadPackage, &Sam, myMap);
-	/*moveThreads[6] = thread(&DiffusionAI::threadPackage, &John, myMap);
-	moveThreads[7] = thread(&DiffusionAI::threadPackage, &Kate, myMap);
+	moveThreads[5] = thread(&Hybrid_AI::threadPackage, &Sam, myMap);
+	moveThreads[6] = thread(&DiffusionAI::threadPackage, &John, myMap);
+    moveThreads[7] = thread(&DiffusionAI::threadPackage, &Kate, myMap);
 	moveThreads[8] = thread(&DiffusionAI::threadPackage, &Sara, myMap);
 	moveThreads[9] = thread(&DiffusionAI::threadPackage, &Melissa, myMap);*/
 
@@ -257,11 +273,12 @@ void runPlayers()
 	//Add player's moves back to playerMoves
 	playerMoves.push_back(&Bob.moves);
 	playerMoves.push_back(&Alice.moves);
-	playerMoves.push_back(&Jim.moves);
+
+	/*playerMoves.push_back(&Jim.moves);
 	playerMoves.push_back(&Fred.moves);
 	playerMoves.push_back(&Tim.moves);
-	//playerMoves.push_back(&Sam.moves);
-	/*playerMoves.push_back(&John.moves);
+	playerMoves.push_back(&Sam.moves);
+	playerMoves.push_back(&John.moves);
 	playerMoves.push_back(&Kate.moves);
 	playerMoves.push_back(&Sara.moves);
 	playerMoves.push_back(&Melissa.moves);*/
