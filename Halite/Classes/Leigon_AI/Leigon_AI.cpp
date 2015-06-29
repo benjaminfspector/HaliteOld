@@ -45,21 +45,16 @@ void LEIGON_AI::getMoves(HaliteMap * presentMap)
 	for(auto a = toMove.begin(); !toMove.empty() && a != toMove.end();)
 	{
 		enum Goodness { BEST, GOOD, BAD };
-		HaliteLocation around[8];
+		HaliteLocation around[4];
 		around[0] = presentMap->getNorthern(a->x, a->y);
-		around[1] = presentMap->getNortheastern(a->x, a->y);
-		around[2] = presentMap->getEastern(a->x, a->y);
-		around[3] = presentMap->getSoutheastern(a->x, a->y);
-		around[4] = presentMap->getSouthern(a->x, a->y);
-		around[5] = presentMap->getSouthwestern(a->x, a->y);
-		around[6] = presentMap->getWestern(a->x, a->y);
-		around[7] = presentMap->getNorthwestern(a->x, a->y);
+		around[1] = presentMap->getEastern(a->x, a->y);
+		around[2] = presentMap->getSouthern(a->x, a->y);
+		around[3] = presentMap->getWestern(a->x, a->y);
 		Goodness possibilities[4];
 		for(short b = 0; b < 4; b++)
 		{
-			short bA = 2 * b;
-			if(around[bA].owner != myTag && around[nextAround(bA)].owner != myTag && around[lastAround(bA)].owner != myTag) possibilities[b] = BEST;
-			else if(around[bA].owner != myTag) possibilities[b] = GOOD;
+			if(around[b].owner != myTag && around[oppositeSquare(b)].owner == myTag) possibilities[b] = BEST;
+			else if(around[b].owner != myTag) possibilities[b] = GOOD;
 			else possibilities[b] = BAD;
 		}
 		Goodness bestPossible = BAD;
@@ -295,14 +290,22 @@ void LEIGON_AI::addStill(short x, short y, HaliteMap * map)
 
 short LEIGON_AI::nextAround(short num)
 {
-	if(num < 0 || num >= 7) return 0;
+	if(num < 0 || num >= 3) return 0;
 	return num + 1;
 }
 
 short LEIGON_AI::lastAround(short num)
 {
-	if(num <= 0 || num > 7) return 7;
+	if(num <= 0 || num > 3) return 3;
 	return num - 1;
+}
+
+short LEIGON_AI::oppositeSquare(short num)
+{
+	if(num < 0 || num > 3) return -1;
+	num += 2;
+	while(num > 3) num -= 4;
+	return num;
 }
 
 
