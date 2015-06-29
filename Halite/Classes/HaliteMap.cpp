@@ -103,6 +103,42 @@ HaliteLocation HaliteMap::getWestern(short xx, short yy)
 	return hMap[yy][mapWidth - 1];
 }
 
+HaliteLocation HaliteMap::getNortheastern(short xx, short yy)
+{
+	if(yy == 0) yy = mapHeight - 1;
+	else yy--;
+	if(xx == mapWidth - 1) xx = 0;
+	else xx++;
+	return hMap[yy][xx];
+}
+
+HaliteLocation HaliteMap::getSoutheastern(short xx, short yy)
+{
+	if(yy == mapHeight - 1) yy = 0;
+	else yy++;
+	if(xx == mapWidth - 1) xx = 0;
+	else xx++;
+	return hMap[yy][xx];
+}
+
+HaliteLocation HaliteMap::getSouthwestern(short xx, short yy)
+{
+	if(yy == mapHeight - 1) yy = 0;
+	else yy++;
+	if(xx == 0) xx = mapWidth - 1;
+	else xx--;
+	return hMap[yy][xx];
+}
+
+HaliteLocation HaliteMap::getNorthwestern(short xx, short yy)
+{
+	if(yy == 0) yy = mapHeight - 1;
+	else yy--;
+	if(xx == 0) xx = mapWidth - 1;
+	else xx--;
+	return hMap[yy][xx];
+}
+
 bool HaliteMap::haveNeighbors(short x, short y, short comparisonTag)
 {
 	HaliteLocation n = getNorthern(x, y), e = getEastern(x, y), s = getSouthern(x, y), w = getWestern(x, y);
@@ -128,7 +164,7 @@ void HaliteMap::punishPlayers(vector<short> puns)
 
 	if(!toContinue) return;
 
-	vector<short> numPieces(numberOfPlayers, 0);
+	vector<int> numPieces(numberOfPlayers, 0);
 	for(short a = 0; a < mapHeight; a++)
 	{
 		for(short b = 0; b < mapWidth; b++)
@@ -139,7 +175,7 @@ void HaliteMap::punishPlayers(vector<short> puns)
 			}
 		}
 	}
-	vector< list<short> > piecesToKill(numberOfPlayers, list<short>());
+	vector< list<int> > piecesToKill(numberOfPlayers, list<int>());
 	for(short a = 0; a < numberOfPlayers; a++)
 	{
 		if(puns[a] > numPieces[a])
@@ -166,7 +202,7 @@ void HaliteMap::punishPlayers(vector<short> puns)
 		}
 	}
 
-	std::vector<short> piecesAtYet(numberOfPlayers, 0);
+	std::vector<int> piecesAtYet(numberOfPlayers, 0);
 	for(auto a = hMap.begin(); a != hMap.end(); a++)
 	{
 		for(auto b = a->begin(); b != a->end(); b++)

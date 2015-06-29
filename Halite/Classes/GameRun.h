@@ -56,6 +56,7 @@ mapDimensions initPast();
 void getPast();
 void renderPast();
 
+void initPlayerNames();
 void init(short width, short height);
 void close();
 

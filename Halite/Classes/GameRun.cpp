@@ -163,11 +163,8 @@ void renderPast()
 	glutSwapBuffers();
 }
 
-void init(short width, short height)
+void initPlayerNames()
 {
-    moveNumber = 0;
-	srand(rand());
-
 	playerNames = vector<string>(0);
 	playerNames.push_back("Bob");
 	playerNames.push_back("Alice");
@@ -179,6 +176,10 @@ void init(short width, short height)
 	playerNames.push_back("Kate");
 	playerNames.push_back("Sara");
 	playerNames.push_back("Melissa");*/
+}
+void init(short width, short height)
+{
+    moveNumber = 0;
 
 	mapWidth = width;
 	mapHeight = height;

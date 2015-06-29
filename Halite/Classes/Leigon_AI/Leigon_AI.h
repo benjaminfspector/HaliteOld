@@ -20,6 +20,7 @@ class LEIGON_AI
 private:
 	short myTag;
 	short lastDirection;
+	short probGoodOverBad;
 public:
 	LEIGON_AI(short givenTag, HaliteMap initialMap);
 	LEIGON_AI();
@@ -32,6 +33,8 @@ public:
 	void addSouth(short x, short y, HaliteMap * map);
 	void addWest(short x, short y, HaliteMap * map);
 	void addStill(short x, short y, HaliteMap * map);
+	short nextAround(short num);
+	short lastAround(short num);
 
 
 	std::list<HaliteMove> moves;

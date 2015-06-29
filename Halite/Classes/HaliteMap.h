@@ -33,6 +33,10 @@ public:
 	HaliteLocation getEastern(short xx, short yy);
 	HaliteLocation getSouthern(short xx, short yy);
 	HaliteLocation getWestern(short xx, short yy);
+	HaliteLocation getNortheastern(short xx, short yy);
+	HaliteLocation getSoutheastern(short xx, short yy);
+	HaliteLocation getSouthwestern(short xx, short yy);
+	HaliteLocation getNorthwestern(short xx, short yy);
 	bool haveNeighbors(short x, short y, short comparisonTag); //uses given comparisonTag as ownerTag; useful for checking squares which aren't your own.
 	bool haveNeighbors(short x, short y); //uses ownerTag of the sqyare.
 

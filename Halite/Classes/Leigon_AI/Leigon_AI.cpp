@@ -4,6 +4,8 @@ LEIGON_AI::LEIGON_AI(short givenTag, HaliteMap initialMap)
 {
 	lastDirection = rand() % 5;
 	myTag = givenTag;
+	probGoodOverBad = pow((initialMap.mapWidth * initialMap.mapHeight), 0.4);
+	if(probGoodOverBad < 2) probGoodOverBad = 2;
 }
 
 //Random move AI
@@ -42,43 +44,51 @@ void LEIGON_AI::getMoves(HaliteMap * presentMap)
 
 	for(auto a = toMove.begin(); !toMove.empty() && a != toMove.end();)
 	{
-		enum Goodness { BEST, MID, BAD };
-		HaliteLocation around[4];
+		enum Goodness { BEST, GOOD, BAD };
+		HaliteLocation around[8];
 		around[0] = presentMap->getNorthern(a->x, a->y);
-		around[1] = presentMap->getEastern(a->x, a->y);
-		around[2] = presentMap->getSouthern(a->x, a->y);
-		around[3] = presentMap->getWestern(a->x, a->y);
+		around[1] = presentMap->getNortheastern(a->x, a->y);
+		around[2] = presentMap->getEastern(a->x, a->y);
+		around[3] = presentMap->getSoutheastern(a->x, a->y);
+		around[4] = presentMap->getSouthern(a->x, a->y);
+		around[5] = presentMap->getSouthwestern(a->x, a->y);
+		around[6] = presentMap->getWestern(a->x, a->y);
+		around[7] = presentMap->getNorthwestern(a->x, a->y);
 		Goodness possibilities[4];
 		for(short b = 0; b < 4; b++)
 		{
-			if(around[b].owner != myTag) possibilities[b] = BEST;
-			else if(!around[b].isSentient) possibilities[b] = MID;
+			short bA = 2 * b;
+			if(around[bA].owner != myTag && around[nextAround(bA)].owner != myTag && around[lastAround(bA)].owner != myTag) possibilities[b] = BEST;
+			else if(around[bA].owner != myTag) possibilities[b] = GOOD;
 			else possibilities[b] = BAD;
 		}
 		Goodness bestPossible = BAD;
 		for(short b = 0; b < 4; b++)
 		{
-			if(possibilities[b] == MID)
+			if(possibilities[b] == GOOD)
 			{
-				bestPossible = MID;
+				bestPossible = GOOD;
 			}
 			else if(possibilities[b] == BEST)
 			{
 				bestPossible = BEST;
-				break;
 			}
 		}
 
-		bool doIncrement = true;;
-		if(bestPossible == BEST)
+		bool goodOverBest = rand() % probGoodOverBad == 0;
+		bool doIncrement = true;
+		if(bestPossible == GOOD || (goodOverBest && bestPossible == BEST))
 		{
+			short initial = lastDirection;
 			lastDirection++;
 			if(lastDirection > 3) lastDirection = 0;
-			while(around[lastDirection].owner == myTag)
+			while(possibilities[lastDirection] != GOOD)
 			{
+				if(lastDirection == initial) break;
 				lastDirection++;
 				if(lastDirection > 3) lastDirection = 0;
 			}
+
 			if(lastDirection == 0)
 			{
 				addNorth(a->x, a->y, presentMap);
@@ -95,7 +105,37 @@ void LEIGON_AI::getMoves(HaliteMap * presentMap)
 			{
 				addWest(a->x, a->y, presentMap);
 			}
-			
+		}
+		else if(bestPossible == BEST)
+		{
+			lastDirection++;
+			if(lastDirection > 3) lastDirection = 0;
+			while(possibilities[lastDirection] != BEST)
+			{
+				lastDirection++;
+				if(lastDirection > 3) lastDirection = 0;
+			}
+
+			if(lastDirection == 0)
+			{
+				addNorth(a->x, a->y, presentMap);
+			}
+			else if(lastDirection == 1)
+			{
+				addEast(a->x, a->y, presentMap);
+			}
+			else if(lastDirection == 2)
+			{
+				addSouth(a->x, a->y, presentMap);
+			}
+			else if(lastDirection == 3)
+			{
+				addWest(a->x, a->y, presentMap);
+			}
+		}
+
+		if(bestPossible == GOOD || bestPossible == BEST)
+		{
 			auto b = a;
 			if(distance(toMove.begin(), a) != 0) a--;
 			else doIncrement = false;
@@ -251,6 +291,18 @@ void LEIGON_AI::addStill(short x, short y, HaliteMap * map)
 {
 	moves.push_back(HaliteMove(HaliteMove::STILL, x, y));
 	map->hMap[y][x] = HaliteLocation(myTag, true);
+}
+
+short LEIGON_AI::nextAround(short num)
+{
+	if(num < 0 || num >= 7) return 0;
+	return num + 1;
+}
+
+short LEIGON_AI::lastAround(short num)
+{
+	if(num <= 0 || num > 7) return 7;
+	return num - 1;
 }
 
 

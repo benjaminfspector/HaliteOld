@@ -12,6 +12,7 @@ bool doPause = false;
 int * fnum;
 std::vector<std::string> * pNames;
 std::vector<std::string> winners;
+std::vector<short> gamesWon;
 short w, h;
 
 bool amDone = true;
@@ -116,6 +117,7 @@ int main( int argc, char* args[] )
 		pastMapD = initPast();
 		getPast();
 	}
+	else initPlayerNames();
 
 	fnum = getMoveNumberP();
 	initLUtil(myAction, &myFPS, &doPause, fnum);
@@ -210,6 +212,7 @@ int main( int argc, char* args[] )
     else if(myAction == COMMAND)
     {
         pNames = getPlayerNames();
+		gamesWon = std::vector<short>(pNames->size(), 0);
         for(int a = 0; a < numberOfGames; a++)
         {
             commandLoop(a);
@@ -218,6 +221,10 @@ int main( int argc, char* args[] )
         {
             std::cout << "The winner of game " << a + 1 << " was " << winners[a] << "\n";
         }
+		for(int a = 0; a < gamesWon.size(); a++)
+		{
+			std::cout << "Player " << (*pNames)[a] << " won " << gamesWon[a] << " games.\n";
+		}
 		getchar();
 		getchar();
     }
@@ -291,6 +298,7 @@ void commandLoop(int timeThrough) {
         if(result != 0)
         {
             winners[timeThrough] = (*pNames)[result-1];
+			gamesWon[result - 1]++;
             break;
         }
     }
