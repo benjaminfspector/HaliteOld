@@ -19,14 +19,16 @@ static double handleInitNetworking(sf::TcpSocket * s, unsigned char playerTag, u
 	sf::Packet p;
 	p << playerTag << ageOfSentient << m;
 	s->send(p);
-	std::cout << "Init Message sent to player " << name << std::endl;
+	std::string str = "Init Message sent to player " + name + "\n";
+	std::cout << str;
 	clock_t initialTime = clock();
 	sf::Packet r;
 	s->receive(r);
-	std::cout << "Init Message received from player " << name << std::endl;
+	str = "Init Message received from player " + name + "\n";
+	std::cout << str;
 	clock_t finalTime = clock() - initialTime;
 	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
-	std::string str = ""; unsigned char readChar;
+	str = ""; unsigned char readChar;
 	while(!r.endOfPacket())
 	{
 		r >> readChar;
@@ -48,7 +50,6 @@ static double handleFrameNetworking(sf::TcpSocket * s, hlt::Map& m, std::set<hlt
 	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
 	moves->clear();
 	unsigned short x, y; unsigned char d;
-	if(r.getData() == NULL) std::cout << ":(";
 	while(!r.endOfPacket())
 	{
 		r >> x >> y >> d;

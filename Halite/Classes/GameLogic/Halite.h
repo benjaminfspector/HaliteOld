@@ -22,8 +22,7 @@ class Halite
 {
 private:
 	hlt::Map game_map;
-	unsigned short turn_number, number_of_players;// , last_turn_outputted;
-	//std::fstream game_file;
+	unsigned short turn_number, number_of_players, last_turn_output;
 	std::vector<std::string> player_names;
 	std::map<unsigned char, hlt::Color> color_codes;
 	std::vector<hlt::Map * > full_game;
@@ -33,15 +32,16 @@ private:
 
 	unsigned char getNextFrame();
 	void connectToPlayers();
+	unsigned char getAgeOfSentient(unsigned short w, unsigned short h) { return pow(int(w)*h, 0.4); }
 public:
 	Halite();
 	Halite(unsigned short w, unsigned short h);
 	void init();
 	std::string runGame();
-	void confirmWithinGame(unsigned short& turnNumber);
-	void render(unsigned short turnNumber);
+	void confirmWithinGame(signed short& turnNumber);
+	void render(short& turnNumber);
 	void output();
-	void input(std::string filename);
+	bool input(std::string filename, unsigned short& width, unsigned short& height);
 	void getColorCodes();
 };
 

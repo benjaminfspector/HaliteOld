@@ -20,53 +20,79 @@ void renderLoop(int val);
 
 Halite my_game;
 bool pause = false;
-unsigned short turn_number = 0;
-signed short fps = 30;
+signed short turn_number = 0, fps = 30;
 
 int main(int argc, char* args[])
 {
-#ifdef _WIN32
+	/*#ifdef _WIN32
 	HANDLE consoleWindow = GetStdHandle(STD_OUTPUT_HANDLE);
 	SMALL_RECT r; r.Left = 0; r.Top = 0; r.Right = 5000; r.Bottom = 5000; COORD c; c.X = 5001; c.Y = 5001;
 	SetConsoleWindowInfo(consoleWindow, TRUE, &r);
 	SetConsoleScreenBufferSize(consoleWindow, c);
-#endif
+	#endif*/
 
 	std::string in;
-
+	std::thread logicThread;
 	unsigned short mapWidth, mapHeight;
-	std::cout << "Please enter the width of the map: ";
-	std::getline(std::cin, in);
+
+	std::cout << "Would you like to run a new game or render a past one? Please enter \"New\" or \"Past\": ";
 	while(true)
 	{
-		try
-		{
-			mapWidth = std::stoi(in);
-			break;
-		}
-		catch(std::exception e)
-		{
-			std::cout << "That isn't a valid input. Please enter an integer width of the map: ";
-			std::getline(std::cin, in);
-		}
-	}
-	std::cout << "Please enter the height of the map: ";
-	std::getline(std::cin, in);
-	while(true)
-	{
-		try
-		{
-			mapHeight = std::stoi(in);
-			break;
-		}
-		catch(std::exception e)
-		{
-			std::cout << "That isn't a valid input. Please enter an integer height of the map: ";
-			std::getline(std::cin, in);
-		}
+		std::getline(std::cin, in);
+		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
+		if(in == "p" || in == "past" || in == "n" || in == "new") break;
+		std::cout << "That isn't a valid input. Please enter \"New\" or \"Past\": ";
 	}
 
-	my_game = Halite(mapWidth, mapHeight);
+	if(in == "new" || in == "n")
+	{
+		std::cout << "Please enter the width of the map: ";
+		std::getline(std::cin, in);
+		while(true)
+		{
+			try
+			{
+				mapWidth = std::stoi(in);
+				break;
+			}
+			catch(std::exception e)
+			{
+				std::cout << "That isn't a valid input. Please enter an integer width of the map: ";
+				std::getline(std::cin, in);
+			}
+		}
+		std::cout << "Please enter the height of the map: ";
+		std::getline(std::cin, in);
+		while(true)
+		{
+			try
+			{
+				mapHeight = std::stoi(in);
+				break;
+			}
+			catch(std::exception e)
+			{
+				std::cout << "That isn't a valid input. Please enter an integer height of the map: ";
+				std::getline(std::cin, in);
+			}
+		}
+
+		my_game = Halite(mapWidth, mapHeight);
+
+		my_game.init();
+
+		logicThread = std::thread(doLogic);
+	}
+	else
+	{
+		std::cout << "Please enter the name of the file you'd like to play back from: ";
+		std::getline(std::cin, in);
+		while(!my_game.input(in, mapWidth, mapHeight))
+		{
+			std::cout << "I couldn't open the specified file. Please enter the name of another file to play back from: ";
+			std::getline(std::cin, in);
+		}
+	}
 
 	//Initialize FreeGLUT
 	glutInit(&argc, args);
@@ -107,9 +133,6 @@ int main(int argc, char* args[])
 	//Set display function
 	glutDisplayFunc(render);
 
-	my_game.init();
-	
-	std::thread logicThread(doLogic);
 
 	glutTimerFunc(1000 / fps, renderLoop, 0);
 	glutMainLoop();
@@ -123,7 +146,7 @@ void renderLoop(int val)
 	if(!pause)
 	{
 		if(fps > 0) turn_number++;
-		else if(fps < 0 && turn_number != 0) turn_number--;
+		else if(fps < 0) turn_number--;
 	}
 	glutTimerFunc(1000 / float(abs(fps)), renderLoop, val);
 }
@@ -131,7 +154,7 @@ void renderLoop(int val)
 void doLogic()
 {
 	std::string winner = my_game.runGame();
-	std::cout << winner << " has won the game!\n";
+	std::cout << "Player " << winner << " has won the game!\n";
 }
 
 void handleMouse(int button, int state, int x, int y)
@@ -179,6 +202,10 @@ void handleKeys(unsigned char key, int x, int y)
 	else if(key == 'c' || key == 'C')
 	{
 		my_game.getColorCodes();
+	}
+	else if(key == 'o' || key == 'O')
+	{
+		my_game.output();
 	}
 }
 

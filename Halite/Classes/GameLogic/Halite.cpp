@@ -206,12 +206,13 @@ std::string Halite::runGame()
 	return player_names[result - 1];
 }
 
-void Halite::confirmWithinGame(unsigned short& turnNumber)
+void Halite::confirmWithinGame(signed short& turnNumber)
 {
 	if(turnNumber >= full_game.size()) turnNumber = full_game.size() - 1;
+	else if(turnNumber < 0) turnNumber = 0;
 }
 
-void Halite::render(unsigned short turnNumber)
+void Halite::render(short& turnNumber)
 {
 	confirmWithinGame(turnNumber);
 
@@ -249,11 +250,75 @@ void Halite::render(unsigned short turnNumber)
 
 void Halite::output()
 {
+	std::cout << "Beginning to output file from frame #" << last_turn_output << ".\n";
 
+	std::string filename = std::to_string(time(NULL)%100000000) + ".hlt";
+	std::fstream game_file;
+	if(last_turn_output == 0)
+	{
+		game_file.open(filename, std::ios_base::out);
+		game_file  << game_map.map_width << ' ' << game_map.map_height << ' ' << number_of_players << "\n";
+		for(auto a = player_names.begin(); a != player_names.end() - 1; a++) game_file  << *a << "\n";
+		game_file  << *(player_names.end() - 1);
+	}
+	else game_file.open(filename, std::ios_base::app);
+
+	while(last_turn_output < full_game.size())
+	{
+		game_file  << std::endl;
+		for(auto a = full_game[last_turn_output]->contents.begin(); a != full_game[last_turn_output]->contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) game_file  << short(b->owner) << ' ' << short(b->age) << ' ';
+		last_turn_output++;
+		std::cout << "Finished outputting frame " << last_turn_output + 1 << ".\n";
+	}
+
+	std::cout << "Output file until frame #" << last_turn_output << ".\n";
+
+	game_file.close();
+}
+
+bool Halite::input(std::string filename, unsigned short& width, unsigned short& height)
+{
+	std::cout << "Beginning to read in file: ";
+
+	std::fstream game_file;
+	game_file.open(filename, std::ios_base::in);
+	if(!game_file.is_open()) return false;
+
+	std::string in;
+	game_file >> width >> height>> number_of_players;
+	game_map.map_width = width;
+	game_map.map_height = height;
+	age_of_sentient = getAgeOfSentient(width, height);
+	std::getline(game_file, in);
+	player_names.resize(number_of_players);
+	for(unsigned char a = 0; a < number_of_players; a++) std::getline(game_file  , player_names[a]);
+
+	game_map.contents.resize(game_map.map_height);
+	for(auto a = game_map.contents.begin(); a != game_map.contents.end(); a++) a->resize(game_map.map_width);
+
+	short ownerIn, ageIn;
+	while(!game_file.eof())
+	{
+		for(unsigned short a = 0; a < game_map.map_height; a++) for(unsigned short b = 0; b < game_map.map_width; b++)
+		{
+			game_file >> ownerIn >> ageIn;
+			game_map.contents[a][b] = { ownerIn, ageIn };
+		}
+		full_game.push_back(new hlt::Map());
+		*full_game.back() = game_map;
+		std::cout << "Goten frame #" << short(full_game.size()) << ".\n";
+	}
+
+	delete full_game.back();
+	full_game.pop_back();
+
+	game_file.close();
+	return true;
 }
 
 Halite::Halite()
 {
+	last_turn_output = 0;
 	color_codes = std::map<unsigned char, hlt::Color>();
 	number_of_players = 0;
 	game_map = hlt::Map();
@@ -263,11 +328,25 @@ Halite::Halite()
 	age_of_sentient = 0;
 	player_connections = std::vector<sf::TcpSocket * >();
 	player_moves = std::vector< std::set<hlt::Move> >();
+	//Init Color Codes:
+	color_codes = std::map<unsigned char, hlt::Color>();
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(0, { 100, 100, 100 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(1, { 255, 0, 0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(2, { 0, 255, 0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(3, { 0, 0, 255 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(4, { 255, 255, 0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(5, { 255, 0, 255 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(6, { 0, 255, 255 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(7, { 255, 255, 255 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(8, { 222, 184, 135 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(9, { 255, 128, 128 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(10, { 255, 165, 0 }));
 }
 
 Halite::Halite(unsigned short w, unsigned short h)
 {
-	age_of_sentient = pow((int(w)*h), 0.4);
+	last_turn_output = 0;
+	age_of_sentient = getAgeOfSentient(w, h);
 	player_moves = std::vector< std::set<hlt::Move> >();
 	full_game = std::vector<hlt::Map * >();
 
