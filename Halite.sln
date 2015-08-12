@@ -1,36 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Halite", "Halite\Halite.vcxproj", "{2A865877-B8D4-4814-AC04-04E0842AC11B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Halite", "Halite\Halite.vcxproj", "{A0DD7CC5-B8E9-4FBB-9DF6-22D822DFED34}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F06CBF44-FF25-4B38-9FBA-139A4367A87A}"
-	ProjectSection(SolutionItems) = preProject
-		Performance1.psess = Performance1.psess
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalitePlayer", "HalitePlayer\HalitePlayer.vcxproj", "{B1B49813-5D74-4464-BDCA-03D562014A9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
-		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
-		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Debug|Win32.ActiveCfg = Debug|x64
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Debug|Win32.Build.0 = Debug|x64
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Debug|x64.ActiveCfg = Debug|x64
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Debug|x64.Build.0 = Debug|x64
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Release|Win32.ActiveCfg = Release|Win32
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Release|Win32.Build.0 = Release|Win32
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Release|x64.ActiveCfg = Release|Win32
-		{2A865877-B8D4-4814-AC04-04E0842AC11B}.Release|x64.Build.0 = Release|Win32
+		{A0DD7CC5-B8E9-4FBB-9DF6-22D822DFED34}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A0DD7CC5-B8E9-4FBB-9DF6-22D822DFED34}.Debug|Win32.Build.0 = Debug|Win32
+		{A0DD7CC5-B8E9-4FBB-9DF6-22D822DFED34}.Release|Win32.ActiveCfg = Release|Win32
+		{A0DD7CC5-B8E9-4FBB-9DF6-22D822DFED34}.Release|Win32.Build.0 = Release|Win32
+		{B1B49813-5D74-4464-BDCA-03D562014A9D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B1B49813-5D74-4464-BDCA-03D562014A9D}.Debug|Win32.Build.0 = Debug|Win32
+		{B1B49813-5D74-4464-BDCA-03D562014A9D}.Release|Win32.ActiveCfg = Release|Win32
+		{B1B49813-5D74-4464-BDCA-03D562014A9D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

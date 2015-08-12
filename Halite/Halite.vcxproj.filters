@@ -1,108 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="AI Template">
-      <UniqueIdentifier>{d2296708-ded4-4131-95d3-91ed46fa4141}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="STD_AI_1">
-      <UniqueIdentifier>{9bcbd330-1fd7-4bcc-b55e-f9208ad9c676}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Diffusion_AI">
-      <UniqueIdentifier>{efb7c32a-8298-4a75-a5d8-8d6ca628c219}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="LEGION_AI">
-      <UniqueIdentifier>{ae8e5640-f961-479d-b412-a47147072a73}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Hybrid_AI">
-      <UniqueIdentifier>{ec559a16-aafd-4eaa-b20f-a6b9a4d63ac5}</UniqueIdentifier>
+    <Filter Include="GameLogic">
+      <UniqueIdentifier>{a21223ea-3a37-46cb-a0e1-e0da1f9c7a4b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Classes\LUtil.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Classes\GameLogic\Halite.cpp">
+      <Filter>GameLogic</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\HaliteMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\HaliteMove.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\HaliteLocation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\GameRun.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\AI_Template\YourName.cpp">
-      <Filter>AI Template</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\STD_AI_1\STD_AI_1.cpp">
-      <Filter>STD_AI_1</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Diffusion_AI\DiffusionAI.cpp">
-      <Filter>Diffusion_AI</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Leigon_AI\Leigon_AI.cpp">
-      <Filter>LEGION_AI</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Hybrid_AI\TestHybrid_AI.cpp">
-      <Filter>Hybrid_AI</Filter>
-    </ClCompile>
-    <ClCompile Include="Classes\Hybrid_AI\Hybrid_AI.cpp">
-      <Filter>Hybrid_AI</Filter>
-    </ClCompile>
+    <ClCompile Include="Classes\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Classes\LOpenGL.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Classes\GameLogic\Halite.h">
+      <Filter>GameLogic</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\LUtil.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Classes\GameLogic\hlt.h">
+      <Filter>GameLogic</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\HaliteMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\HaliteLocation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\HaliteMove.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\GameRun.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\AI_Template\YourName.h">
-      <Filter>AI Template</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\STD_AI_1\STD_AI_1.h">
-      <Filter>STD_AI_1</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Diffusion_AI\DiffusionAI.h">
-      <Filter>Diffusion_AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Leigon_AI\Leigon_AI.h">
-      <Filter>LEGION_AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Hybrid_AI\TestHybrid_AI.h">
-      <Filter>Hybrid_AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\Hybrid_AI\Hybrid_AI.h">
-      <Filter>Hybrid_AI</Filter>
-    </ClInclude>
+    <ClInclude Include="Classes\OpenGL.h" />
+    <ClInclude Include="Classes\Util.h" />
+    <ClInclude Include="Classes\Networking.h" />
   </ItemGroup>
 </Project>

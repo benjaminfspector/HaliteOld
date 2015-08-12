@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A0DD7CC5-B8E9-4FBB-9DF6-22D822DFED34}</ProjectGuid>
-    <RootNamespace>Halite</RootNamespace>
+    <ProjectGuid>{B1B49813-5D74-4464-BDCA-03D562014A9D}</ProjectGuid>
+    <RootNamespace>HalitePlayer</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -39,18 +39,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\boost_1_58_0;C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\include;C:\freeglutMSVC\Halite\Halite\Classes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\freeglutMSVC\SFML-2.3.1\lib;C:\freeglutMSVC\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\Halite\HalitePlayer\Classes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\freeglutMSVC\SFML-2.3.1\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\HalitePlayer\HalitePlayer\Classes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\freeglutMSVC\SFML-2.3.1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;freeglut.lib;sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-network-s-d.lib;sfml-system-s-d.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -60,23 +65,25 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>sfml-network-s.lib;sfml-system-s.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Classes\GameLogic\Halite.cpp" />
-    <ClCompile Include="Classes\main.cpp" />
+    <ClInclude Include="Classes\Agents\Basic\Basic.h" />
+    <ClInclude Include="Classes\Agents\Random\Random.h" />
+    <ClInclude Include="Classes\hlt.h" />
+    <ClInclude Include="Classes\Networking.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Classes\GameLogic\Halite.h" />
-    <ClInclude Include="Classes\GameLogic\hlt.h" />
-    <ClInclude Include="Classes\Networking.h" />
-    <ClInclude Include="Classes\OpenGL.h" />
-    <ClInclude Include="Classes\Util.h" />
+    <ClCompile Include="Classes\Agents\Basic\Basic.cpp" />
+    <ClCompile Include="Classes\Agents\Random\Random.cpp" />
+    <ClCompile Include="Classes\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

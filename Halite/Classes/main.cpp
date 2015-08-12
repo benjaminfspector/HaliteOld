@@ -1,338 +1,261 @@
-#include "LUtil.h"
-//#include <Windows.h>
-#include <time.h>
-#include <string>
-#include <thread>
+#include <iostream>
+#ifdef _WIN32
+	#include <Windows.h>
+#endif
 
-static Job myAction;
+#include "Util.h"
+#include "GameLogic\Halite.h"
 
-int myFPS = 6;
-int numberOfGames = 0;
-bool doPause = false;
-int * fnum;
-std::vector<std::string> * pNames;
-std::vector<std::string> winners;
-std::vector<short> gamesWon;
-short w, h;
+void handleMouse(int button, int state, int x, int y);
+void handlePassiveMouseMotion(int x, int y);
+void handleMouseMotion(int x, int y);
+void handleKeys(unsigned char key, int x, int y);
+void handleKeysUp(unsigned char key, int x, int y);
+void handleSpecialKeys(int key, int x, int y);
+void handleSpecialKeysUp(int key, int x, int y);
 
-bool amDone = true;
+void render();
+void doLogic();
+void renderLoop(int val);
 
-short result = 0;
+Halite my_game;
+bool pause = false;
+unsigned short turn_number = 0;
+signed short fps = 30;
 
-void renderLoop( int val );
-
-void fileLoop();
-
-void commandLoop(int timeThrough);
-
-void bothLoop( int val );
-
-void pastLoop( int val );
-
-int main( int argc, char* args[] )
+int main(int argc, char* args[])
 {
-	//Move console to second monitor
-	//HWND consoleWindow = GetConsoleWindow();
-	//SetWindowPos(consoleWindow, 0, 1600, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-	//End moveConsole
-
-    srand(time(NULL));
+#ifdef _WIN32
+	HANDLE consoleWindow = GetStdHandle(STD_OUTPUT_HANDLE);
+	SMALL_RECT r; r.Left = 0; r.Top = 0; r.Right = 5000; r.Bottom = 5000; COORD c; c.X = 5001; c.Y = 5001;
+	SetConsoleWindowInfo(consoleWindow, TRUE, &r);
+	SetConsoleScreenBufferSize(consoleWindow, c);
+#endif
 
 	std::string in;
-	std::cout << "Would you like to render a new game, output a new game to a file, do both, or render a past game? Please enter \"Render\", \"Output\", \"Both\", \"Command\", or \"Past\": ";
-	std::cin >> in;
+
+	unsigned short mapWidth, mapHeight;
+	std::cout << "Please enter the width of the map: ";
+	std::getline(std::cin, in);
 	while(true)
 	{
-		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
-		if(in != "render" && in != "r" && in != "output" && in != "o" && in != "both" && in != "b" && in != "command" && in != "c" && in != "past" && in != "p")
+		try
 		{
-			std::cout << "That is not a valid response. Please enter \"Render\", \"Output\", \"Both\", \"Command\", or \"Read\": ";
-			std::cin >> in;
-		}
-		else if(in == "render" || in == "r")
-		{
-			myAction = RENDER;
+			mapWidth = std::stoi(in);
 			break;
 		}
-		else if(in == "output" || in == "o")
+		catch(std::exception e)
 		{
-			myAction = WRITE;
-			break;
-		}
-		else if(in == "both" || in == "b")
-		{
-			myAction = BOTH;
-			break;
-		}
-        else if(in == "command" || in == "c")
-        {
-            myAction = COMMAND;
-            break;
-        }
-		else
-		{
-			myAction = PAST;
-			break;
+			std::cout << "That isn't a valid input. Please enter an integer width of the map: ";
+			std::getline(std::cin, in);
 		}
 	}
-
-	if(myAction != PAST)
-	{
-		std::cout << "Please enter the width of the map: ";
-		while(true)
-		{
-			std::cin >> in;
-			try
-			{
-				w = std::stoi(in);
-				break;
-			}
-			catch(const std::invalid_argument& ia)
-			{
-				std::cout << "That is not an integer. Please enter an integer value: ";
-			}
-		}
-
-		std::cout << "Please enter the height of the map: ";
-		while(true)
-		{
-			std::cin >> in;
-			try
-			{
-				h = std::stoi(in);
-				break;
-			}
-			catch(const std::invalid_argument& ia)
-			{
-				std::cout << "That is not an integer. Please enter an integer value: ";
-			}
-		}
-	}
-	
-	initColorCodes();
-
-	mapDimensions pastMapD;
-	if(myAction == PAST)
-	{
-		pastMapD = initPast();
-		getPast();
-	}
-	else initPlayerNames();
-
-	fnum = getMoveNumberP();
-	initLUtil(myAction, &myFPS, &doPause, fnum);
-
-	if(myAction != WRITE && myAction != COMMAND)
-	{
-		//Initialize FreeGLUT
-		glutInit(&argc, args);
-
-		//Create OpenGL 2.1 context
-		glutInitContextVersion(2, 1);
-
-		//Create Double Buffered Window
-		glutInitDisplayMode(GLUT_DOUBLE);
-		glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-		glutCreateWindow("Halite");
-
-		//Do post window/context creation initialization
-		if(myAction != PAST)
-		{
-			if(!initGL(w, h))
-			{
-				printf("Unable to initialize graphics library!\n");
-				return 1;
-			}
-		}
-		else
-		{
-			if(!initGL(pastMapD.w, pastMapD.h))
-			{
-				printf("Unable to initialize graphics library!\n");
-				return 1;
-			}
-		}
-
-		//Set leopard handler
-		glutKeyboardFunc(handleKeys);
-
-        glutKeyboardUpFunc(handleKeysUp);
-
-		//Set special leopard handler
-		glutSpecialFunc(handleSpecialKeys);
-
-		glutSpecialUpFunc(handleSpecialKeysUp);
-
-		//Set mouse handler
-		glutMouseFunc(handleMouse);
-
-		//Set passive mouse motion handler
-		glutPassiveMotionFunc(handlePassiveMouseMotion);
-
-		//Set mouse motion handler
-		glutMotionFunc(handleMouseMotion);
-
-		//glutFullScreen();
-		////system("pause");
-	}
-    
-    if(myAction == COMMAND)
-    {
-        std::cout << "Please enter the number of games: ";
-        while(true)
-        {
-            std::cin >> in;
-            try
-            {
-                numberOfGames = std::stoi(in);
-                break;
-            }
-            catch(const std::invalid_argument& ia)
-            {
-                std::cout << "That is not an integer. Please enter an integer value: ";
-            }
-        }
-        winners = std::vector<std::string> (numberOfGames);
-    }
-
-	if(myAction != PAST && myAction != COMMAND)
-	{
-		init(w, h);		
-	}
-	if(myAction == WRITE || myAction == BOTH)
-	{
-		initOutput();
-		doOutput(myMap.findWinner());
-	}
-
-	if(myAction == WRITE)
-	{
-		fileLoop();
-	}
-    else if(myAction == COMMAND)
-    {
-        pNames = getPlayerNames();
-		gamesWon = std::vector<short>(pNames->size(), 0);
-        for(int a = 0; a < numberOfGames; a++)
-        {
-            commandLoop(a);
-        }
-        for(int a = 0; a < numberOfGames; a++)
-        {
-            std::cout << "The winner of game " << a + 1 << " was " << winners[a] << "\n";
-        }
-		for(int a = 0; a < gamesWon.size(); a++)
-		{
-			std::cout << "Player " << (*pNames)[a] << " won " << gamesWon[a] << " games.\n";
-		}
-		getchar();
-		getchar();
-    }
-	else if(myAction == PAST)
-	{
-		//Set rendering function
-		glutDisplayFunc(renderPast);
-		glutTimerFunc(1000 / SCREEN_FPSS[myFPS], pastLoop, 0);
-		glutMainLoop();
-	}
-	else
-	{
-		if(myAction == RENDER)
-		{
-			glutTimerFunc(1000 / SCREEN_FPSS[myFPS], renderLoop, 0);
-		}
-		else if(myAction == BOTH)
-		{
-			glutTimerFunc(1000 / SCREEN_FPSS[myFPS], bothLoop, 0);
-		}
-
-		//Set rendering function
-		glutDisplayFunc(render);
-		render();
-		outputPlayerColorCodes();
-		glutMainLoop();
-	}
-
-    return 0;
-}
-
-void renderLoop( int val )
-{
-	if(result == 0)
-	{
-		runPlayers();
-		result = calculateResults();
-	}
-	render();
-
-    //Run frame one more time
-    glutTimerFunc( 1000 / SCREEN_FPSS[myFPS], renderLoop, val );
-}
-
-void fileLoop()
-{
+	std::cout << "Please enter the height of the map: ";
+	std::getline(std::cin, in);
 	while(true)
 	{
-		runPlayers();
-		short result = calculateResults();
-		doOutput(result);
-
-		if(result != 0)
+		try
 		{
-			close();
-			std::cout << "Done!";
-			getchar();
-			getchar();
-			exit(0);
+			mapHeight = std::stoi(in);
+			break;
+		}
+		catch(std::exception e)
+		{
+			std::cout << "That isn't a valid input. Please enter an integer height of the map: ";
+			std::getline(std::cin, in);
 		}
 	}
-}
 
-void commandLoop(int timeThrough) {
-    init(w, h);
-    while(true)
-    {
-        runPlayers();
-        short result = calculateResults();
-        
-        if(result != 0)
-        {
-            winners[timeThrough] = (*pNames)[result-1];
-			gamesWon[result - 1]++;
-            break;
-        }
-    }
-}
+	my_game = Halite(mapWidth, mapHeight);
 
-void bothLoop( int val )
-{
-	if(result == 0)
+	//Initialize FreeGLUT
+	glutInit(&argc, args);
+
+	//Create OpenGL 2.1 context
+	glutInitContextVersion(2, 1);
+
+	//Create Double Buffered Window
+	glutInitDisplayMode(GLUT_DOUBLE);
+	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	glutCreateWindow("Halite");
+
+	if(!initGL(mapWidth, mapHeight))
 	{
-		runPlayers();
-		result = calculateResults();
-		if (result != 0)
-		{
-			doOutput(result);
-			result = 256;
-		}
+		printf("Unable to initialize graphics library!\n");
+		return 1;
 	}
-	
-	//std::thread fileThread (doOutput, result);
-	//std::thread renderThread (render);
-	//fileThread.join();
-	//renderThread.join();
-	
-	render();
 
-	//Run frame one more time
-	glutTimerFunc(1000 / SCREEN_FPSS[myFPS], bothLoop, val);
+	//Set leopard handler
+	glutKeyboardFunc(handleKeys);
+
+	glutKeyboardUpFunc(handleKeysUp);
+
+	//Set special leopard handler
+	glutSpecialFunc(handleSpecialKeys);
+
+	glutSpecialUpFunc(handleSpecialKeysUp);
+
+	//Set mouse handler
+	glutMouseFunc(handleMouse);
+
+	//Set passive mouse motion handler
+	glutPassiveMotionFunc(handlePassiveMouseMotion);
+
+	//Set mouse motion handler
+	glutMotionFunc(handleMouseMotion);
+
+	//Set display function
+	glutDisplayFunc(render);
+
+	my_game.init();
+	
+	std::thread logicThread(doLogic);
+
+	glutTimerFunc(1000 / fps, renderLoop, 0);
+	glutMainLoop();
+
+	return 0;
 }
 
-void pastLoop( int val )
+void renderLoop(int val)
 {
-	renderPast();
-	if(!doPause) (*fnum)++;
+	render();
+	if(!pause)
+	{
+		if(fps > 0) turn_number++;
+		else if(fps < 0 && turn_number != 0) turn_number--;
+	}
+	glutTimerFunc(1000 / float(abs(fps)), renderLoop, val);
+}
 
-	//Run frame one more time
-	glutTimerFunc(1000 / SCREEN_FPSS[myFPS], pastLoop, val);
+void doLogic()
+{
+	std::string winner = my_game.runGame();
+	std::cout << winner << " has won the game!\n";
+}
+
+void handleMouse(int button, int state, int x, int y)
+{
+
+}
+
+void handlePassiveMouseMotion(int x, int y)
+{
+
+}
+
+void handleMouseMotion(int x, int y)
+{
+
+}
+
+void handleKeys(unsigned char key, int x, int y)
+{
+	if(key == 27) //Escape
+	{
+		exit(0);
+	}
+	else if(key == 'f' || key == 'F')
+	{
+		glutFullScreenToggle();
+	}
+	else if(key == 'b' || key == 'B')
+	{
+		turn_number = 0;
+	}
+	else if(key == 'e' || key == 'E')
+	{
+		turn_number = 65535;
+	}
+	else if(key == 'r' || key == 'R')
+	{
+		fps = 0;
+		std::cout << "FPS reset to " << fps << "!\n";
+	}
+	else if(key == ' ')
+	{
+		pause = !pause;
+	}
+	else if(key == 'c' || key == 'C')
+	{
+		my_game.getColorCodes();
+	}
+}
+
+void handleKeysUp(unsigned char key, int x, int y)
+{
+
+}
+
+static bool lShift = false, rShift = false;
+void handleSpecialKeys(int key, int x, int y)
+{
+	if(key == GLUT_KEY_SHIFT_L)
+	{
+		lShift = true;
+	}
+	else if(key == GLUT_KEY_SHIFT_R)
+	{
+		rShift = true;
+	}
+	else if(key == GLUT_KEY_LEFT)
+	{
+		if(lShift || rShift) (turn_number) -= 15;
+		else (turn_number)--;
+		pause = true;
+	}
+	else if(key == GLUT_KEY_RIGHT)
+	{
+		if(lShift || rShift) (turn_number) += 15;
+		else (turn_number)++;
+		pause = true;
+	}
+	else if(key == GLUT_KEY_UP)
+	{
+		fps++;
+		std::cout << "FPS increased to " << fps << "!\n";
+	}
+	else if(key == GLUT_KEY_DOWN)
+	{
+		fps--;
+		std::cout << "FPS decreased to " << fps << "!\n";
+	}
+}
+
+void handleSpecialKeysUp(int key, int x, int y)
+{
+	if(key == GLUT_KEY_SHIFT_L)
+	{
+		lShift = false;
+	}
+	else if(key == GLUT_KEY_SHIFT_R)
+	{
+		rShift = false;
+	}
+}
+
+void render()
+{
+	//Ensure within game
+	my_game.confirmWithinGame(turn_number);
+
+	//Clear color buffer
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Take saved matrix off the stack and reset it
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	my_game.render(turn_number);
+
+	//Render Test square
+	/*glColor3ub(255, 255, 0);
+	glBegin(GL_QUADS);
+	glVertex2f(0, 0);
+	glVertex2f(20, 0);
+	glVertex2f(20, 20);
+	glVertex2f(0, 20);
+	glEnd();*/
+
+	glutSwapBuffers();
 }
