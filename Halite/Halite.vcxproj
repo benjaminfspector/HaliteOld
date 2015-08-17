@@ -39,7 +39,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\boost_1_58_0;C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\include;C:\freeglutMSVC\Halite\Halite\Classes;$(IncludePath)</IncludePath>
+    <IncludePath>C:\boost_1_58_0;C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\include;C:\freeglutMSVC\boost_1_58_0;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
     <LibraryPath>C:\freeglutMSVC\SFML-2.3.1\lib;C:\freeglutMSVC\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -47,10 +47,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\include;C:\freeglutMSVC\boost_1_58_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;freeglut.lib;sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\freeglutMSVC\SFML-2.3.1\lib;C:\freeglutMSVC\lib;C:\freeglutMSVC\boost_1_58_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

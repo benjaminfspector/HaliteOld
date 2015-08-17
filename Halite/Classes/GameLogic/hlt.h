@@ -1,15 +1,27 @@
 #ifndef HLT_H
 #define HLT_H
 
-#include "OpenGL.h"
-
 #include <list>
 #include <vector>
 #include <random>
+#include <boost/interprocess/ipc/message_queue.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
+#include "OpenGL.h"
 
 namespace hlt
 {
-	struct Location { unsigned short x, y;  };
+	struct Location 
+	{ 
+		unsigned short x, y; 
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & x;
+			ar & y;
+		}
+	};
 	static bool operator<(const Location& l1, const Location& l2)
 	{
 		return ((l1.x + l1.y)*(unsigned int(l1.x) + l1.y + 1) / 2) + l1.y < ((l2.x + l2.y)*(unsigned int(l2.x) + l2.y + 1) / 2) + l2.y;
@@ -20,7 +32,18 @@ namespace hlt
 		GLubyte r, g, b;
 	};
 
-	struct Site { unsigned char owner, age; };
+	struct Site 
+	{ 
+		unsigned char owner, age; 
+	
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & owner;
+			ar & age;
+		}
+	};
+
 	class Map
 	{
 	public:
@@ -142,9 +165,29 @@ namespace hlt
 			else l.x = map_width - 1;
 			return l;
 		}
+	private:
+		friend class boost::serialization::access;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & map_width;
+			ar & map_height;
+			for(auto a = contents.begin(); a != contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) ar & *b;
+		}
 	};
 
-	struct Move { Location l; unsigned char d; };
+	struct Move 
+	{ 
+		Location l; unsigned char d;
+	
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & l;
+			ar & d;
+		}
+	};
 	static bool operator<(const Move& m1, const Move& m2)
 	{
 		unsigned int l1Prod = ((m1.l.x + m1.l.y)*(unsigned int(m1.l.x) + m1.l.y + 1) / 2) + m1.l.y, l2Prod = ((m2.l.x + m2.l.y)*(unsigned int(m2.l.x) + m2.l.y + 1) / 2) + m2.l.y;

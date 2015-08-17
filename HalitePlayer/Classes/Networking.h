@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 #include "hlt.h"
+#include <boost/interprocess/ipc/message_queue.hpp>
 
 static sf::TcpSocket * connectToGame()
 {
