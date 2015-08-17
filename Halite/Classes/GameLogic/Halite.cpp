@@ -6,7 +6,7 @@ unsigned char Halite::getNextFrame()
 	std::vector< std::future<double> > frameThreads(number_of_players);
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		frameThreads[a] = std::async(handleFrameNetworking, mapQueues[a], movesQueues[a], game_map, &player_moves[a]);
+		frameThreads[a] = std::async(handleFrameNetworking, a+1, game_map, &player_moves[a]);
 	}
 
 	//Create a map of the locations of sentient pieces on the game map. Additionally, age pieces. Something like:
@@ -326,8 +326,6 @@ Halite::Halite()
 	player_names = std::vector<std::string>();
 	full_game = std::vector<hlt::Map * >();
 	age_of_sentient = 0;
-	mapQueues = std::vector<boost::interprocess::message_queue *>();
-	movesQueues = std::vector<boost::interprocess::message_queue *>();
 	player_moves = std::vector< std::set<hlt::Move> >();
 	//Init Color Codes:
 	color_codes = std::map<unsigned char, hlt::Color>();
@@ -370,8 +368,6 @@ Halite::Halite(unsigned short w, unsigned short h)
 	//Connect to players
 	number_of_players = 0;
 	player_names = std::vector<std::string>();
-	mapQueues = std::vector<boost::interprocess::message_queue *>();
-	movesQueues = std::vector<boost::interprocess::message_queue *>();
 
 	std::string in;
 
@@ -393,11 +389,7 @@ Halite::Halite(unsigned short w, unsigned short h)
 			if(in == "n" || in == "no" || in == "nope") break;
 		}
 
-
-		mapQueues.push_back(createMapQueue(number_of_players + 1));
-		movesQueues.push_back(createMovesQueue(number_of_players + 1));
-
-		std::cout << "How should I refer to the player with id " << number_of_players + 1 << "? Please enter their name: ";
+		std::cout << "How should I refer to the player with a tag of " << number_of_players + 1 << "? Please enter their name: ";
 		std::getline(std::cin, in);
 		player_names.push_back(in);
 

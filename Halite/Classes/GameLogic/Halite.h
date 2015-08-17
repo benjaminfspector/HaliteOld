@@ -28,8 +28,6 @@ private:
 	std::map<unsigned char, hlt::Color> color_codes;
 	std::vector<hlt::Map * > full_game;
 	char age_of_sentient;
-	std::vector<boost::interprocess::message_queue *> mapQueues;
-	std::vector<boost::interprocess::message_queue *> movesQueues;
 	std::vector< std::set<hlt::Move> > player_moves;
 
 	unsigned char getNextFrame();

@@ -9,52 +9,95 @@
 
 #include "hlt.h"
 #include <boost/interprocess/ipc/message_queue.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/set.hpp>
 
-static sf::TcpSocket * connectToGame()
+struct InitPackage {
+	unsigned char playerTag;
+	unsigned char ageOfSentient;
+	hlt::Map map;
+private:
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & playerTag;
+		ar & ageOfSentient;
+		ar & map;
+	}
+};
+
+static boost::interprocess::message_queue * mapQueue;
+static boost::interprocess::message_queue * movesQueue;
+
+static unsigned int getTag()
 {
+	std::string in;
+	unsigned short id;
+	std::cout << "What is this player's tag? Please enter a valid port number: ";
 	while(true)
 	{
-		sf::TcpSocket * s = new sf::TcpSocket();
-		s->setBlocking(true);
-		std::string in;
-		unsigned short portNumber;
-		std::cout << "What port would you like to connect to? Please enter a valid port number: ";
-		while(true)
+		std::getline(std::cin, in);
+		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
+		try
 		{
-			std::getline(std::cin, in);
-			std::transform(in.begin(), in.end(), in.begin(), ::tolower);
-			try
-			{
-				portNumber = std::stoi(in);
-				break;
-			}
-			catch(std::exception e)
-			{
-				std::cout << "That isn't a valid input. Please enter a valid port number: ";
-			}
+			id = std::stoi(in);
+			break;
 		}
-		if(sf::Socket::Status::Done == s->connect(sf::IpAddress::getLocalAddress(), portNumber))
+		catch(std::exception e)
 		{
-			std::cout << "Successfully established contact with " << s->getRemoteAddress() << ".\n";
-			return s;
+			std::cout << "That isn't a valid input. Please enter a valid port number: ";
 		}
-		std::cout << "There was a problem connecting. Let's try again: \n";
 	}
+	return id;
 }
 
-static sf::Packet& operator<<(sf::Packet& p, const std::set<hlt::Move>& moves)
-{
-	for(auto a = moves.begin(); a != moves.end(); a++) p << a->l.x << a->l.y << a->d;
-	return p;
+template<class type>
+static void sendObject(boost::interprocess::message_queue *queue, type const &objectToBeSent) {
+	std::ostringstream archiveStream;
+	boost::archive::text_oarchive archive(archiveStream);
+	archive << objectToBeSent;
+	std::string serializedString(archiveStream.str());
+	queue->send(serializedString.data(), serializedString.size(), 0);
 }
 
-static sf::Packet& operator>>(sf::Packet& p, hlt::Map& m)
+template<class type>
+static void receiveObject(boost::interprocess::message_queue *queue, unsigned int maxSize, type &receivingObject) {
+	boost::interprocess::message_queue::size_type messageSize;
+	unsigned int priority;
+	std::stringstream stream;
+	std::string serializedString;
+	serializedString.resize(maxSize);
+
+	queue->receive(&serializedString[0], maxSize, messageSize, priority);
+
+	stream << serializedString;
+	boost::archive::text_iarchive archive(stream);
+	archive >> receivingObject;
+}
+
+static void getInit(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
-	p >> m.map_width >> m.map_height;
-	m.contents.resize(m.map_height);
-	for(auto a = m.contents.begin(); a != m.contents.end(); a++) a->resize(m.map_width);
-	for(auto a = m.contents.begin(); a != m.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) p >> b->owner >> b->age;
-	return p;
+	// Receive initpackage
+	std::string packageQueueName = "initpackage" + playerTag;
+	boost::interprocess::message_queue packageQueue(boost::interprocess::open_only, packageQueueName.c_str());
+	InitPackage package;
+	receiveObject(&packageQueue, sizeof(InitPackage), package);
+	ageOfSentient = package.ageOfSentient;
+	m = package.map;
+	if(playerTag != package.playerTag) {
+		std::cout << "There was a problem with player tag assignment.\n";
+		throw 1;
+	}
+
+	// Send confirmation string
+	std::string confirmation = "Done";
+	std::string stringQueueName = "initstring" + playerTag;
+	boost::interprocess::message_queue stringQueue(boost::interprocess::create_only, stringQueueName.c_str(), 1, sizeof(confirmation));
+	stringQueue.send(confirmation.data(), confirmation.size(), 0);
+
 }
 
 static void getInit(sf::TcpSocket * s, unsigned char& playerTag, unsigned char& ageOfSentient, hlt::Map& m)
@@ -71,6 +114,14 @@ static void sendInitResponse(sf::TcpSocket * s)
 	p << response;
 	s->send(p);
 	std::cout << "Sent init response.\n";
+}
+
+static void setupFrameQueues(unsigned short playerTag) {
+	std::string mapQueueName = "map" + playerTag;
+	mapQueue = new boost::interprocess::message_queue(boost::interprocess::open_only, mapQueueName.c_str());
+
+	std::string movesQueueName = "moves" + playerTag;
+	movesQueue = new boost::interprocess::message_queue(boost::interprocess::open_only, movesQueueName.c_str());
 }
 
 static void getFrame(sf::TcpSocket * s, hlt::Map& m)

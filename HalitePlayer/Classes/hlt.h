@@ -4,16 +4,39 @@
 #include <list>
 #include <vector>
 #include <random>
+#include <boost/interprocess/ipc/message_queue.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 namespace hlt
 {
-	struct Location { unsigned short x, y;  };
+	struct Location
+	{
+		unsigned short x, y;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & x;
+			ar & y;
+		}
+	};
 	static bool operator<(const Location& l1, const Location& l2)
 	{
 		return ((l1.x + l1.y)*(unsigned int(l1.x) + l1.y + 1) / 2) + l1.y < ((l2.x + l2.y)*(unsigned int(l2.x) + l2.y + 1) / 2) + l2.y;
 	}
 
-	struct Site { unsigned char owner, age; };
+	struct Site
+	{
+		unsigned char owner, age;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & owner;
+			ar & age;
+		}
+	};
+
 	class Map
 	{
 	public:
@@ -26,11 +49,11 @@ namespace hlt
 			map_height = 0;
 			contents = std::vector< std::vector<Site> >(map_height, std::vector<Site>(map_width, { 0, 0 }));
 		}
-		Map(short width, short height, unsigned char numberOfPlayers)
+		Map(short width, short height, unsigned char numberOfPlayers, unsigned char ageOfSentient)
 		{
-			contents = std::vector< std::vector<Site> >(map_height, std::vector<Site>(map_width, { 0, 0 }));
 			map_width = width;
 			map_height = height;
+			contents = std::vector< std::vector<Site> >(map_height, std::vector<Site>(map_width, { 0, 0 }));
 
 			std::list<Location> takenSpots;
 			float minDistance = sqrt(map_height*map_width) / 2;
@@ -58,7 +81,7 @@ namespace hlt
 						minDistance *= 0.85;
 					}
 				}
-				contents[l.y][l.x] = { a, 0 };
+				contents[l.y][l.x] = { a, ageOfSentient };
 				takenSpots.push_back(l);
 			}
 		}
@@ -135,9 +158,29 @@ namespace hlt
 			else l.x = map_width - 1;
 			return l;
 		}
+	private:
+		friend class boost::serialization::access;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & map_width;
+			ar & map_height;
+			for(auto a = contents.begin(); a != contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) ar & *b;
+		}
 	};
 
-	struct Move { Location l; unsigned char d; };
+	struct Move
+	{
+		Location l; unsigned char d;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & l;
+			ar & d;
+		}
+	};
 	static bool operator<(const Move& m1, const Move& m2)
 	{
 		unsigned int l1Prod = ((m1.l.x + m1.l.y)*(unsigned int(m1.l.x) + m1.l.y + 1) / 2) + m1.l.y, l2Prod = ((m2.l.x + m2.l.y)*(unsigned int(m2.l.x) + m2.l.y + 1) / 2) + m2.l.y;
