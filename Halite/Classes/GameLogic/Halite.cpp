@@ -6,7 +6,7 @@ unsigned char Halite::getNextFrame()
 	std::vector< std::future<double> > frameThreads(number_of_players);
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		frameThreads[a] = std::async(handleFrameNetworking, player_connections[a], game_map, &player_moves[a]);
+		frameThreads[a] = std::async(handleFrameNetworking, mapQueues[a], movesQueues[a], game_map, &player_moves[a]);
 	}
 
 	//Create a map of the locations of sentient pieces on the game map. Additionally, age pieces. Something like:
@@ -326,7 +326,8 @@ Halite::Halite()
 	player_names = std::vector<std::string>();
 	full_game = std::vector<hlt::Map * >();
 	age_of_sentient = 0;
-	player_connections = std::vector<sf::TcpSocket * >();
+	mapQueues = std::vector<boost::interprocess::message_queue *>();
+	movesQueues = std::vector<boost::interprocess::message_queue *>();
 	player_moves = std::vector< std::set<hlt::Move> >();
 	//Init Color Codes:
 	color_codes = std::map<unsigned char, hlt::Color>();
@@ -369,20 +370,10 @@ Halite::Halite(unsigned short w, unsigned short h)
 	//Connect to players
 	number_of_players = 0;
 	player_names = std::vector<std::string>();
-	player_connections = std::vector<sf::TcpSocket * >();
+	mapQueues = std::vector<boost::interprocess::message_queue *>();
+	movesQueues = std::vector<boost::interprocess::message_queue *>();
 
 	std::string in;
-	//Ask if the user would like to use the default ports?
-	bool useDefaultPorts = true;
-	std::cout << "Would you like to use the default ports? Please enter Yes or No: ";
-	while(true)
-	{
-		std::getline(std::cin, in);
-		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
-		if(in == "n" || in == "no" || in == "nope" || in == "y" || in == "yes" || in == "yep") break;
-		std::cout << "That isn't a valid input. Please enter Yes or No: ";
-	}
-	if(in == "n" || in == "no" || in == "nope") useDefaultPorts = false;
 
 	bool done = false;
 	while(!done)
@@ -402,35 +393,11 @@ Halite::Halite(unsigned short w, unsigned short h)
 			if(in == "n" || in == "no" || in == "nope") break;
 		}
 
-		unsigned short portNumber;
-		if(useDefaultPorts) portNumber = number_of_players + 2000;
-		else
-		{
-			std::cout << "What port would you like to connect player " << number_of_players + 1 << " on? Please enter a valid port number: ";
-			while(true)
-			{
-				std::getline(std::cin, in);
-				std::transform(in.begin(), in.end(), in.begin(), ::tolower);
-				try
-				{
-					portNumber = std::stoi(in);
-					break;
-				}
-				catch(std::exception e)
-				{
-					std::cout << "That isn't a valid input. Please enter a valid port number: ";
-				}
-			}
-		}
-		std::cout << "Waiting for a connection on port " << portNumber << ".\n";
 
-		sf::TcpListener listener;
-		listener.listen(portNumber);
-		sf::TcpSocket * socket = new sf::TcpSocket();
-		while(listener.accept(*socket) != sf::Socket::Done);
-		player_connections.push_back(socket);
+		mapQueues.push_back(createMapQueue(number_of_players + 1));
+		movesQueues.push_back(createMovesQueue(number_of_players + 1));
 
-		std::cout << "Connected to player " << number_of_players + 1 << " at " << socket->getRemoteAddress() << std::endl << "How should I refer to this player? Please enter their name: ";
+		std::cout << "How should I refer to the player with id " << number_of_players + 1 << "? Please enter their name: ";
 		std::getline(std::cin, in);
 		player_names.push_back(in);
 
@@ -456,7 +423,7 @@ void Halite::init()
 	std::vector<std::thread> initThreads(number_of_players);
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		initThreads[a] = std::thread(handleInitNetworking, player_connections[a], a + 1, age_of_sentient, player_names[a], game_map);
+		initThreads[a] = std::thread(handleInitNetworking, a + 1, age_of_sentient, player_names[a], game_map);
 	}
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{

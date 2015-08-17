@@ -37,7 +37,7 @@ static sf::Packet& operator<<(sf::Packet& p, const hlt::Map& m)
 	return p;
 }
 
-static double handleInitNetworkingMQ(unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
+static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
 {
 	InitPackage const &package = {playerTag, ageOfSentient, m};
 
@@ -84,7 +84,22 @@ static double handleInitNetworkingMQ(unsigned char playerTag, unsigned char ageO
 	}
 }
 
-static double handleInitNetworking(sf::TcpSocket * s, unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
+static boost::interprocess::message_queue* createMapQueue(unsigned char playerTag) {
+	std::string sendQueueName = "map" + playerTag;
+	boost::interprocess::message_queue::remove(sendQueueName.c_str());
+	boost::interprocess::message_queue *mapQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create, sendQueueName.c_str(), 1000000, sizeof(hlt::Map));
+	return mapQueue;
+}
+
+static boost::interprocess::message_queue* createMovesQueue(unsigned char playerTag) {
+	std::string sendQueueName = "moves" + playerTag;
+	std::set<hlt::Map> expampleMapSet;
+	boost::interprocess::message_queue::remove(sendQueueName.c_str());
+	boost::interprocess::message_queue *movesQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create, sendQueueName.c_str(), 1000000, expampleMapSet.max_size());
+	return movesQueue;
+}
+
+/*static double handleInitNetworking(sf::TcpSocket * s, unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
 {
 	sf::Packet p;
 	p << playerTag << ageOfSentient << m;
@@ -106,16 +121,16 @@ static double handleInitNetworking(sf::TcpSocket * s, unsigned char playerTag, u
 	}
 	if(str != "Done") return FLT_MAX;
 	return timeElapsed;
-}
+}*/
 
-static double handleFrameNetworkingMQ(boost::interprocess::message_queue mapQueue, boost::interprocess::message_queue movesQueue, hlt::Map const &m, std::set<hlt::Move> * moves)
+static double handleFrameNetworking(boost::interprocess::message_queue *mapQueue, boost::interprocess::message_queue *movesQueue, hlt::Map const &m, std::set<hlt::Move> * moves)
 {
 	// Sending Map
 	std::ostringstream archiveStream;
 	boost::archive::text_oarchive archive(archiveStream);
 	archive << m;
 	std::string serializedString(archiveStream.str());
-	mapQueue.send(serializedString.data(), serializedString.size(), 0);
+	mapQueue->send(serializedString.data(), serializedString.size(), 0);
 
 	// Receiving moves
 	boost::interprocess::message_queue::size_type messageSize;
@@ -127,7 +142,7 @@ static double handleFrameNetworkingMQ(boost::interprocess::message_queue mapQueu
 
 	serializedString = "";
 	serializedString.resize(moves->max_size());
-	movesQueue.receive(&serializedString[0], moves->max_size(), messageSize, priority);
+	movesQueue->receive(&serializedString[0], moves->max_size(), messageSize, priority);
 
 	clock_t finalTime = clock() - initialTime;
 	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
@@ -141,7 +156,7 @@ static double handleFrameNetworkingMQ(boost::interprocess::message_queue mapQueu
 	return timeElapsed;
 }
 
-static double handleFrameNetworking(sf::TcpSocket * s, hlt::Map& m, std::set<hlt::Move> * moves)
+/*static double handleFrameNetworking(sf::TcpSocket * s, hlt::Map& m, std::set<hlt::Move> * moves)
 {
 	sf::Packet p;
 	p << m;
@@ -159,6 +174,6 @@ static double handleFrameNetworking(sf::TcpSocket * s, hlt::Map& m, std::set<hlt
 		moves->insert({ { x, y }, d });
 	}
 	return timeElapsed;
-}
+}*/
 
 #endif
