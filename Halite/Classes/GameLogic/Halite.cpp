@@ -41,7 +41,8 @@ unsigned char Halite::getNextFrame()
 	std::vector<bool> permissibleTime(number_of_players);
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		permissibleTime[a] = frameThreads[a].get() <= allowableTimesToRespond[a];
+		double elapsedTime = frameThreads[a].get();
+		permissibleTime[a] = elapsedTime <= allowableTimesToRespond[a];
 	}
 
 	//De-age players who have exceed the time limit:
@@ -411,7 +412,8 @@ Halite::Halite(unsigned short w, unsigned short h)
 
 void Halite::init()
 {
-	//Send initial package 
+	//Send initial package
+	std::cout << "Connect your players\n";
 	std::vector<std::thread> initThreads(number_of_players);
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
@@ -421,6 +423,7 @@ void Halite::init()
 	{
 		initThreads[a].join();
 	}
+	std::cout << "Finished connecting\n";
 }
 
 void Halite::getColorCodes()

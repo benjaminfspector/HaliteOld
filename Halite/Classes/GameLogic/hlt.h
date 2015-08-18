@@ -4,8 +4,12 @@
 #include <list>
 #include <vector>
 #include <random>
+
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/string.hpp>
 
 #include "OpenGL.h"
 
@@ -165,7 +169,7 @@ namespace hlt
 			else l.x = map_width - 1;
 			return l;
 		}
-	private:
+
 		friend class boost::serialization::access;
 
 		template<class Archive>
