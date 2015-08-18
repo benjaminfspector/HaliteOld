@@ -4,9 +4,8 @@ Basic::Basic()
 {
 	srand(time(NULL));
 	my_tag = getTag();
-	boost::interprocess::message_queue *queue = setupInitialNetworking(my_tag);
 	getInit(my_tag, age_of_sentient, present_map);
-	sendInitResponse(queue);
+	sendInitResponse(my_tag);
 }
 
 void Basic::run()

@@ -5,11 +5,10 @@ Random::Random()
 	srand(time(NULL));
 	my_tag = getTag();
 	std::cout << "Got tag\n";
-	boost::interprocess::message_queue *queue = setupInitialNetworking(my_tag);
 	std::cout << "Got queue\n";
 	getInit(my_tag, age_of_sentient, present_map);
 	std::cout << "Got initial response\n";
-	sendInitResponse(queue);
+	sendInitResponse(my_tag);
 	std::cout << "Sent initial response\n";
 }
 

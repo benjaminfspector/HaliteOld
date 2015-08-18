@@ -18,7 +18,8 @@
 
 #include "GameLogic\hlt.h"
 
-struct InitPackage {
+struct InitPackage 
+{
 	unsigned char playerTag;
 	unsigned char ageOfSentient;
 	hlt::Map map;
@@ -31,41 +32,35 @@ private:
 	{
 		ar & playerTag;
 		ar & ageOfSentient;
-
-		ar & map.map_width;
-		ar & map.map_height;
-		for(int a = 0; a < map.contents.size(); a++) {
-			for(int b = 0; b < map.contents[a].size(); b++) {
-				hlt::Site s = map.contents[a][b];
-				ar & s.owner;
-				ar & s.age;
-			}
-		}
+		ar & map;
 	}
 };
 
+const std::string confirmation = "Done";
+static unsigned int mapSize = 0;
+static unsigned int moveSize = 0;
+
 template<class type>
-static void sendObject(boost::interprocess::message_queue *queue, type objectToBeSent, unsigned char playerTag) {
+static void sendObject(boost::interprocess::message_queue &queue, type objectToBeSent)
+{
 	std::ostringstream archiveStream;
 	boost::archive::text_oarchive archive(archiveStream);
 	archive & objectToBeSent;
 	std::string serializedString(archiveStream.str());
 
-	sendSize(playerTag, serializedString.size());
-
-	queue->send(serializedString.data(), serializedString.size(), 0);
+	queue.send(serializedString.data(), serializedString.size(), 0);
 }
 
 template<class type>
-static void receiveObject(boost::interprocess::message_queue *queue, type &receivingObject, unsigned char playerTag) {
+static void receiveObject(boost::interprocess::message_queue &queue, unsigned int maxSize, type &receivingObject)
+{
 	boost::interprocess::message_queue::size_type messageSize;
 	unsigned int priority;
-	unsigned int maxSize = getSize(playerTag);
 	std::stringstream stream;
 	std::string serializedString;
 	serializedString.resize(maxSize);
 
-	queue->receive(&serializedString[0], maxSize, messageSize, priority);
+	queue.receive(&serializedString[0], maxSize, messageSize, priority);
 
 	stream << serializedString;
 	boost::archive::text_iarchive archive(stream);
@@ -73,7 +68,8 @@ static void receiveObject(boost::interprocess::message_queue *queue, type &recei
 }
 
 template<class type>
-static unsigned int getMaxSize(type object) {
+static unsigned int getMaxSize(type object) 
+{
 	std::ostringstream archiveStream;
 	boost::archive::text_oarchive archive(archiveStream);
 	archive & object;
@@ -82,13 +78,15 @@ static unsigned int getMaxSize(type object) {
 	return serializedString.size();
 }
 
-static void sendSize(unsigned char playerTag, unsigned int size) {
+static void sendSize(unsigned char playerTag, unsigned int size) 
+{
 	std::string initialQueueName = "size" + playerTag;
 	boost::interprocess::message_queue sizeQueue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, sizeof(unsigned int));
 	sizeQueue.send(&size, sizeof(size), 0);
 }
 
-static unsigned int getSize(unsigned char playerTag) {
+static unsigned int getSize(unsigned char playerTag) 
+{
 	std::string initialQueueName = "playersize" + playerTag;
 	unsigned int priority;
 	unsigned int size;
@@ -100,61 +98,54 @@ static unsigned int getSize(unsigned char playerTag) {
 
 static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
 {
-	InitPackage package = {playerTag, ageOfSentient, m};
-	while(true) {
-		sendSize(playerTag, 4);
-		std::cout << "sent\n";
-		unsigned int size = getSize(playerTag);
-		std::cout << "size: " << size << "\n";
-	}
+	
+	hlt::Move exampleMove = { { 0, 0 }, 0 };
+	moveSize = getMaxSize(exampleMove);
+	mapSize = getMaxSize(m);
+	InitPackage package = { playerTag, ageOfSentient, m };
+	unsigned int packageSize = getMaxSize(package);
+	
+	sendSize(playerTag, mapSize);
+	sendSize(playerTag, packageSize);
 
-	// Send initial package
-	/*std::ostringstream archiveStream;
-	boost::archive::text_oarchive archive(archiveStream);
-	archive & package;
-	std::string serializedString(archiveStream.str());
-
+	// Send Init package
 	std::string initialQueueName = "initpackage" + playerTag;
-	std::cout << initialQueueName << "\n";
-	boost::interprocess::message_queue::remove(initialQueueName.c_str());
-	boost::interprocess::message_queue packageQueue = boost::interprocess::message_queue(boost::interprocess::create_only, initialQueueName.c_str(), 1, serializedString.size());
+	std::cout << "max: " << packageSize << "\n";
+	boost::interprocess::message_queue packageQueue = boost::interprocess::message_queue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, packageSize);
+	sendObject(packageQueue, package);
 
-	packageQueue.send(serializedString.data(), serializedString.size(), 0);
-
-	std::string str = "Init Message sent to player " + name + "\n";
-	std::cout << str;
-		
-	// Receive a confirmation string from player
+	// Receive confirmation
 	std::string stringQueueName = "initstring" + playerTag;
-	boost::interprocess::message_queue stringQueue(boost::interprocess::open_only, stringQueueName.c_str());
-		
+	boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
+
 	boost::interprocess::message_queue::size_type messageSize;
 	unsigned int priority;
 	std::string stringQueueString;
-	std::string confirmation = "Done";
 	stringQueueString.resize(getMaxSize(confirmation));
 
 	clock_t initialTime = clock();
 	stringQueue.receive(&stringQueueString[0], stringQueueString.size(), messageSize, priority);
 	stringQueueString.resize(messageSize);
-	str = "Init Message received from player " + name + "\n";
-	std::cout << str;
+	std::cout << "Init Message received from player " + name + "\n";
 	clock_t finalTime = clock() - initialTime;
 	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
 
-	if(stringQueueString != "Done") return FLT_MAX;
-	return timeElapsed;*/
-	return 0;
+	if(stringQueueString == confirmation) std::cout << "yes\n";
+
+	if(stringQueueString != confirmation) return FLT_MAX;
+	return timeElapsed;
 }
 
-static boost::interprocess::message_queue* createMapQueue(unsigned char playerTag) {
+static boost::interprocess::message_queue* createMapQueue(unsigned char playerTag) 
+{
 	std::string mapQueueName = "map" + playerTag;
 	boost::interprocess::message_queue::remove(mapQueueName.c_str());
-	boost::interprocess::message_queue *mapQueue = new boost::interprocess::message_queue(boost::interprocess::create_only, mapQueueName.c_str(), 1, sizeof(hlt::Map));
+	boost::interprocess::message_queue *mapQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create, mapQueueName.c_str(), 1, sizeof(hlt::Map));
 	return mapQueue;
 }
 
-static boost::interprocess::message_queue* createMovesQueue(unsigned char playerTag) {
+static boost::interprocess::message_queue* createMovesQueue(unsigned char playerTag) 
+{
 	std::string movesQueueName = "moves" + playerTag;
 	boost::interprocess::message_queue *movesQueue = new boost::interprocess::message_queue(boost::interprocess::open_only, movesQueueName.c_str());
 	return movesQueue;
@@ -163,19 +154,25 @@ static boost::interprocess::message_queue* createMovesQueue(unsigned char player
 static double handleFrameNetworking(unsigned char playerTag, hlt::Map &m, std::set<hlt::Move> * moves)
 {
 	// Sending Map
-	boost::interprocess::message_queue *mapQueue = createMapQueue(playerTag);
-	sendObject(mapQueue, m, playerTag);
-	delete mapQueue;
+	std::string mapQueueName = "map" + playerTag;
+	boost::interprocess::message_queue mapQueue(boost::interprocess::open_or_create, mapQueueName.c_str(), 1, mapSize);
+	sendObject(mapQueue, m);
 
 	// Receiving moves
-	boost::interprocess::message_queue *movesQueue = createMovesQueue(playerTag);
+	std::string movesQueueName = "moves" + playerTag;
+	boost::interprocess::message_queue movesQueue(boost::interprocess::open_or_create, movesQueueName.c_str(), 10, moveSize);
 
 	clock_t initialTime = clock();
-	receiveObject(movesQueue, *moves, playerTag);
+	// Read in moves
+	unsigned int numberOfMoves = getSize(playerTag);
+	for(int a = 0; a < numberOfMoves; a++) {
+		hlt::Move move;
+		receiveObject(movesQueue, moveSize, move);
+		moves->insert(move);
+	}
 	clock_t finalTime = clock() - initialTime;
 	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
 
-	delete movesQueue;
 
 	return timeElapsed;
 }

@@ -166,7 +166,7 @@ namespace hlt
 		{
 			ar & map_width;
 			ar & map_height;
-			for(auto a = contents.begin(); a != contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) ar & *b;
+			for(int a = 0; a < contents.size(); a++) for(int b = 0; b < contents[a].size(); b++) ar & contents[a][b];
 		}
 	};
 
