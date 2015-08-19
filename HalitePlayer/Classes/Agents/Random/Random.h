@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <set>
+#include <stdlib.h>
 
 #include "Networking.h"
 #include "hlt.h"

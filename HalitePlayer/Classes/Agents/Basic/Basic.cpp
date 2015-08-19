@@ -2,7 +2,6 @@
 
 Basic::Basic()
 {
-	srand(time(NULL));
 	my_tag = getTag();
 	getInit(my_tag, age_of_sentient, present_map);
 	sendInitResponse(my_tag);
@@ -21,6 +20,7 @@ void Basic::run()
 			around[1] = present_map.getEasternSite({ b, a });
 			around[2] = present_map.getSouthernSite({ b, a });
 			around[3] = present_map.getWesternSite({ b, a });
+			std::cout << "rand " << rand() % 4 << "\n";
 			//Find one to look at first:
 			unsigned char toLookAt = rand() % 4, best_age_yet = 255, best_direction_yet = 5;
 			bool opponent_found = false;

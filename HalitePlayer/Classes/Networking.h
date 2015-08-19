@@ -33,13 +33,16 @@ private:
 
 const std::string confirmation = "Done";
 static unsigned int mapSize = 0;
+static unsigned int moveSize = 0;
 
 static void removeQueues(unsigned char playerTag) 
 {
-	boost::interprocess::message_queue::remove("playersize" + playerTag);
-	boost::interprocess::message_queue::remove("size" + playerTag);
-	boost::interprocess::message_queue::remove("initpackage" + playerTag);
-	boost::interprocess::message_queue::remove("initstring" + playerTag);
+	boost::interprocess::message_queue::remove("playersize" + (short)playerTag);
+	boost::interprocess::message_queue::remove("size" + (short)playerTag);
+	boost::interprocess::message_queue::remove("initpackage" + (short)playerTag);
+	boost::interprocess::message_queue::remove("initstring" + (short)playerTag);
+	boost::interprocess::message_queue::remove("map" + (short)playerTag);
+	boost::interprocess::message_queue::remove("moves" + (short)playerTag);
 }
 
 static unsigned unsigned char getTag()
@@ -95,7 +98,7 @@ static void receiveObject(boost::interprocess::message_queue &queue, unsigned in
 }
 
 template<class type>
-static unsigned int getMaxSize(type object) 
+static unsigned int getMaxSize(type object)
 {
 	std::ostringstream archiveStream;
 	boost::archive::text_oarchive archive(archiveStream);
@@ -107,14 +110,14 @@ static unsigned int getMaxSize(type object)
 
 static void sendSize(unsigned char playerTag, unsigned int size) 
 {
-	std::string initialQueueName = "playersize" + playerTag;
+	std::string initialQueueName = "playersize" + (short)playerTag;
 	boost::interprocess::message_queue sizeQueue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, sizeof(unsigned int));
 	sizeQueue.send(&size, sizeof(size), 0);
 }
 
 static unsigned int getSize(unsigned char playerTag) 
 {
-	std::string initialQueueName = "size" + playerTag;
+	std::string initialQueueName = "size" + (short)playerTag;
 	unsigned int priority;
 	unsigned int size;
 	boost::interprocess::message_queue::size_type recvd_size;
@@ -125,15 +128,22 @@ static unsigned int getSize(unsigned char playerTag)
 
 static void getInit(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
+	hlt::Move exampleMove = { { USHRT_MAX, USHRT_MAX }, UCHAR_MAX };
+	moveSize = getMaxSize(exampleMove);
+
 	mapSize = getSize(playerTag);
 	unsigned int packageSize = getSize(playerTag);
 	
 	// Receive initpackage
 	InitPackage package;
-	std::string packageQueueName = "initpackage" + playerTag;
+	std::string packageQueueName = "initpackage" + (short)playerTag;
 	std::cout << "max: " << packageSize << "\n";
 	boost::interprocess::message_queue packageQueue(boost::interprocess::open_or_create, packageQueueName.c_str(), 1, packageSize);
-	receiveObject(&packageQueue, packageSize, package);
+	receiveObject(packageQueue, packageSize, package);
+
+	std::cout << "pack: " << package.map.contents.size() << "\n";
+
+	std::cout << "Age of sentient: " << (unsigned short)package.ageOfSentient << "\n";
 
 	ageOfSentient = package.ageOfSentient;
 	m = package.map;
@@ -147,42 +157,35 @@ static void getInit(unsigned char playerTag, unsigned char& ageOfSentient, hlt::
 static void sendInitResponse(unsigned int playerTag) 
 {
 	std::cout << "gonna send...\n";
-	std::string stringQueueName = "initstring" + playerTag;
-	boost::interprocess::message_queue::remove(stringQueueName.c_str());
+	std::string stringQueueName = "initstring" + (short)playerTag;
 	boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
 
 	std::cout << "sending...\n";
 	stringQueue.send(confirmation.data(), confirmation.size(), 0);
 	std::cout << "sent...\n";
-
-	while(true) {
-
-	}
 }
-
-/*
-static void sendInitResponse(sf::TcpSocket * s)
-{
-	std::string response = "Done"; sf::Packet p;
-	p << response;
-	s->send(p);
-	std::cout << "Sent init response.\n";
-}*/
 
 static void getFrame(unsigned char playerTag, hlt::Map& m)
 {
-	/*std::string mapQueueName = "map" + playerTag;
-	boost::interprocess::message_queue mapQueue(boost::interprocess::open_only, mapQueueName.c_str());
-
-	receiveObject(&mapQueue, m, playerTag);*/
+	std::string mapQueueName = "map" + (short)playerTag;
+	boost::interprocess::message_queue mapQueue(boost::interprocess::open_or_create, mapQueueName.c_str(), 1, mapSize);
+	receiveObject(mapQueue, mapSize, m);
 }
 
 static void sendFrame(unsigned char playerTag, std::set<hlt::Move>& moves)
 {
-	/*std::string movesQueueName = "moves" + playerTag;
-	boost::interprocess::message_queue::remove(movesQueueName.c_str());
-	boost::interprocess::message_queue movesQueue(boost::interprocess::create_only, movesQueueName.c_str(), 1, moves.max_size());
-	sendObject(&movesQueue, moves, playerTag);*/
+	std::string movesQueueName = "moves" + (short)playerTag;
+	boost::interprocess::message_queue movesQueue(boost::interprocess::open_or_create, movesQueueName.c_str(), 10, moveSize);
+
+	sendSize(playerTag, moves.size());
+	std::cout << "\n\n\n";
+	for(auto a = moves.begin(); a != moves.end(); ++a)
+	{
+		hlt::Move move = *a;
+		std::cout << "move: " << (short)move.d << "\n";
+		sendObject(movesQueue, move);
+	}
+
 }
 
 #endif

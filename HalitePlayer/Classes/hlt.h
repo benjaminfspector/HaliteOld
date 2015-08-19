@@ -6,6 +6,7 @@
 #include <random>
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/vector.hpp>
 
 namespace hlt
 {
@@ -48,6 +49,12 @@ namespace hlt
 			map_width = 0;
 			map_height = 0;
 			contents = std::vector< std::vector<Site> >(map_height, std::vector<Site>(map_width, { 0, 0 }));
+		}
+		Map(const Map &otherMap)
+		{
+			map_width = otherMap.map_width;
+			map_height = otherMap.map_height;
+			contents = otherMap.contents;
 		}
 		Map(short width, short height, unsigned char numberOfPlayers, unsigned char ageOfSentient)
 		{
@@ -166,7 +173,7 @@ namespace hlt
 		{
 			ar & map_width;
 			ar & map_height;
-			for(int a = 0; a < contents.size(); a++) for(int b = 0; b < contents[a].size(); b++) ar & contents[a][b];
+			ar & contents;
 		}
 	};
 
