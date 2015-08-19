@@ -69,6 +69,7 @@ unsigned char Halite::getNextFrame()
 			catch(std::out_of_range e)
 			{
 				isGood = false;
+				std::cout << "is not good\n\n\n";
 			}
 			//If there actually is a piece there:
 			if(isGood)

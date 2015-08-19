@@ -178,11 +178,9 @@ static void sendFrame(unsigned char playerTag, std::set<hlt::Move>& moves)
 	boost::interprocess::message_queue movesQueue(boost::interprocess::open_or_create, movesQueueName.c_str(), 10, moveSize);
 
 	sendSize(playerTag, moves.size());
-	std::cout << "\n\n\n";
 	for(auto a = moves.begin(); a != moves.end(); ++a)
 	{
 		hlt::Move move = *a;
-		std::cout << "move: " << (short)move.d << "\n";
 		sendObject(movesQueue, move);
 	}
 

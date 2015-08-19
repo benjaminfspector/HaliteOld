@@ -98,87 +98,75 @@ static unsigned int getSize(unsigned char playerTag)
 
 static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
 {
+	hlt::Move exampleMove = { { USHRT_MAX, USHRT_MAX }, UCHAR_MAX };
+	moveSize = getMaxSize(exampleMove);
 
-	try {
-		hlt::Move exampleMove = { { USHRT_MAX, USHRT_MAX }, UCHAR_MAX };
-		moveSize = getMaxSize(exampleMove);
+	hlt::Map exampleMap(m);
+	for(int a = 0; a < exampleMap.contents.size(); a++) for(int b = 0; b < exampleMap.contents[a].size(); b++) exampleMap.contents[a][b] = { UCHAR_MAX, UCHAR_MAX };
+	mapSize = getMaxSize(exampleMap);
 
-		hlt::Map exampleMap(m);
-		for(int a = 0; a < exampleMap.contents.size(); a++) for(int b = 0; b < exampleMap.contents[a].size(); b++) exampleMap.contents[a][b] = { UCHAR_MAX, UCHAR_MAX };
-		mapSize = getMaxSize(exampleMap);
+	InitPackage package = { playerTag, ageOfSentient, m };
+	unsigned int packageSize = getMaxSize(package);
 
-		InitPackage package = { playerTag, ageOfSentient, m };
-		unsigned int packageSize = getMaxSize(package);
+	sendSize(playerTag, mapSize);
+	sendSize(playerTag, packageSize);
 
-		sendSize(playerTag, mapSize);
-		sendSize(playerTag, packageSize);
+	// Send Init package
+	std::string initialQueueName = "initpackage" + (short)playerTag;
+	std::cout << "max: " << packageSize << "\n";
+	std::cout << "m: " << m.contents.size() << "\n";
+	std::cout << "pack: " << package.map.contents.size() << "\n";
+	boost::interprocess::message_queue packageQueue = boost::interprocess::message_queue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, packageSize);
+	sendObject(packageQueue, package);
 
-		// Send Init package
-		std::string initialQueueName = "initpackage" + (short)playerTag;
-		std::cout << "max: " << packageSize << "\n";
-		std::cout << "m: " << m.contents.size() << "\n";
-		std::cout << "pack: " << package.map.contents.size() << "\n";
-		boost::interprocess::message_queue packageQueue = boost::interprocess::message_queue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, packageSize);
-		sendObject(packageQueue, package);
+	// Receive confirmation
+	std::string stringQueueName = "initstring" + (short)playerTag;
+	boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
 
-		// Receive confirmation
-		std::string stringQueueName = "initstring" + (short)playerTag;
-		boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
+	boost::interprocess::message_queue::size_type messageSize;
+	unsigned int priority;
+	std::string stringQueueString;
+	stringQueueString.resize(getMaxSize(confirmation));
 
-		boost::interprocess::message_queue::size_type messageSize;
-		unsigned int priority;
-		std::string stringQueueString;
-		stringQueueString.resize(getMaxSize(confirmation));
+	clock_t initialTime = clock();
+	stringQueue.receive(&stringQueueString[0], stringQueueString.size(), messageSize, priority);
+	stringQueueString.resize(messageSize);
+	std::cout << "Init Message received from player " + name + "\n";
+	clock_t finalTime = clock() - initialTime;
+	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
 
-		clock_t initialTime = clock();
-		stringQueue.receive(&stringQueueString[0], stringQueueString.size(), messageSize, priority);
-		stringQueueString.resize(messageSize);
-		std::cout << "Init Message received from player " + name + "\n";
-		clock_t finalTime = clock() - initialTime;
-		double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
+	if(stringQueueString == confirmation) std::cout << "yes\n";
 
-		if(stringQueueString == confirmation) std::cout << "yes\n";
-
-		if(stringQueueString != confirmation) return FLT_MAX;
-		return timeElapsed;
-	} catch(std::exception e) {
-		std::cout << "ERROR " << e.what() << "\n";
-		return 0;
-	}
+	if(stringQueueString != confirmation) return FLT_MAX;
+	return timeElapsed;
 }
 
 static double handleFrameNetworking(unsigned char playerTag, hlt::Map &m, std::set<hlt::Move> * moves)
 {
-	try {
-		std::cout << "wat";
-		// Sending Map
-		std::string mapQueueName = "map" + (short)playerTag;
-		boost::interprocess::message_queue mapQueue(boost::interprocess::open_or_create, mapQueueName.c_str(), 1, mapSize);
-		sendObject(mapQueue, m);
+	// Sending Map
+	std::string mapQueueName = "map" + (short)playerTag;
+	boost::interprocess::message_queue mapQueue(boost::interprocess::open_or_create, mapQueueName.c_str(), 1, mapSize);
+	sendObject(mapQueue, m);
 
-		// Receiving moves
-		std::string movesQueueName = "moves" + (short)playerTag;
-		boost::interprocess::message_queue movesQueue(boost::interprocess::open_or_create, movesQueueName.c_str(), 10, moveSize);
+	// Receiving moves
+	std::string movesQueueName = "moves" + (short)playerTag;
+	boost::interprocess::message_queue movesQueue(boost::interprocess::open_or_create, movesQueueName.c_str(), 10, moveSize);
 
-		clock_t initialTime = clock();
-		unsigned int numberOfMoves = getSize(playerTag);
-		std::cout << "\n\n\n";
-		for(int a = 0; a < numberOfMoves; a++) 
-		{
-			hlt::Move move;
-			receiveObject(movesQueue, moveSize, move);
-			std::cout << "move: " << (short)move.d << "\n";
-			moves->insert(move);
-		}
-		clock_t finalTime = clock() - initialTime;
-		double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
+	moves->clear();
 
-
-		return timeElapsed;
-	} catch(std::exception e) {
-		std::cout << "ERROR " << e.what() << "\n";
-		return 0;
+	clock_t initialTime = clock();
+	unsigned int numberOfMoves = getSize(playerTag);
+	for(int a = 0; a < numberOfMoves; a++) 
+	{
+		hlt::Move move;
+		receiveObject(movesQueue, moveSize, move);
+		moves->insert(move);
 	}
+	clock_t finalTime = clock() - initialTime;
+	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
+
+
+	return timeElapsed;
 }
 
 #endif
