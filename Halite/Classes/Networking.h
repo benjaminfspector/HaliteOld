@@ -9,12 +9,17 @@
 #include <string>
 #include <sstream>
 #include <exception>
+#include <cstdlib> 
 
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/string.hpp>
+#include <boost/interprocess/managed_shared_memory.hpp>
+#include <boost/interprocess/containers/vector.hpp>
+#include <boost/interprocess/containers/set.hpp>
+#include <boost/interprocess/allocators/allocator.hpp>
 
 #include "GameLogic\hlt.h"
 
@@ -39,6 +44,36 @@ private:
 const std::string confirmation = "Done";
 static unsigned int mapSize = 0;
 static unsigned int moveSize = 0;
+
+typedef boost::interprocess::allocator<hlt::Move, boost::interprocess::managed_shared_memory::segment_manager>  ShmemAllocator;
+typedef boost::interprocess::set<hlt::Move, std::less<hlt::Move>, ShmemAllocator> MySet;
+
+static void test(unsigned char playerTag) {
+	using namespace boost::interprocess;
+
+	shared_memory_object::remove("MySharedMemory" + playerTag);
+	//Create a new segment with given name and size
+	managed_shared_memory segment(create_only, "MySharedMemory" + playerTag, 65536);
+
+	//Initialize shared memory STL-compatible allocator
+	const ShmemAllocator alloc_inst(segment.get_segment_manager());
+
+	//Construct a vector named "MySet" in shared memory with argument alloc_inst
+	MySet *mySet = segment.construct<MySet>("MySet")(alloc_inst);
+
+	hlt::Move move = { { 0, 0 }, 1 };
+
+	mySet->clear();
+
+	for(int i = 0; i < 100; ++i) mySet->insert(move);
+
+	//if(segment.find<MySet>("MySet").first) std::cout << "worked\n";
+
+	//segment.destroy<MySet>("MySet");
+
+	//if(segment.find<MySet>("MySet").first) std::cout << "didnt work\n";
+	//else std::cout << "worked again\n";
+}
 
 template<class type>
 static void sendObject(boost::interprocess::message_queue &queue, type objectToBeSent)
@@ -98,6 +133,7 @@ static unsigned int getSize(unsigned char playerTag)
 
 static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
 {
+	test(playerTag);
 	hlt::Move exampleMove = { { USHRT_MAX, USHRT_MAX }, UCHAR_MAX };
 	moveSize = getMaxSize(exampleMove);
 
@@ -144,11 +180,41 @@ static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfS
 static double handleFrameNetworking(unsigned char playerTag, hlt::Map &m, std::set<hlt::Move> * moves)
 {
 	// Sending Map
+	boost::interprocess::managed_shared_memory mapSegment(boost::interprocess::open_or_create, "map" + (short)playerTag, 65536);
+	hlt::Map *map = mapSegment.find<hlt::Map>("map").first;
+	if(!map) {
+		std::cout << "ya\n\n\n\n";
+		map = mapSegment.construct<hlt::Map>("map")();
+	}
+	map->contents = std::vector< std::vector<hlt::Site> >(m.contents);
+	map->map_width = m.map_width;
+	map->map_height = m.map_height;
+
+	sendSize(playerTag, 1);
+
+	// Receiving moves
+	moves->clear();
+
+	clock_t initialTime = clock();
+	getSize(playerTag);
+	clock_t finalTime = clock() - initialTime;
+	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
+
+	boost::interprocess::managed_shared_memory movesSegment(boost::interprocess::open_or_create, "moves" + (short)playerTag, 65536);
+	MySet *mySet = movesSegment.find<MySet>("MySet").first;
+	for(auto a = mySet->begin(); a != mySet->end(); ++a)
+	{
+		moves->insert(*a);
+	}
+
+	return timeElapsed;
+
+	/*
 	std::string mapQueueName = "map" + (short)playerTag;
 	boost::interprocess::message_queue mapQueue(boost::interprocess::open_or_create, mapQueueName.c_str(), 1, mapSize);
 	sendObject(mapQueue, m);
-
-	// Receiving moves
+	
+	
 	std::string movesQueueName = "moves" + (short)playerTag;
 	boost::interprocess::message_queue movesQueue(boost::interprocess::open_or_create, movesQueueName.c_str(), 10, moveSize);
 
@@ -165,8 +231,7 @@ static double handleFrameNetworking(unsigned char playerTag, hlt::Map &m, std::s
 	clock_t finalTime = clock() - initialTime;
 	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
 
-
-	return timeElapsed;
+	return timeElapsed;*/
 }
 
 #endif
