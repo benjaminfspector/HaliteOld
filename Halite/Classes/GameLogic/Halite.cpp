@@ -6,7 +6,7 @@ unsigned char Halite::getNextFrame()
 	std::vector< std::future<double> > frameThreads(number_of_players);
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		frameThreads[a] = std::async(handleFrameNetworking, a+1, game_map, &player_moves[a]);
+		frameThreads[a] = std::async(handleFrameNetworking, a + 1, mapMemory[a], movesMemory[a], game_map, &player_moves[a]);
 	}
 
 	//Create a map of the locations of sentient pieces on the game map. Additionally, age pieces. Something like:
@@ -227,10 +227,10 @@ void Halite::render(short& turnNumber)
 	glPointSize(pointSize);
 	glBegin(GL_POINTS);
 	unsigned short aD = 0;
-	for(auto a = m->contents.begin(); a != m->contents.end(); a++)
+	for(auto a = m->contents.begin(); a != m->contents.end(); ++a)
 	{
 		unsigned short bD = 0;
-		for(auto b = a->begin(); b != a->end(); b++)
+		for(auto b = a->begin(); b != a->end(); ++b)
 		{
 			hlt::Color c = color_codes[b->owner];
 			const double BASE_DIMMING_FACTOR = 0.5;
@@ -327,6 +327,8 @@ Halite::Halite()
 	turn_number = 0;
 	player_names = std::vector<std::string>();
 	full_game = std::vector<hlt::Map * >();
+	mapMemory = std::vector<boost::interprocess::managed_shared_memory *>();
+	movesMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 	age_of_sentient = 0;
 	player_moves = std::vector< std::set<hlt::Move> >();
 	//Init Color Codes:
@@ -350,6 +352,8 @@ Halite::Halite(unsigned short w, unsigned short h)
 	age_of_sentient = getAgeOfSentient(w, h);
 	player_moves = std::vector< std::set<hlt::Move> >();
 	full_game = std::vector<hlt::Map * >();
+	mapMemory = std::vector<boost::interprocess::managed_shared_memory *>();
+	movesMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 
 	//Init Color Codes:
 	color_codes = std::map<unsigned char, hlt::Color>();
@@ -398,6 +402,13 @@ Halite::Halite(unsigned short w, unsigned short h)
 		number_of_players++;
 	}
 
+	while(true) {
+		std::cout << "Add all of your players. Have you finished adding all your players? After this the game will start.";
+		std::getline(std::cin, in);
+		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
+		if(in == "y" || in == "yes" || in == "yep") break;
+	}
+
 	getColorCodes();
 
 	//Initialize map:
@@ -416,6 +427,16 @@ void Halite::init()
 	//Send initial package
 	std::cout << "Connect your players\n";
 	std::vector<std::thread> initThreads(number_of_players);
+
+	for(unsigned char a = 0; a < number_of_players; a++)
+	{
+		boost::interprocess::managed_shared_memory *mapSegment = 0;
+		boost::interprocess::managed_shared_memory *moveSegment = 0;
+		setupMemory(a + 1, mapSegment, moveSegment);
+		mapMemory.push_back(mapSegment);
+		movesMemory.push_back(moveSegment);
+	}
+
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
 		initThreads[a] = std::thread(handleInitNetworking, a + 1, age_of_sentient, player_names[a], game_map);

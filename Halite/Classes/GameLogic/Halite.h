@@ -13,7 +13,7 @@
 
 //For the time being we'll use sfml sockets, and then switch to asio later once I understand it.
 #include <C:\freeglutMSVC\SFML-2.3.1\include\SFML\Network.hpp>
-#include <boost/interprocess/ipc/message_queue.hpp>
+#include <boost/interprocess/managed_shared_memory.hpp>
 
 #include "hlt.h"
 #include "OpenGL.h"
@@ -27,7 +27,8 @@ private:
 	std::vector<std::string> player_names;
 	std::map<unsigned char, hlt::Color> color_codes;
 	std::vector<hlt::Map * > full_game;
-	std::vector<boost::interprocess::message_queue *> initialQueues;
+	std::vector<boost::interprocess::managed_shared_memory *> mapMemory;
+	std::vector<boost::interprocess::managed_shared_memory *> movesMemory;
 	char age_of_sentient;
 	std::vector< std::set<hlt::Move> > player_moves;
 
