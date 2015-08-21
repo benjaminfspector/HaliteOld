@@ -327,7 +327,7 @@ Halite::Halite()
 	turn_number = 0;
 	player_names = std::vector<std::string>();
 	full_game = std::vector<hlt::Map * >();
-	mapMemory = std::vector<boost::interprocess::managed_shared_memory *>();
+	mapMemory = std::vector<boost::interprocess::mapped_region *>();
 	movesMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 	age_of_sentient = 0;
 	player_moves = std::vector< std::set<hlt::Move> >();
@@ -352,7 +352,7 @@ Halite::Halite(unsigned short w, unsigned short h)
 	age_of_sentient = getAgeOfSentient(w, h);
 	player_moves = std::vector< std::set<hlt::Move> >();
 	full_game = std::vector<hlt::Map * >();
-	mapMemory = std::vector<boost::interprocess::managed_shared_memory *>();
+	mapMemory = std::vector<boost::interprocess::mapped_region *>();
 	movesMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 
 	//Init Color Codes:
@@ -403,7 +403,7 @@ Halite::Halite(unsigned short w, unsigned short h)
 	}
 
 	while(true) {
-		std::cout << "Add all of your players. Have you finished adding all your players? After this the game will start.";
+		std::cout << "Have you finished connecting all your players?";
 		std::getline(std::cin, in);
 		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
 		if(in == "y" || in == "yes" || in == "yep") break;
@@ -430,21 +430,22 @@ void Halite::init()
 
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		boost::interprocess::managed_shared_memory *mapSegment = 0;
-		boost::interprocess::managed_shared_memory *moveSegment = 0;
-		setupMemory(a + 1, mapSegment, moveSegment);
-		mapMemory.push_back(mapSegment);
-		movesMemory.push_back(moveSegment);
-	}
-
-	for(unsigned char a = 0; a < number_of_players; a++)
-	{
 		initThreads[a] = std::thread(handleInitNetworking, a + 1, age_of_sentient, player_names[a], game_map);
 	}
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
 		initThreads[a].join();
 	}
+
+	for(unsigned char a = 0; a < number_of_players; a++)
+	{
+		boost::interprocess::mapped_region *mapSegment = 0;
+		boost::interprocess::managed_shared_memory *moveSegment = 0;
+		setupMemory(a + 1, mapSegment, moveSegment);
+		mapMemory.push_back(mapSegment);
+		movesMemory.push_back(moveSegment);
+	}
+
 	std::cout << "Finished connecting\n";
 }
 

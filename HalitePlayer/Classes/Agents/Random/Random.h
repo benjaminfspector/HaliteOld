@@ -13,7 +13,7 @@ class Random
 private:
 	unsigned char my_tag;
 	unsigned char age_of_sentient;
-	hlt::Map present_map;
+	hlt::Map *present_map;
 	std::set<hlt::Move> moves;
 public:
 	Random();

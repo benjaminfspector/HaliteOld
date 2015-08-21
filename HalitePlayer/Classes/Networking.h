@@ -14,6 +14,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/interprocess/managed_shared_memory.hpp>
+#include <boost/interprocess/windows_shared_memory.hpp>
 #include <boost/interprocess/containers/set.hpp>
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
@@ -41,17 +42,11 @@ const std::string confirmation = "Done";
 static unsigned short mapSize = 0;
 static unsigned short moveSize = 0;
 
-static boost::interprocess::managed_shared_memory *mapSegment = 0;
+static boost::interprocess::mapped_region *mapSegment = 0;
 static boost::interprocess::managed_shared_memory *movesSegment = 0;
 
 typedef boost::interprocess::allocator<hlt::Move, boost::interprocess::managed_shared_memory::segment_manager>  SharedMemoryAllocator;
 typedef boost::interprocess::set<hlt::Move, std::less<hlt::Move>, SharedMemoryAllocator> MoveSet;
-
-typedef boost::interprocess::allocator<void, boost::interprocess::managed_shared_memory::segment_manager> VoidAllocator;
-typedef boost::interprocess::allocator<hlt::Site, boost::interprocess::managed_shared_memory::segment_manager>  SiteAllocator;
-typedef boost::interprocess::vector<hlt::Site, SiteAllocator> SiteVector;
-typedef boost::interprocess::allocator<SiteVector, boost::interprocess::managed_shared_memory::segment_manager>  SiteVectorAllocator;
-typedef boost::interprocess::vector<SiteVector, SiteVectorAllocator> MapContents;
 
 static void removeQueues(unsigned char playerTag) 
 {
@@ -61,11 +56,6 @@ static void removeQueues(unsigned char playerTag)
 	boost::interprocess::message_queue::remove("initstring" + (short)playerTag);
 	boost::interprocess::shared_memory_object::remove("map" + (short)playerTag);
 	boost::interprocess::shared_memory_object::remove("moves" + (short)playerTag);
-}
-
-static void setupMemory(unsigned char playerTag) {
-	mapSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "map" + (short)playerTag, 65536);
-	movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "moves" + (short)playerTag, 65536);
 }
 
 static unsigned unsigned char getTag()
@@ -89,7 +79,6 @@ static unsigned unsigned char getTag()
 	}
 
 	removeQueues(playerTag);
-	setupMemory(playerTag);
 
 	return playerTag;
 }
@@ -139,7 +128,7 @@ static unsigned short getSize(unsigned char playerTag)
 	return size;
 }
 
-static void getInit(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map& m)
+static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map *m)
 {
 	hlt::Move exampleMove = { { USHRT_MAX, USHRT_MAX }, UCHAR_MAX };
 	moveSize = getMaxSize(exampleMove);
@@ -150,49 +139,36 @@ static void getInit(unsigned char playerTag, unsigned char& ageOfSentient, hlt::
 	// Receive initpackage
 	InitPackage package;
 	std::string packageQueueName = "initpackage" + (short)playerTag;
-	std::cout << "max: " << packageSize << "\n";
 	boost::interprocess::message_queue packageQueue(boost::interprocess::open_or_create, packageQueueName.c_str(), 1, packageSize);
 	receiveObject(packageQueue, packageSize, package);
 
-	std::cout << "pack: " << package.map.contents.size() << "\n";
-
-	std::cout << "Age of sentient: " << (unsigned short)package.ageOfSentient << "\n";
-
 	ageOfSentient = package.ageOfSentient;
-	m = package.map;
+	new (m) hlt::Map(package.map);
+
 	if(playerTag != package.playerTag)
 	{
 		std::cout << "There was a problem with player tag assignment.\n";
 		throw 1;
 	}
-}
-
-static void sendInitResponse(unsigned int playerTag) 
-{
-	std::cout << "gonna send...\n";
+	
+	// Send response
 	std::string stringQueueName = "initstring" + (short)playerTag;
 	boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
 
-	std::cout << "sending...\n";
 	stringQueue.send(confirmation.data(), confirmation.size(), 0);
-	std::cout << "sent...\n";
+	
+	// Setup memory
+	boost::interprocess::windows_shared_memory sharedMemory(boost::interprocess::open_or_create, "map" + (short)playerTag, boost::interprocess::read_write, mapSize);
+	mapSegment = new boost::interprocess::mapped_region(sharedMemory, boost::interprocess::read_write);
+
+	movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "moves" + (short)playerTag, 65536);
 }
 
-static void getFrame(unsigned char playerTag, hlt::Map& m)
+static void getFrame(unsigned char playerTag, hlt::Map *&m)
 {
 	getSize(playerTag);
 
-	m.contents.clear();
-	MapContents mapContents = *(mapSegment->find<MapContents>("map").first);
-
-	unsigned int mapHeight = mapContents.size();
-	m.contents.clear();
-	for(int a = 0; a < mapHeight; a++) {
-		m.contents.push_back(std::vector<hlt::Site>(mapContents[a].begin(), mapContents[a].end()));
-	}
-
-	m.map_height = mapHeight;
-	m.map_width = m.contents[0].size();
+	m = static_cast<hlt::Map*>(mapSegment->get_address());
 }
 
 static void sendFrame(unsigned char playerTag, std::set<hlt::Move>& moves)

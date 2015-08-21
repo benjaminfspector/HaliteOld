@@ -3,8 +3,7 @@
 Basic::Basic()
 {
 	my_tag = getTag();
-	getInit(my_tag, age_of_sentient, present_map);
-	sendInitResponse(my_tag);
+	initNetwork(my_tag, age_of_sentient, present_map);
 }
 
 void Basic::run()
@@ -13,13 +12,13 @@ void Basic::run()
 	{
 		moves.clear();
 		getFrame(my_tag, present_map);
-		for(unsigned short a = 0; a < present_map.map_height; a++) for(unsigned short b = 0; b < present_map.map_width; b++) if(present_map.contents[a][b].owner == my_tag && present_map.contents[a][b].age == age_of_sentient)
+		for(unsigned short a = 0; a < present_map->map_height; a++) for(unsigned short b = 0; b < present_map->map_width; b++) if(present_map->contents[a][b].owner == my_tag && present_map->contents[a][b].age == age_of_sentient)
 		{
 			hlt::Site around[4];
-			around[0] = present_map.getNorthernSite({ b, a });
-			around[1] = present_map.getEasternSite({ b, a });
-			around[2] = present_map.getSouthernSite({ b, a });
-			around[3] = present_map.getWesternSite({ b, a });
+			around[0] = present_map->getNorthernSite({ b, a });
+			around[1] = present_map->getEasternSite({ b, a });
+			around[2] = present_map->getSouthernSite({ b, a });
+			around[3] = present_map->getWesternSite({ b, a });
 			//Find one to look at first:
 			unsigned char toLookAt = rand() % 4, best_age_yet = 255, best_direction_yet = 5;
 			bool opponent_found = false;
