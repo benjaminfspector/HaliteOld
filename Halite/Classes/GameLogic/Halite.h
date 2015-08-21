@@ -27,7 +27,6 @@ private:
 	std::vector<std::string> player_names;
 	std::map<unsigned char, hlt::Color> color_codes;
 	std::vector<hlt::Map * > full_game;
-	std::vector<boost::interprocess::managed_shared_memory *> mapMemory;
 	std::vector<boost::interprocess::managed_shared_memory *> movesMemory;
 	char age_of_sentient;
 	std::vector< std::set<hlt::Move> > player_moves;

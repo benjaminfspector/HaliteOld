@@ -39,9 +39,6 @@ private:
 
 const std::string confirmation = "Done";
 
-static unsigned short mapSize = 0;
-static unsigned short moveSize = 0;
-
 static boost::interprocess::managed_shared_memory *mapSegment = 0;
 static boost::interprocess::managed_shared_memory *movesSegment = 0;
 
@@ -60,7 +57,7 @@ static void removeQueues(unsigned char playerTag)
 	boost::interprocess::message_queue::remove("size" + (short)playerTag);
 	boost::interprocess::message_queue::remove("initpackage" + (short)playerTag);
 	boost::interprocess::message_queue::remove("initstring" + (short)playerTag);
-	boost::interprocess::shared_memory_object::remove("map" + (short)playerTag);
+	boost::interprocess::shared_memory_object::remove("map");
 	boost::interprocess::shared_memory_object::remove("moves" + (short)playerTag);
 }
 
@@ -136,10 +133,7 @@ static unsigned short getSize(unsigned char playerTag)
 
 static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map &m, MoveSet *&moves)
 {
-	hlt::Move exampleMove = { { USHRT_MAX, USHRT_MAX }, UCHAR_MAX };
-	moveSize = getMaxSize(exampleMove);
 
-	mapSize = getSize(playerTag);
 	unsigned int packageSize = getSize(playerTag);
 	
 	// Receive initpackage
@@ -164,7 +158,7 @@ static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, h
 	stringQueue.send(confirmation.data(), confirmation.size(), 0);
 	
 	// Setup memory
-	mapSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "map" + (short)playerTag, 65536);
+	mapSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "map", 65536);
 	movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "moves" + (short)playerTag, 65536);
 
 	// Setup moves set

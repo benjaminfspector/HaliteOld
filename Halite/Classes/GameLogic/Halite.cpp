@@ -3,10 +3,13 @@
 unsigned char Halite::getNextFrame()
 {
 	//Create threads to send/receive data to/from players. The threads should return a float of how much time passed between the end of their message being sent and the end of the AI's message being sent.
+
+	sendMap(game_map);
+
 	std::vector< std::future<double> > frameThreads(number_of_players);
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		frameThreads[a] = std::async(handleFrameNetworking, a + 1, mapMemory[a], movesMemory[a], game_map, &player_moves[a]);
+		frameThreads[a] = std::async(handleFrameNetworking, a + 1, movesMemory[a], &player_moves[a]);
 	}
 
 	//Create a map of the locations of sentient pieces on the game map. Additionally, age pieces. Something like:
@@ -326,8 +329,6 @@ Halite::Halite()
 	game_map = hlt::Map();
 	turn_number = 0;
 	player_names = std::vector<std::string>();
-	full_game = std::vector<hlt::Map * >();
-	mapMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 	movesMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 	age_of_sentient = 0;
 	player_moves = std::vector< std::set<hlt::Move> >();
@@ -352,7 +353,6 @@ Halite::Halite(unsigned short w, unsigned short h)
 	age_of_sentient = getAgeOfSentient(w, h);
 	player_moves = std::vector< std::set<hlt::Move> >();
 	full_game = std::vector<hlt::Map * >();
-	mapMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 	movesMemory = std::vector<boost::interprocess::managed_shared_memory *>();
 
 	//Init Color Codes:
@@ -426,23 +426,11 @@ void Halite::init()
 {
 	//Send initial package
 	std::cout << "Connect your players\n";
-	std::vector<std::thread> initThreads(number_of_players);
 
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		initThreads[a] = std::thread(handleInitNetworking, a + 1, age_of_sentient, player_names[a], game_map);
-	}
-	for(unsigned char a = 0; a < number_of_players; a++)
-	{
-		initThreads[a].join();
-	}
-
-	for(unsigned char a = 0; a < number_of_players; a++)
-	{
-		boost::interprocess::managed_shared_memory *mapSegment = 0;
 		boost::interprocess::managed_shared_memory *moveSegment = 0;
-		setupMemory(a + 1, mapSegment, moveSegment);
-		mapMemory.push_back(mapSegment);
+		handleInitNetworking(a + 1, age_of_sentient, player_names[a], game_map, moveSegment);
 		movesMemory.push_back(moveSegment);
 	}
 
