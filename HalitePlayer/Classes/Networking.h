@@ -42,11 +42,17 @@ const std::string confirmation = "Done";
 static unsigned short mapSize = 0;
 static unsigned short moveSize = 0;
 
-static boost::interprocess::mapped_region *mapSegment = 0;
+static boost::interprocess::managed_shared_memory *mapSegment = 0;
 static boost::interprocess::managed_shared_memory *movesSegment = 0;
 
 typedef boost::interprocess::allocator<hlt::Move, boost::interprocess::managed_shared_memory::segment_manager>  SharedMemoryAllocator;
 typedef boost::interprocess::set<hlt::Move, std::less<hlt::Move>, SharedMemoryAllocator> MoveSet;
+
+typedef boost::interprocess::allocator<void, boost::interprocess::managed_shared_memory::segment_manager> VoidAllocator;
+typedef boost::interprocess::allocator<hlt::Site, boost::interprocess::managed_shared_memory::segment_manager>  SiteAllocator;
+typedef boost::interprocess::vector<hlt::Site, SiteAllocator> SiteVector;
+typedef boost::interprocess::allocator<SiteVector, boost::interprocess::managed_shared_memory::segment_manager>  SiteVectorAllocator;
+typedef boost::interprocess::vector<SiteVector, SiteVectorAllocator> MapContents;
 
 static void removeQueues(unsigned char playerTag) 
 {
@@ -128,7 +134,7 @@ static unsigned short getSize(unsigned char playerTag)
 	return size;
 }
 
-static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map *m)
+static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map &m, MoveSet *&moves)
 {
 	hlt::Move exampleMove = { { USHRT_MAX, USHRT_MAX }, UCHAR_MAX };
 	moveSize = getMaxSize(exampleMove);
@@ -143,7 +149,7 @@ static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, h
 	receiveObject(packageQueue, packageSize, package);
 
 	ageOfSentient = package.ageOfSentient;
-	new (m) hlt::Map(package.map);
+	m = package.map;
 
 	if(playerTag != package.playerTag)
 	{
@@ -158,32 +164,32 @@ static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, h
 	stringQueue.send(confirmation.data(), confirmation.size(), 0);
 	
 	// Setup memory
-	boost::interprocess::windows_shared_memory sharedMemory(boost::interprocess::open_or_create, "map" + (short)playerTag, boost::interprocess::read_write, mapSize);
-	mapSegment = new boost::interprocess::mapped_region(sharedMemory, boost::interprocess::read_write);
-
+	mapSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "map" + (short)playerTag, 65536);
 	movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "moves" + (short)playerTag, 65536);
+
+	// Setup moves set
+	const SharedMemoryAllocator alloc_inst(movesSegment->get_segment_manager());
+	moves = movesSegment->construct<MoveSet>("moves")(alloc_inst);
 }
 
-static void getFrame(unsigned char playerTag, hlt::Map *&m)
+static void getFrame(unsigned char playerTag, hlt::Map &m)
 {
 	getSize(playerTag);
-
-	m = static_cast<hlt::Map*>(mapSegment->get_address());
+	
+	MapContents *mapContents = mapSegment->find<MapContents>("map").first;
+	m.contents.clear();
+	for(auto a = mapContents->begin(); a != mapContents->end(); a++)
+	{
+		m.contents.push_back(std::vector<hlt::Site>(a->begin(), a->end()));
+	}
+	m.map_height = m.contents.size();
+	m.map_width = m.contents[0].size();
 }
 
-static void sendFrame(unsigned char playerTag, std::set<hlt::Move>& moves)
+static void sendFrame(unsigned char playerTag)
 {
-	const SharedMemoryAllocator alloc_inst(movesSegment->get_segment_manager());
-	MoveSet *mySet = movesSegment->find<MoveSet>("moves").first;
-	if(!mySet) 
-	{
-		mySet = movesSegment->construct<MoveSet>("moves")(alloc_inst);
-	}
-
-	mySet->clear();
-	*mySet = MoveSet(moves.begin(), moves.end(), alloc_inst);
-
-	sendSize(playerTag, moves.size());
+	sendSize(playerTag, 1);
+	getSize(playerTag);
 }
 
 #endif

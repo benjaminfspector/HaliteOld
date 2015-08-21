@@ -4,9 +4,12 @@
 #include <list>
 #include <vector>
 #include <random>
+
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/string.hpp>
 
 namespace hlt
 {
@@ -165,7 +168,7 @@ namespace hlt
 			else l.x = map_width - 1;
 			return l;
 		}
-	private:
+
 		friend class boost::serialization::access;
 
 		template<class Archive>
@@ -173,7 +176,10 @@ namespace hlt
 		{
 			ar & map_width;
 			ar & map_height;
-			ar & contents;
+			for(auto a = contents.begin(); a != contents.end(); ++a)
+			{
+				ar & *a;
+			}
 		}
 	};
 
