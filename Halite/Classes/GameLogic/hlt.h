@@ -28,7 +28,7 @@ namespace hlt
 	};
 	static bool operator<(const Location& l1, const Location& l2)
 	{
-		return ((l1.x + l1.y)*(unsigned int(l1.x) + l1.y + 1) / 2) + l1.y < ((l2.x + l2.y)*(unsigned int(l2.x) + l2.y + 1) / 2) + l2.y;
+		return ((l1.x + l1.y)*((unsigned int)l1.x + l1.y + 1) / 2) + l1.y < ((l2.x + l2.y)*((unsigned int)l2.x + l2.y + 1) / 2) + l2.y;
 	}
 
 	struct Color
@@ -82,7 +82,7 @@ namespace hlt
 				while(bad)
 				{
 					bad = false;
-					l = { rand() % map_width, rand() % map_height };
+					l = { static_cast<unsigned short>(rand() % map_width), static_cast<unsigned short>(rand() % map_height) };
 					for(auto b = takenSpots.begin(); b != takenSpots.end(); b++)
 					{
 						if(getDistance(l, *b) <= minDistance)
@@ -98,7 +98,7 @@ namespace hlt
 						minDistance *= 0.85;
 					}
 				}
-				contents[l.y][l.x] = { a, ageOfSentient };
+				contents[l.y][l.x] = { (unsigned char)a, ageOfSentient };
 				takenSpots.push_back(l);
 			}
 		}
@@ -203,7 +203,7 @@ namespace hlt
 	};
 	static bool operator<(const Move& m1, const Move& m2)
 	{
-		unsigned int l1Prod = ((m1.l.x + m1.l.y)*(unsigned int(m1.l.x) + m1.l.y + 1) / 2) + m1.l.y, l2Prod = ((m2.l.x + m2.l.y)*(unsigned int(m2.l.x) + m2.l.y + 1) / 2) + m2.l.y;
+		unsigned int l1Prod = ((m1.l.x + m1.l.y)*((unsigned int)m1.l.x + m1.l.y + 1) / 2) + m1.l.y, l2Prod = ((m2.l.x + m2.l.y)*((unsigned int)m2.l.x + m2.l.y + 1) / 2) + m2.l.y;
 		return ((l1Prod + m1.d)*(l1Prod + m1.d + 1) / 2) + m1.d < ((l2Prod + m2.d)*(l2Prod + m2.d + 1) / 2) + m2.d;
 	}
 }

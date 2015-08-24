@@ -1,11 +1,10 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
-#include <SFML\Network.hpp>
+#include <SFML/Network.hpp>
 #include <time.h>
 #include <set>
 #include <iostream>
-#include <Windows.h>
 #include <cstdlib> 
 
 #include "hlt.h"
@@ -14,10 +13,10 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/interprocess/managed_shared_memory.hpp>
-#include <boost/interprocess/windows_shared_memory.hpp>
 #include <boost/interprocess/containers/set.hpp>
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
+#include <boost/lexical_cast.hpp>
 
 struct InitPackage 
 {
@@ -53,15 +52,15 @@ typedef boost::interprocess::vector<SiteVector, SiteVectorAllocator> MapContents
 
 static void removeQueues(unsigned char playerTag) 
 {
-	boost::interprocess::message_queue::remove("playersize" + (short)playerTag);
-	boost::interprocess::message_queue::remove("size" + (short)playerTag);
-	boost::interprocess::message_queue::remove("initpackage" + (short)playerTag);
-	boost::interprocess::message_queue::remove("initstring" + (short)playerTag);
+    boost::interprocess::message_queue::remove(std::string("playersize" + std::to_string(playerTag)).c_str());
+	boost::interprocess::message_queue::remove(std::string("size" + std::to_string(playerTag)).c_str());
+	boost::interprocess::message_queue::remove(std::string("initpackage" + std::to_string(playerTag)).c_str());
+	boost::interprocess::message_queue::remove(std::string("initstring" + std::to_string(playerTag)).c_str());
 	boost::interprocess::shared_memory_object::remove("map");
-	boost::interprocess::shared_memory_object::remove("moves" + (short)playerTag);
+	boost::interprocess::shared_memory_object::remove(std::string("moves" + std::to_string(playerTag)).c_str());
 }
 
-static unsigned unsigned char getTag()
+static unsigned char getTag()
 {
 	std::string in;
 	unsigned char playerTag;
@@ -115,14 +114,14 @@ static unsigned short getMaxSize(type object)
 
 static void sendSize(unsigned char playerTag, unsigned short size)
 {
-	std::string initialQueueName = "playersize" + (short)playerTag;
+    std::string initialQueueName = "playersize" + std::to_string(playerTag);
 	boost::interprocess::message_queue sizeQueue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, sizeof(unsigned short));
 	sizeQueue.send(&size, sizeof(size), 0);
 }
 
 static unsigned short getSize(unsigned char playerTag)
 {
-	std::string initialQueueName = "size" + (short)playerTag;
+	std::string initialQueueName = "size" + std::to_string(playerTag);
 	unsigned int priority;
 	unsigned int size;
 	boost::interprocess::message_queue::size_type recvd_size;
@@ -138,7 +137,7 @@ static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, h
 	
 	// Receive initpackage
 	InitPackage package;
-	std::string packageQueueName = "initpackage" + (short)playerTag;
+	std::string packageQueueName = "initpackage" + std::to_string(playerTag);
 	boost::interprocess::message_queue packageQueue(boost::interprocess::open_or_create, packageQueueName.c_str(), 1, packageSize);
 	receiveObject(packageQueue, packageSize, package);
 
@@ -152,14 +151,14 @@ static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, h
 	}
 	
 	// Send response
-	std::string stringQueueName = "initstring" + (short)playerTag;
+	std::string stringQueueName = "initstring" + std::to_string(playerTag);
 	boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
 
 	stringQueue.send(confirmation.data(), confirmation.size(), 0);
 	
 	// Setup memory
 	mapSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "map", 65536);
-	movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "moves" + (short)playerTag, 65536);
+    movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, std::string("moves" + std::to_string(playerTag)).c_str(), 65536);
 
 	// Setup moves set
 	const SharedMemoryAllocator alloc_inst(movesSegment->get_segment_manager());

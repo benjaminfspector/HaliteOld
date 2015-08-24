@@ -4,7 +4,7 @@
 #endif
 
 #include "Util.h"
-#include "GameLogic\Halite.h"
+#include "GameLogic/Halite.h"
 
 void handleMouse(int button, int state, int x, int y);
 void handlePassiveMouseMotion(int x, int y);
@@ -19,10 +19,10 @@ void doLogic();
 void renderLoop(int val);
 
 Halite my_game;
-bool pause = false;
+bool isPaused = false;
 signed short turn_number = 0, fps = 30;
 
-int main(int argc, char* args[])
+int tmain(int argc, char* args[])
 {
 	/*#ifdef _WIN32
 	HANDLE consoleWindow = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -143,7 +143,7 @@ int main(int argc, char* args[])
 void renderLoop(int val)
 {
 	render();
-	if(!pause)
+	if(!isPaused)
 	{
 		if(fps > 0) turn_number++;
 		else if(fps < 0) turn_number--;
@@ -197,7 +197,7 @@ void handleKeys(unsigned char key, int x, int y)
 	}
 	else if(key == ' ')
 	{
-		pause = !pause;
+		isPaused = !isPaused;
 	}
 	else if(key == 'c' || key == 'C')
 	{
@@ -229,13 +229,13 @@ void handleSpecialKeys(int key, int x, int y)
 	{
 		if(lShift || rShift) (turn_number) -= 15;
 		else (turn_number)--;
-		pause = true;
+		isPaused = true;
 	}
 	else if(key == GLUT_KEY_RIGHT)
 	{
 		if(lShift || rShift) (turn_number) += 15;
 		else (turn_number)++;
-		pause = true;
+		isPaused = true;
 	}
 	else if(key == GLUT_KEY_UP)
 	{

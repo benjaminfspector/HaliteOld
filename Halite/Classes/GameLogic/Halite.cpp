@@ -108,7 +108,7 @@ unsigned char Halite::getNextFrame()
 				if(atPosition.age != age_of_sentient)
 				{
 					//Take over square.
-					game_map.contents[l.y][l.x] = { playerNumber, age_of_sentient };
+					game_map.contents[l.y][l.x] = { (unsigned char)playerNumber, (unsigned char)age_of_sentient };
 				}
 				else if(atPosition.owner != playerNumber)
 				{
@@ -128,7 +128,7 @@ unsigned char Halite::getNextFrame()
 		if(atPosition.age != age_of_sentient)
 		{
 			//Take over square.
-			game_map.contents[a->first.y][a->first.x] = { a->second, age_of_sentient };
+			game_map.contents[a->first.y][a->first.x] = { a->second, (unsigned char)age_of_sentient };
 		}
 		else if(atPosition.owner != a->second)
 		{
@@ -307,7 +307,7 @@ bool Halite::input(std::string filename, unsigned short& width, unsigned short& 
 		for(unsigned short a = 0; a < game_map.map_height; a++) for(unsigned short b = 0; b < game_map.map_width; b++)
 		{
 			game_file >> ownerIn >> ageIn;
-			game_map.contents[a][b] = { ownerIn, ageIn };
+			game_map.contents[a][b] = { (unsigned char)ownerIn, (unsigned char)ageIn };
 		}
 		full_game.push_back(new hlt::Map());
 		*full_game.back() = game_map;

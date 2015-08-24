@@ -1,7 +1,7 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
-#include <SFML\Network.hpp>
+#include <SFML/Network.hpp>
 #include <time.h>
 #include <set>
 #include <vector>
@@ -9,7 +9,7 @@
 #include <string>
 #include <sstream>
 #include <exception>
-#include <cstdlib> 
+#include <cfloat>
 
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -17,12 +17,12 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/interprocess/managed_shared_memory.hpp>
-#include <boost/interprocess/windows_shared_memory.hpp>
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/containers/set.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
+#include <boost/lexical_cast.hpp>
 
-#include "GameLogic\hlt.h"
+#include "GameLogic/hlt.h"
 
 struct InitPackage 
 {
@@ -83,14 +83,14 @@ static unsigned short getMaxSize(type object)
 
 static void sendSize(unsigned char playerTag, unsigned short size) 
 {
-	std::string initialQueueName = "size" + (short)playerTag;
+	std::string initialQueueName = "size" + std::to_string(playerTag);
 	boost::interprocess::message_queue sizeQueue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, sizeof(unsigned short));
 	sizeQueue.send(&size, sizeof(size), 0);
 }
 
 static unsigned short getSize(unsigned char playerTag)
 {
-	std::string initialQueueName = "playersize" + (short)playerTag;
+	std::string initialQueueName = "playersize" + std::to_string(playerTag);
 	unsigned int priority;
 	unsigned int size;
 	boost::interprocess::message_queue::size_type recvd_size;
@@ -111,12 +111,12 @@ static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfS
 
 	sendSize(playerTag, packageSize);
 	// Send Init package
-	std::string initialQueueName = "initpackage" + (short)playerTag;
-	boost::interprocess::message_queue packageQueue = boost::interprocess::message_queue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, packageSize);
+	std::string initialQueueName = "initpackage" + std::to_string(playerTag);
+	boost::interprocess::message_queue packageQueue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, packageSize);
 	sendObject(packageQueue, package);
 
 	// Receive confirmation
-	std::string stringQueueName = "initstring" + (short)playerTag;
+	std::string stringQueueName = "initstring" + std::to_string(playerTag);
 	boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
 
 	boost::interprocess::message_queue::size_type messageSize;
@@ -134,11 +134,11 @@ static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfS
 	double timeElapsed = float(finalTime) / CLOCKS_PER_SEC;
 
 	// Get rid of initial message queues
-	boost::interprocess::message_queue::remove("initpackage" + (short)playerTag);
-	boost::interprocess::message_queue::remove("initstring" + (short)playerTag);
+    boost::interprocess::message_queue::remove(std::string("initpackage" + std::to_string(playerTag)).c_str());
+    boost::interprocess::message_queue::remove(std::string("initstring" + std::to_string(playerTag)).c_str());
 	
 	// Setup memory
-	movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "moves" + (short)playerTag, 65536);
+                                               movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, std::string("moves" + std::to_string(playerTag)).c_str(), 65536);
 
 
 	if(stringQueueString != confirmation) return FLT_MAX;

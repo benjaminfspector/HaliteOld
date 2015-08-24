@@ -12,12 +12,12 @@
 #include <future>
 
 //For the time being we'll use sfml sockets, and then switch to asio later once I understand it.
-#include <C:\freeglutMSVC\SFML-2.3.1\include\SFML\Network.hpp>
+#include <SFML/Network.hpp>
 #include <boost/interprocess/managed_shared_memory.hpp>
 
 #include "hlt.h"
 #include "OpenGL.h"
-#include "Networking.h"
+#include "../Networking.h"
 
 class Halite
 {

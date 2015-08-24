@@ -3,8 +3,8 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "Agents\Random\Random.h"
-#include "Agents\Basic\Basic.h"
+#include "Agents/Random/Random.h"
+#include "Agents/Basic/Basic.h"
 
 int main()
 {

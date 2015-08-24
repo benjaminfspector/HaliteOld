@@ -2,7 +2,7 @@
 
 Random::Random()
 {
-	my_tag = getTag();
+    my_tag = getTag();
 	std::cout << "Got tag\n";
 	std::cout << "Got queue\n";
 	initNetwork(my_tag, age_of_sentient, present_map, moves);
@@ -18,7 +18,7 @@ void Random::run()
 		for(unsigned short a = 0; a < present_map.map_height; a++) {
 			for(unsigned short b = 0; b < present_map.map_width; b++) {
 				if(present_map.contents[a][b].owner == my_tag && present_map.contents[a][b].age == age_of_sentient) {
-					moves->insert({ { b, a }, rand() % 5 });
+					moves->insert({ { b, a }, (unsigned char)(rand() % 5) });
 				}
 			}
 		}
