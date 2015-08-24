@@ -22,6 +22,8 @@
 #include <boost/interprocess/allocators/allocator.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <boost/asio.hpp>
+
 #include "GameLogic/hlt.h"
 
 struct InitPackage 
@@ -58,6 +60,14 @@ typedef boost::interprocess::vector<SiteVector, SiteVectorAllocator> MapContents
 
 static boost::interprocess::managed_shared_memory *mapSegment;
 
+static void setupSocket(boost::asio::ip::tcp::tcp::socket *&socket, unsigned short port) {
+    using boost::asio::ip::tcp;
+    
+    boost::asio::io_service io_service;
+    tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
+    socket = new tcp::socket(io_service);
+    acceptor.accept(socket);
+}
 
 template<class type>
 static void sendObject(boost::interprocess::message_queue &queue, type objectToBeSent)
@@ -103,7 +113,7 @@ static void setupMapMemory() {
 	mapSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "map", 65536);
 }
 
-static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map &m, boost::interprocess::managed_shared_memory *&movesSegment)
+static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map &m)
 {
 	// Get and send sizes of objects
 	InitPackage package = { playerTag, ageOfSentient, m };
@@ -136,10 +146,6 @@ static double handleInitNetworking(unsigned char playerTag, unsigned char ageOfS
 	// Get rid of initial message queues
     boost::interprocess::message_queue::remove(std::string("initpackage" + std::to_string(playerTag)).c_str());
     boost::interprocess::message_queue::remove(std::string("initstring" + std::to_string(playerTag)).c_str());
-	
-	// Setup memory
-                                               movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, std::string("moves" + std::to_string(playerTag)).c_str(), 65536);
-
 
 	if(stringQueueString != confirmation) return FLT_MAX;
 	return timeElapsed;
