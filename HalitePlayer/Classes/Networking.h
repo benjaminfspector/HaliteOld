@@ -5,18 +5,12 @@
 #include <time.h>
 #include <set>
 #include <iostream>
-#include <cstdlib> 
-
-#include "hlt.h"
-#include <boost/interprocess/ipc/message_queue.hpp>
+#include <cstdlib>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/set.hpp>
-#include <boost/interprocess/managed_shared_memory.hpp>
-#include <boost/interprocess/containers/set.hpp>
-#include <boost/interprocess/containers/vector.hpp>
-#include <boost/interprocess/allocators/allocator.hpp>
-#include <boost/lexical_cast.hpp>
+
+#include "hlt.h"
 
 struct InitPackage 
 {
@@ -36,153 +30,81 @@ private:
 	}
 };
 
-const std::string confirmation = "Done";
-
-static boost::interprocess::managed_shared_memory *mapSegment = 0;
-static boost::interprocess::managed_shared_memory *movesSegment = 0;
-
-typedef boost::interprocess::allocator<hlt::Move, boost::interprocess::managed_shared_memory::segment_manager>  SharedMemoryAllocator;
-typedef boost::interprocess::set<hlt::Move, std::less<hlt::Move>, SharedMemoryAllocator> MoveSet;
-
-typedef boost::interprocess::allocator<void, boost::interprocess::managed_shared_memory::segment_manager> VoidAllocator;
-typedef boost::interprocess::allocator<hlt::Site, boost::interprocess::managed_shared_memory::segment_manager>  SiteAllocator;
-typedef boost::interprocess::vector<hlt::Site, SiteAllocator> SiteVector;
-typedef boost::interprocess::allocator<SiteVector, boost::interprocess::managed_shared_memory::segment_manager>  SiteVectorAllocator;
-typedef boost::interprocess::vector<SiteVector, SiteVectorAllocator> MapContents;
-
-static void removeQueues(unsigned char playerTag) 
+static sf::TcpSocket * connectToGame()
 {
-    boost::interprocess::message_queue::remove(std::string("playersize" + std::to_string(playerTag)).c_str());
-	boost::interprocess::message_queue::remove(std::string("size" + std::to_string(playerTag)).c_str());
-	boost::interprocess::message_queue::remove(std::string("initpackage" + std::to_string(playerTag)).c_str());
-	boost::interprocess::message_queue::remove(std::string("initstring" + std::to_string(playerTag)).c_str());
-	boost::interprocess::shared_memory_object::remove("map");
-	boost::interprocess::shared_memory_object::remove(std::string("moves" + std::to_string(playerTag)).c_str());
+    while(true)
+    {
+        sf::TcpSocket * s = new sf::TcpSocket();
+        s->setBlocking(true);
+        std::string in;
+        unsigned short portNumber;
+        std::cout << "What port would you like to connect to? Please enter a valid port number: ";
+        while(true)
+        {
+            std::getline(std::cin, in);
+            std::transform(in.begin(), in.end(), in.begin(), ::tolower);
+            try
+            {
+                portNumber = std::stoi(in);
+                break;
+            }
+            catch(std::exception e)
+            {
+                std::cout << "That isn't a valid input. Please enter a valid port number: ";
+            }
+        }
+        if(sf::Socket::Status::Done == s->connect(sf::IpAddress::getLocalAddress(), portNumber))
+        {
+            std::cout << "Successfully established contact with " << s->getRemoteAddress() << ".\n";
+            return s;
+        }
+        std::cout << "There was a problem connecting. Let's try again: \n";
+    }
 }
 
-static unsigned char getTag()
+static sf::Packet& operator<<(sf::Packet& p, const std::set<hlt::Move>& moves)
 {
-	std::string in;
-	unsigned char playerTag;
-	std::cout << "What is this player's tag? Please enter a valid player tag: ";
-	while(true)
-	{
-		std::getline(std::cin, in);
-		std::transform(in.begin(), in.end(), in.begin(), ::tolower);
-		try
-		{
-			playerTag = std::stoi(in);
-			break;
-		}
-		catch(std::exception e)
-		{
-			std::cout << "That isn't a valid input. Please enter a valid player tag: ";
-		}
-	}
-
-	removeQueues(playerTag);
-
-	return playerTag;
+    for(auto a = moves.begin(); a != moves.end(); a++) p << a->l.x << a->l.y << a->d;
+    return p;
 }
 
-template<class type>
-static void receiveObject(boost::interprocess::message_queue &queue, unsigned int maxSize, type &receivingObject)
+static sf::Packet& operator>>(sf::Packet& p, hlt::Map& m)
 {
-	boost::interprocess::message_queue::size_type messageSize;
-	unsigned int priority;
-	std::stringstream stream;
-	std::string serializedString;
-	serializedString.resize(maxSize);
-
-	queue.receive(&serializedString[0], maxSize, messageSize, priority);
-
-	stream << serializedString;
-	boost::archive::text_iarchive archive(stream);
-	archive >> receivingObject;
+    p >> m.map_width >> m.map_height;
+    m.contents.resize(m.map_height);
+    for(auto a = m.contents.begin(); a != m.contents.end(); a++) a->resize(m.map_width);
+    for(auto a = m.contents.begin(); a != m.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) p >> b->owner >> b->age;
+    return p;
 }
 
-template<class type>
-static unsigned short getMaxSize(type object)
+static void getInit(sf::TcpSocket * s, unsigned char& playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
-	std::ostringstream archiveStream;
-	boost::archive::text_oarchive archive(archiveStream);
-	archive & object;
-	std::string serializedString(archiveStream.str());
-
-	return serializedString.size();
+    sf::Packet r;
+    s->receive(r);
+    std::cout << "Received init message.\n";
+    r >> playerTag >> ageOfSentient >> m;
 }
 
-static void sendSize(unsigned char playerTag, unsigned short size)
+static void sendInitResponse(sf::TcpSocket * s)
 {
-    std::string initialQueueName = "playersize" + std::to_string(playerTag);
-	boost::interprocess::message_queue sizeQueue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, sizeof(unsigned short));
-	sizeQueue.send(&size, sizeof(size), 0);
+    std::string response = "Done"; sf::Packet p;
+    p << response;
+    s->send(p);
+    std::cout << "Sent init response.\n";
 }
 
-static unsigned short getSize(unsigned char playerTag)
+static void getFrame(sf::TcpSocket * s, hlt::Map& m)
 {
-	std::string initialQueueName = "size" + std::to_string(playerTag);
-	unsigned int priority;
-	unsigned int size;
-	boost::interprocess::message_queue::size_type recvd_size;
-	boost::interprocess::message_queue sizeQueue(boost::interprocess::open_or_create, initialQueueName.c_str(), 1, sizeof(unsigned short));
-	sizeQueue.receive(&size, sizeof(size), recvd_size, priority);
-	return size;
+    sf::Packet r;
+    s->receive(r);
+    r >> m;
 }
 
-static void initNetwork(unsigned char playerTag, unsigned char& ageOfSentient, hlt::Map &m, MoveSet *&moves)
+static void sendFrame(sf::TcpSocket * s, const std::set<hlt::Move>& moves)
 {
-
-	unsigned int packageSize = getSize(playerTag);
-	
-	// Receive initpackage
-	InitPackage package;
-	std::string packageQueueName = "initpackage" + std::to_string(playerTag);
-	boost::interprocess::message_queue packageQueue(boost::interprocess::open_or_create, packageQueueName.c_str(), 1, packageSize);
-	receiveObject(packageQueue, packageSize, package);
-
-	ageOfSentient = package.ageOfSentient;
-	m = package.map;
-
-	if(playerTag != package.playerTag)
-	{
-		std::cout << "There was a problem with player tag assignment.\n";
-		throw 1;
-	}
-	
-	// Send response
-	std::string stringQueueName = "initstring" + std::to_string(playerTag);
-	boost::interprocess::message_queue stringQueue(boost::interprocess::open_or_create, stringQueueName.c_str(), 1, confirmation.size());
-
-	stringQueue.send(confirmation.data(), confirmation.size(), 0);
-	
-	// Setup memory
-	mapSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, "map", 65536);
-    movesSegment = new boost::interprocess::managed_shared_memory(boost::interprocess::open_or_create, std::string("moves" + std::to_string(playerTag)).c_str(), 65536);
-
-	// Setup moves set
-	const SharedMemoryAllocator alloc_inst(movesSegment->get_segment_manager());
-	moves = movesSegment->construct<MoveSet>("moves")(alloc_inst);
-}
-
-static void getFrame(unsigned char playerTag, hlt::Map &m)
-{
-	getSize(playerTag);
-	
-	MapContents *mapContents = mapSegment->find<MapContents>("map").first;
-	m.contents.clear();
-	for(auto a = mapContents->begin(); a != mapContents->end(); a++)
-	{
-		m.contents.push_back(std::vector<hlt::Site>(a->begin(), a->end()));
-	}
-	m.map_height = m.contents.size();
-	m.map_width = m.contents[0].size();
-}
-
-static void sendFrame(unsigned char playerTag)
-{
-	sendSize(playerTag, 1);
-	getSize(playerTag);
+    sf::Packet p;
+    p << moves;
+    s->send(p);
 }
 
 #endif
