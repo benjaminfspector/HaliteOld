@@ -183,10 +183,7 @@ namespace hlt
 		{
 			ar & map_width;
 			ar & map_height;
-			for(auto a = contents.begin(); a != contents.end(); ++a)
-			{
-				ar & *a;
-			}
+			ar & contents;
 		}
 	};
 

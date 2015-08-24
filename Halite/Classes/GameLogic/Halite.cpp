@@ -426,10 +426,15 @@ Halite::Halite(unsigned short w, unsigned short h)
         }
         std::cout << "Waiting for a connection on port " << portNumber << ".\n";
         
-        boost::asio::io_service io_service;
-        tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), portNumber));
-        tcp::socket *socket = new tcp::socket(io_service);
-        acceptor.accept(*socket);
+        boost::asio::io_service *io_service = new boost::asio::io_service();
+		tcp::acceptor acceptor(*io_service, tcp::endpoint(tcp::v4(), portNumber));
+
+        tcp::socket *socket = new tcp::socket(*io_service);
+		tcp::socket &referenceSocket = *socket;
+		acceptor.accept(referenceSocket);
+
+		boost::asio::socket_base::keep_alive option(true);
+		socket->set_option(option);
         player_connections.push_back(socket);
         
         std::cout << "Connected to player " << number_of_players + 1 << " at " << socket->remote_endpoint().address().to_string() << std::endl << "How should I refer to this player? Please enter their name: ";

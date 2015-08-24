@@ -54,7 +54,8 @@ template<class type>
 static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 {
     size_t header;
-    s->read_some(boost::asio::buffer( &header, sizeof(header)));
+	boost::system::error_code error;
+	s->read_some(boost::asio::buffer(&header, sizeof(header)));
     
     boost::asio::streambuf buf;
     s->read_some(buf.prepare( header ));
@@ -88,16 +89,18 @@ static boost::asio::ip::tcp::socket * connectToGame()
                 std::cout << "That isn't a valid input. Please enter a valid port number: ";
             }
         }
-        boost::asio::io_service io_service;
-        
-        tcp::resolver resolver(io_service);
-        tcp::resolver::query query(tcp::v4(), "localhost", "");
-        tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-        
-        tcp::socket *socket = new tcp::socket(io_service);
-        boost::system::error_code error = boost::asio::error::host_not_found;
-        boost::asio::connect(*socket, endpoint_iterator);
-        
+
+		boost::asio::io_service *io_service = new boost::asio::io_service();
+		tcp::endpoint endpoint(boost::asio::ip::address::from_string("127.0.0.1"), portNumber);
+
+        tcp::socket *socket = new tcp::socket(*io_service);
+        boost::system::error_code error;
+		socket->connect(endpoint, error);
+
+		boost::asio::socket_base::keep_alive option(true);
+		socket->set_option(option);
+		std::cout << "open " << socket->is_open() << "\n";
+		
         if (error) {
             std::cout << "There was a problem connecting. Let's try again: \n";
         } else {
@@ -111,21 +114,19 @@ static boost::asio::ip::tcp::socket * connectToGame()
 
 static void getInit(boost::asio::ip::tcp::socket *s, unsigned char& playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
+
     InitPackage package;
     getObject(s, package);
     
     playerTag = package.playerTag;
     ageOfSentient = package.ageOfSentient;
     m = package.map;
-    
-    std::cout << "Received init message.\n";
 }
 
 static void sendInitResponse(boost::asio::ip::tcp::socket *s)
 {
     std::string response = "Done";
     sendObject(s, response);
-    std::cout << "Sent init response.\n";
 }
 
 static void getFrame(boost::asio::ip::tcp::socket *s, hlt::Map& m)

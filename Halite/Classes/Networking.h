@@ -33,7 +33,6 @@ private:
 	}
 };
 
-
 template<class type>
 static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
 {
