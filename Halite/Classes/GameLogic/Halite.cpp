@@ -1,5 +1,7 @@
 #include "Halite.h"
 
+using boost::asio::ip::tcp;
+
 unsigned char Halite::getNextFrame()
 {
     //Create threads to send/receive data to/from players. The threads should return a float of how much time passed between the end of their message being sent and the end of the AI's message being sent.
@@ -326,7 +328,7 @@ Halite::Halite()
     player_names = std::vector<std::string>();
     full_game = std::vector<hlt::Map * >();
     age_of_sentient = 0;
-    player_connections = std::vector<sf::TcpSocket * >();
+    player_connections = std::vector<tcp::socket * >();
     player_moves = std::vector< std::set<hlt::Move> >();
     //Init Color Codes:
     color_codes = std::map<unsigned char, hlt::Color>();
@@ -369,7 +371,7 @@ Halite::Halite(unsigned short w, unsigned short h)
     //Connect to players
     number_of_players = 0;
     player_names = std::vector<std::string>();
-    player_connections = std::vector<sf::TcpSocket * >();
+    player_connections = std::vector<tcp::socket * >();
     
     std::string in;
     //Ask if the user would like to use the default ports?
@@ -424,13 +426,13 @@ Halite::Halite(unsigned short w, unsigned short h)
         }
         std::cout << "Waiting for a connection on port " << portNumber << ".\n";
         
-        sf::TcpListener listener;
-        listener.listen(portNumber);
-        sf::TcpSocket * socket = new sf::TcpSocket();
-        while(listener.accept(*socket) != sf::Socket::Done);
+        boost::asio::io_service io_service;
+        tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), portNumber));
+        tcp::socket *socket = new tcp::socket(io_service);
+        acceptor.accept(*socket);
         player_connections.push_back(socket);
         
-        std::cout << "Connected to player " << number_of_players + 1 << " at " << socket->getRemoteAddress() << std::endl << "How should I refer to this player? Please enter their name: ";
+        std::cout << "Connected to player " << number_of_players + 1 << " at " << portNumber << std::endl << "How should I refer to this player? Please enter their name: ";
         std::getline(std::cin, in);
         player_names.push_back(in);
         
