@@ -5,7 +5,6 @@
 #include <time.h>
 #include <set>
 #include <cfloat>
-#include <SFML/Network.hpp>
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -34,12 +33,6 @@ private:
 	}
 };
 
-static sf::Packet& operator<<(sf::Packet& p, const hlt::Map& m)
-{
-    p << m.map_width << m.map_height;
-    for(auto a = m.contents.begin(); a != m.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) p << b->owner << b->age;
-    return p;
-}
 
 template<class type>
 static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)

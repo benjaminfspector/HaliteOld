@@ -11,8 +11,6 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 
-#include "OpenGL.h"
-
 namespace hlt
 {
     struct Location

@@ -10,7 +10,6 @@
 #include <iostream>
 #include <thread>
 #include <future>
-#include <SFML/Network.hpp>
 #include <boost/asio.hpp>
 
 #include "hlt.h"
@@ -26,7 +25,7 @@ private:
     std::map<unsigned char, hlt::Color> color_codes;
     std::vector<hlt::Map * > full_game;
     char age_of_sentient;
-    std::vector<boost::asio::ip::tcp::tcp::socket *> player_connections;
+    std::vector<boost::asio::ip::tcp::socket *> player_connections;
     std::vector< std::set<hlt::Move> > player_moves;
     
     unsigned char getNextFrame();

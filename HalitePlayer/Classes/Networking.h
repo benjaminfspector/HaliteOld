@@ -1,7 +1,6 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
-#include <SFML/Network.hpp>
 #include <time.h>
 #include <set>
 #include <iostream>
@@ -109,20 +108,6 @@ static boost::asio::ip::tcp::socket * connectToGame()
     }
 }
 
-static sf::Packet& operator<<(sf::Packet& p, const std::set<hlt::Move>& moves)
-{
-    for(auto a = moves.begin(); a != moves.end(); a++) p << a->l.x << a->l.y << a->d;
-    return p;
-}
-
-static sf::Packet& operator>>(sf::Packet& p, hlt::Map& m)
-{
-    p >> m.map_width >> m.map_height;
-    m.contents.resize(m.map_height);
-    for(auto a = m.contents.begin(); a != m.contents.end(); a++) a->resize(m.map_width);
-    for(auto a = m.contents.begin(); a != m.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) p >> b->owner >> b->age;
-    return p;
-}
 
 static void getInit(boost::asio::ip::tcp::socket *s, unsigned char& playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
