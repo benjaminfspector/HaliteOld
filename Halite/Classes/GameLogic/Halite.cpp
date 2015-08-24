@@ -432,7 +432,7 @@ Halite::Halite(unsigned short w, unsigned short h)
         acceptor.accept(*socket);
         player_connections.push_back(socket);
         
-        std::cout << "Connected to player " << number_of_players + 1 << " at " << portNumber << std::endl << "How should I refer to this player? Please enter their name: ";
+        std::cout << "Connected to player " << number_of_players + 1 << " at " << socket->remote_endpoint().address().to_string() << std::endl << "How should I refer to this player? Please enter their name: ";
         std::getline(std::cin, in);
         player_names.push_back(in);
         

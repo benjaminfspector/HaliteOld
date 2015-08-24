@@ -12,7 +12,7 @@ class Basic
 private:
     unsigned char my_tag;
     unsigned char age_of_sentient;
-    sf::TcpSocket * connection;
+    boost::asio::ip::tcp::socket *connection;
     hlt::Map present_map;
     std::set<hlt::Move> moves;
 public:

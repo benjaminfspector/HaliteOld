@@ -42,7 +42,7 @@ static sf::Packet& operator<<(sf::Packet& p, const hlt::Map& m)
 }
 
 template<class type>
-static void sendObject(boost::asio::ip::tcp::socket &s, type sendingObject)
+static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
 {
     boost::asio::streambuf buf;
     std::ostream os( &buf );
@@ -55,17 +55,17 @@ static void sendObject(boost::asio::ip::tcp::socket &s, type sendingObject)
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back( boost::asio::buffer(&header, sizeof(header)) );
     buffers.push_back( buf.data() );
-    const size_t rc = boost::asio::write(s, buffers);
+    s->write_some(buffers);
 }
 
 template<class type>
-static void getObject(boost::asio::ip::tcp::socket &s, type &receivingObject)
+static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 {
     size_t header;
-    boost::asio::read(s, boost::asio::buffer( &header, sizeof(header) ));
+    s->read_some(boost::asio::buffer( &header, sizeof(header) ));
     
     boost::asio::streambuf buf;
-    const size_t rc = boost::asio::read(s, buf.prepare( header ));
+    s->read_some(buf.prepare( header ));
     buf.commit( header );
     
     std::istream is( &buf );
@@ -73,7 +73,7 @@ static void getObject(boost::asio::ip::tcp::socket &s, type &receivingObject)
     ar & receivingObject;
 }
 
-static double handleInitNetworking(boost::asio::ip::tcp::socket &s, unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
+static double handleInitNetworking(boost::asio::ip::tcp::socket *s, unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
 {
     using boost::asio::ip::tcp;
     
@@ -97,7 +97,7 @@ static double handleInitNetworking(boost::asio::ip::tcp::socket &s, unsigned cha
     return timeElapsed;
 }
 
-static double handleFrameNetworking(boost::asio::ip::tcp::socket &s, hlt::Map& m, std::set<hlt::Move> * moves)
+static double handleFrameNetworking(boost::asio::ip::tcp::socket *s, hlt::Map& m, std::set<hlt::Move> * moves)
 {
     sendObject(s, m);
     
