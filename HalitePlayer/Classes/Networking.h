@@ -6,6 +6,7 @@
 #include <set>
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/set.hpp>
@@ -33,6 +34,41 @@ private:
 		ar & map;
 	}
 };
+
+static void serializeMoveSet(std::set<hlt::Move> &moves, std::string &returnString) {
+    std::ostringstream oss;
+    for(auto a = moves.begin(); a != moves.end(); ++a) oss << a->l.x << " " << a->l.y << " " << a->d << " ";
+    
+    returnString = oss.str();
+}
+
+static void deserializeMap(std::string &inputString, hlt::Map &map) {
+    map = hlt::Map();
+    std::stringstream iss(inputString);
+    iss >> map.map_width >> map.map_height;
+    map.contents = std::vector< std::vector<hlt::Site> >(map.map_height, std::vector<hlt::Site>(map.map_width, { 0, 0 }));
+    
+    // Run-length encode of owners
+    unsigned short y = 0, x = 0;
+    unsigned short counter = 0, owner = 0;
+    while(y != map.map_height) {
+        iss >> counter >> owner;
+        for(int a = 0; a < counter; ++a) {
+            map.contents[y][x].owner = owner;
+            ++x;
+            if(x == map.map_width) {
+                x = 0;
+                ++y;
+            }
+        }
+    }
+    
+    for (int a = 0; a < map.contents.size(); ++a) {
+        for (int b = 0; b < map.contents[a].size(); ++b) {
+            iss >> map.contents[a][b].age;
+        }
+    }
+}
 
 template<class type>
 static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)

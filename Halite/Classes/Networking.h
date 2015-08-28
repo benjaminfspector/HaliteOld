@@ -5,6 +5,7 @@
 #include <time.h>
 #include <set>
 #include <cfloat>
+#include <sstream>
 #include <SFML/Network.hpp>
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -39,6 +40,46 @@ static sf::Packet& operator<<(sf::Packet& p, const hlt::Map& m)
     p << m.map_width << m.map_height;
     for(auto a = m.contents.begin(); a != m.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) p << b->owner << b->age;
     return p;
+}
+
+static void serializeMap(hlt::Map &map, std::string &returnString) {
+    std::ostringstream oss;
+    oss << map.map_width << " " << map.map_height << " ";
+    
+    // Run-length encode of owners
+    unsigned short currentOwner = map.contents[0][0].owner;
+    unsigned short counter = 0;
+    for (int a = 0; a < map.contents.size(); ++a) {
+        for (int b = 0; b < map.contents[a].size(); ++b) {
+            if(map.contents[a][b].owner == currentOwner) {
+                counter++;
+            } else {
+                oss << counter << " " << currentOwner << " ";
+                counter = 1;
+                currentOwner = map.contents[a][b].owner;
+            }
+        }
+    }
+    // Place the last run into the string
+    oss << counter << " " << currentOwner << " ";
+    
+    // Encoding of ages
+    for (int a = 0; a < map.contents.size(); ++a) {
+        for (int b = 0; b < map.contents[a].size(); ++b) {
+            oss << map.contents[a][b].age << " ";
+        }
+    }
+    
+    returnString = oss.str();
+}
+
+static void deserializeMoveSet(std::string &inputString, std::set<hlt::Move> &moves) {
+    moves = std::set<hlt::Move>();
+    
+    std::stringstream iss(inputString);
+    hlt::Location l;
+    unsigned char d;
+    while(iss >> l.x >> l.y >> d) moves.insert({l, d});
 }
 
 template<class type>
