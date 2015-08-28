@@ -1,7 +1,4 @@
 #include <iostream>
-#ifdef _WIN32
-	#include <Windows.h>
-#endif
 
 #include "Util.h"
 #include "GameLogic/Halite.h"
@@ -22,7 +19,7 @@ Halite my_game;
 bool isPaused = false;
 signed short turn_number = 0, fps = 30;
 
-int tmain(int argc, char* args[])
+int main(int argc, char* args[])
 {
 	/*#ifdef _WIN32
 	HANDLE consoleWindow = GetStdHandle(STD_OUTPUT_HANDLE);

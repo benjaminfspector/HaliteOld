@@ -11,8 +11,6 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 
-#include "OpenGL.h"
-
 namespace hlt
 {
     struct Location
@@ -178,10 +176,7 @@ namespace hlt
         {
             ar & map_width;
             ar & map_height;
-            for(auto a = contents.begin(); a != contents.end(); ++a)
-            {
-                ar & *a;
-            }
+			ar & contents;
         }
     };
     

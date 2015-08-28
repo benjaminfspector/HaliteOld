@@ -1,7 +1,6 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
-#include <SFML/Network.hpp>
 #include <time.h>
 #include <set>
 #include <iostream>
@@ -91,7 +90,8 @@ template<class type>
 static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 {
     size_t header;
-    s->read_some(boost::asio::buffer( &header, sizeof(header)));
+	boost::system::error_code error;
+	s->read_some(boost::asio::buffer(&header, sizeof(header)));
     
     boost::asio::streambuf buf;
     s->read_some(buf.prepare( header ));
@@ -125,16 +125,18 @@ static boost::asio::ip::tcp::socket * connectToGame()
                 std::cout << "That isn't a valid input. Please enter a valid port number: ";
             }
         }
-        boost::asio::io_service io_service;
-        
-        tcp::resolver resolver(io_service);
-        tcp::resolver::query query(tcp::v4(), "localhost", "");
-        tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-        
-        tcp::socket *socket = new tcp::socket(io_service);
-        boost::system::error_code error = boost::asio::error::host_not_found;
-        boost::asio::connect(*socket, endpoint_iterator);
-        
+
+		boost::asio::io_service *io_service = new boost::asio::io_service();
+		tcp::endpoint endpoint(boost::asio::ip::address::from_string("127.0.0.1"), portNumber);
+
+        tcp::socket *socket = new tcp::socket(*io_service);
+        boost::system::error_code error;
+		socket->connect(endpoint, error);
+
+		boost::asio::socket_base::keep_alive option(true);
+		socket->set_option(option);
+		std::cout << "open " << socket->is_open() << "\n";
+		
         if (error) {
             std::cout << "There was a problem connecting. Let's try again: \n";
         } else {
@@ -145,38 +147,22 @@ static boost::asio::ip::tcp::socket * connectToGame()
     }
 }
 
-static sf::Packet& operator<<(sf::Packet& p, const std::set<hlt::Move>& moves)
-{
-    for(auto a = moves.begin(); a != moves.end(); a++) p << a->l.x << a->l.y << a->d;
-    return p;
-}
-
-static sf::Packet& operator>>(sf::Packet& p, hlt::Map& m)
-{
-    p >> m.map_width >> m.map_height;
-    m.contents.resize(m.map_height);
-    for(auto a = m.contents.begin(); a != m.contents.end(); a++) a->resize(m.map_width);
-    for(auto a = m.contents.begin(); a != m.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) p >> b->owner >> b->age;
-    return p;
-}
 
 static void getInit(boost::asio::ip::tcp::socket *s, unsigned char& playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
+
     InitPackage package;
     getObject(s, package);
     
     playerTag = package.playerTag;
     ageOfSentient = package.ageOfSentient;
     m = package.map;
-    
-    std::cout << "Received init message.\n";
 }
 
 static void sendInitResponse(boost::asio::ip::tcp::socket *s)
 {
     std::string response = "Done";
     sendObject(s, response);
-    std::cout << "Sent init response.\n";
 }
 
 static void getFrame(boost::asio::ip::tcp::socket *s, hlt::Map& m)

@@ -6,7 +6,6 @@
 #include <set>
 #include <cfloat>
 #include <sstream>
-#include <SFML/Network.hpp>
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
