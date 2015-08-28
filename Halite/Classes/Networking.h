@@ -34,13 +34,6 @@ private:
 	}
 };
 
-static sf::Packet& operator<<(sf::Packet& p, const hlt::Map& m)
-{
-    p << m.map_width << m.map_height;
-    for(auto a = m.contents.begin(); a != m.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++) p << b->owner << b->age;
-    return p;
-}
-
 static void serializeMap(hlt::Map &map, std::string &returnString) {
     std::ostringstream oss;
     oss << map.map_width << " " << map.map_height << " ";
