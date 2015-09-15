@@ -34,18 +34,24 @@ private:
 	}
 };
 
-static void serializeMap(hlt::Map &map, std::string &returnString) {
+static void serializeMap(hlt::Map &map, std::string &returnString)
+{
     std::ostringstream oss;
     oss << map.map_width << " " << map.map_height << " ";
     
     // Run-length encode of owners
     unsigned short currentOwner = map.contents[0][0].owner;
     unsigned short counter = 0;
-    for (int a = 0; a < map.contents.size(); ++a) {
-        for (int b = 0; b < map.contents[a].size(); ++b) {
-            if(map.contents[a][b].owner == currentOwner) {
+    for (int a = 0; a < map.contents.size(); ++a)
+	{
+        for (int b = 0; b < map.contents[a].size(); ++b) 
+		{
+            if(map.contents[a][b].owner == currentOwner)
+			{
                 counter++;
-            } else {
+            }
+			else
+			{
                 oss << counter << " " << currentOwner << " ";
                 counter = 1;
                 currentOwner = map.contents[a][b].owner;
@@ -56,8 +62,10 @@ static void serializeMap(hlt::Map &map, std::string &returnString) {
     oss << counter << " " << currentOwner << " ";
     
     // Encoding of ages
-    for (int a = 0; a < map.contents.size(); ++a) {
-        for (int b = 0; b < map.contents[a].size(); ++b) {
+    for (int a = 0; a < map.contents.size(); ++a)
+	{
+        for (int b = 0; b < map.contents[a].size(); ++b)
+		{
             oss << map.contents[a][b].age << " ";
         }
     }
@@ -65,7 +73,8 @@ static void serializeMap(hlt::Map &map, std::string &returnString) {
     returnString = oss.str();
 }
 
-static void deserializeMoveSet(std::string &inputString, std::set<hlt::Move> &moves) {
+static void deserializeMoveSet(std::string &inputString, std::set<hlt::Move> &moves)
+{
     moves = std::set<hlt::Move>();
     
     std::stringstream iss(inputString);
@@ -134,7 +143,6 @@ static double handleInitNetworking(boost::asio::ip::tcp::socket *s, unsigned cha
 
 static double handleFrameNetworking(boost::asio::ip::tcp::socket *s, hlt::Map& m, std::set<hlt::Move> * moves)
 {
-	std::cout << "map size: " << m.map_width << ", " << m.map_height << "\n";
     sendObject(s, m);
     
     moves->clear();

@@ -10,7 +10,7 @@ int main()
 {
 	srand(time(NULL));
 
-	/*std::string in;
+	std::string in;
 	std::cout << "What type of agent would you like to play? Enter r for a random agent and b for a basic agent: ";
 	while(true)
 	{
@@ -27,10 +27,7 @@ int main()
 	{
 		Basic b = Basic();
 		b.run();
-	}*/
+	}
 
-	/// TEMPORARY
-	Random r = Random();
-	r.run();
 	return 0;
 }

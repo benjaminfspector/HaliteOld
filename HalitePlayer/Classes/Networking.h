@@ -51,20 +51,25 @@ static void deserializeMap(std::string &inputString, hlt::Map &map) {
     // Run-length encode of owners
     unsigned short y = 0, x = 0;
     unsigned short counter = 0, owner = 0;
-    while(y != map.map_height) {
+    while(y != map.map_height)
+	{
         iss >> counter >> owner;
-        for(int a = 0; a < counter; ++a) {
+        for(int a = 0; a < counter; ++a)
+		{
             map.contents[y][x].owner = owner;
             ++x;
-            if(x == map.map_width) {
+            if(x == map.map_width)
+			{
                 x = 0;
                 ++y;
             }
         }
     }
     
-    for (int a = 0; a < map.contents.size(); ++a) {
-        for (int b = 0; b < map.contents[a].size(); ++b) {
+    for (int a = 0; a < map.contents.size(); ++a)
+	{
+        for (int b = 0; b < map.contents[a].size(); ++b)
+		{
             iss >> map.contents[a][b].age;
         }
     }
@@ -97,16 +102,10 @@ static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
     buf.commit( header );
 
 	std::cout << "header: " << header << "\n";
-	std::cout << "bur: " << buf.size();
 
-	try {
-		std::istream is(&buf);
-		boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
-		ar >> receivingObject;
-	}
-	catch (boost::archive::archive_exception e) {
-		std::cout << "ex: " << e.what() << "\n";
-	}
+	std::istream is(&buf);
+	boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
+	ar >> receivingObject;
 }
 
 static boost::asio::ip::tcp::socket * connectToGame()
@@ -144,9 +143,12 @@ static boost::asio::ip::tcp::socket * connectToGame()
 		socket->set_option(option);
 		std::cout << "open " << socket->is_open() << "\n";
 		
-        if (error) {
+        if (error)
+		{
             std::cout << "There was a problem connecting. Let's try again: \n";
-        } else {
+        } 
+		else 
+		{
             std::cout << "Successfully established contact with " << socket->remote_endpoint().address().to_string() << ".\n";
             return socket;
         }

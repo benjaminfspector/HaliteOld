@@ -382,7 +382,7 @@ Halite::Halite(unsigned short w, unsigned short h)
     std::string in;
     //Ask if the user would like to use the default ports?
     bool useDefaultPorts = true;
-    /*std::cout << "Would you like to use the default ports? Please enter Yes or No: ";
+    std::cout << "Would you like to use the default ports? Please enter Yes or No: ";
     while(true)
     {
         std::getline(std::cin, in);
@@ -448,29 +448,8 @@ Halite::Halite(unsigned short w, unsigned short h)
         player_names.push_back(in);
         
         number_of_players++;
-    }*/
+    }
 
-	/// TEMPORARY
-	number_of_players = 2;
-	for (int a = 0; a < 2; a++)
-	{
-		int portNumber = (2000 + a);
-		std::cout << "Waiting for a connection on port " << portNumber << ".\n";
-
-		boost::asio::io_service *io_service = new boost::asio::io_service();
-		tcp::acceptor acceptor(*io_service, tcp::endpoint(tcp::v4(), portNumber));
-
-		tcp::socket *socket = new tcp::socket(*io_service);
-		tcp::socket &referenceSocket = *socket;
-		acceptor.accept(referenceSocket);
-
-		boost::asio::socket_base::keep_alive option(true);
-		socket->set_option(option);
-		player_connections.push_back(socket);
-
-		player_names.push_back("plr");
-	}
-    
     getColorCodes();
     
     //Initialize map:
