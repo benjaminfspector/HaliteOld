@@ -15,9 +15,11 @@
 
 namespace hlt
 {
-	struct Location 
-	{ 
-		unsigned short x, y; 
+	struct Location
+	{
+		unsigned short x, y;
+
+		friend class boost::serialization::access;
 
 		template<class Archive>
 		void serialize(Archive & ar, const unsigned int version)
@@ -32,14 +34,16 @@ namespace hlt
 	}
 
 	struct Color
-	{ 
+	{
 		GLubyte r, g, b;
 	};
 
-	struct Site 
-	{ 
-		unsigned char owner, age; 
-	
+	struct Site
+	{
+		unsigned char owner, age;
+
+		friend class boost::serialization::access;
+
 		template<class Archive>
 		void serialize(Archive & ar, const unsigned int version)
 		{
@@ -74,25 +78,25 @@ namespace hlt
 
 			std::list<Location> takenSpots;
 			float minDistance = sqrt(map_height*map_width) / 2;
-			for(int a = 1; a <= numberOfPlayers; a++)
+			for (int a = 1; a <= numberOfPlayers; a++)
 			{
 				bool bad = true;
 				int counter = 0;
 				Location l;
-				while(bad)
+				while (bad)
 				{
 					bad = false;
 					l = { static_cast<unsigned short>(rand() % map_width), static_cast<unsigned short>(rand() % map_height) };
-					for(auto b = takenSpots.begin(); b != takenSpots.end(); b++)
+					for (auto b = takenSpots.begin(); b != takenSpots.end(); b++)
 					{
-						if(getDistance(l, *b) <= minDistance)
+						if (getDistance(l, *b) <= minDistance)
 						{
 							bad = true;
 							break;
 						}
 					}
 					counter++;
-					if(counter > 150)
+					if (counter > 150)
 					{
 						counter = 0;
 						minDistance *= 0.85;
@@ -110,17 +114,17 @@ namespace hlt
 		float getDistance(Location l1, Location l2)
 		{
 			short dx = abs(l1.x - l2.x), dy = abs(l1.y - l2.y);
-			if(dx > map_width / 2) dx = map_width - dx;
-			if(dy > map_height / 2) dy = map_height - dy;
+			if (dx > map_width / 2) dx = map_width - dx;
+			if (dy > map_height / 2) dy = map_height - dy;
 			return sqrt((dx*dx) + (dy*dy));
 		}
 		float getAngle(Location l1, Location l2)
 		{
 			short dx = l2.x - l1.x, dy = l2.y - l1.y;
-			if(dx > map_width - dx) dx -= map_width;
-			else if(-dx > map_width + dx) dx += map_width;
-			if(dy > map_height - dy) dy -= map_height;
-			else if(-dy > map_height + dy) dy += map_height;
+			if (dx > map_width - dx) dx -= map_width;
+			else if (-dx > map_width + dx) dx += map_width;
+			if (dy > map_height - dy) dy -= map_height;
+			else if (-dy > map_height + dy) dy += map_height;
 			return atan2(dy, dx);
 		}
 		Site& getSite(Location l)
@@ -129,53 +133,54 @@ namespace hlt
 		}
 		Site& getNorthernSite(Location l)
 		{
-			if(l.y != 0) l.y--;
+			if (l.y != 0) l.y--;
 			else l.y = map_height - 1;
 			return contents[l.y][l.x];
 		}
 		Site& getEasternSite(Location l)
 		{
-			if(l.x != map_width - 1) l.x++;
+			if (l.x != map_width - 1) l.x++;
 			else l.x = 0;
 			return contents[l.y][l.x];
 		}
 		Site& getSouthernSite(Location l)
 		{
-			if(l.y != map_height - 1) l.y++;
+			if (l.y != map_height - 1) l.y++;
 			else l.y = 0;
 			return contents[l.y][l.x];
 		}
 		Site& getWesternSite(Location l)
 		{
-			if(l.x != 0) l.x--;
+			if (l.x != 0) l.x--;
 			else l.x = map_width - 1;
 			return contents[l.y][l.x];
 		}
 		Location getNorthern(Location l)
 		{
-			if(l.y != 0) l.y--;
+			if (l.y != 0) l.y--;
 			else l.y = map_height - 1;
 			return l;
 		}
 		Location getEastern(Location l)
 		{
-			if(l.x != map_width - 1) l.x++;
+			if (l.x != map_width - 1) l.x++;
 			else l.x = 0;
 			return l;
 		}
 		Location getSouthern(Location l)
 		{
-			if(l.y != map_height - 1) l.y++;
+			if (l.y != map_height - 1) l.y++;
 			else l.y = 0;
 			return l;
 		}
 		Location getWestern(Location l)
 		{
-			if(l.x != 0) l.x--;
+			if (l.x != 0) l.x--;
 			else l.x = map_width - 1;
 			return l;
 		}
 
+	private:
 		friend class boost::serialization::access;
 
 		template<class Archive>
@@ -187,10 +192,12 @@ namespace hlt
 		}
 	};
 
-	struct Move 
-	{ 
+	struct Move
+	{
 		Location l; unsigned char d;
-	
+
+		friend class boost::serialization::access;
+
 		template<class Archive>
 		void serialize(Archive & ar, const unsigned int version)
 		{

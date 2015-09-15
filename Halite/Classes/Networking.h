@@ -5,7 +5,7 @@
 #include <time.h>
 #include <set>
 #include <cfloat>
-#include <sstream>
+#include <fstream>
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -75,14 +75,16 @@ static void deserializeMoveSet(std::string &inputString, std::set<hlt::Move> &mo
 }
 
 template<class type>
-static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
+static void sendObject(boost::asio::ip::tcp::socket *s, const type &sendingObject)
 {
     boost::asio::streambuf buf;
     std::ostream os( &buf );
-    boost::archive::text_oarchive ar( os );
-    ar & sendingObject;
+    boost::archive::text_oarchive ar( os, boost::archive::archive_flags::no_header);
+    ar << sendingObject;
     
-    const size_t header = buf.size();
+	size_t header = buf.size();
+
+	std::cout << "header size: " << header << "\n";
     
     // send header and buffer using scatter
     std::vector<boost::asio::const_buffer> buffers;
@@ -94,7 +96,7 @@ static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
 template<class type>
 static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 {
-    size_t header;
+	size_t header;
     s->read_some(boost::asio::buffer( &header, sizeof(header) ));
     
     boost::asio::streambuf buf;
@@ -102,8 +104,8 @@ static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
     buf.commit( header );
     
     std::istream is( &buf );
-    boost::archive::text_iarchive ar( is );
-    ar & receivingObject;
+    boost::archive::text_iarchive ar( is, boost::archive::archive_flags::no_header);
+	ar >> receivingObject;
 }
 
 static double handleInitNetworking(boost::asio::ip::tcp::socket *s, unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)
@@ -132,6 +134,7 @@ static double handleInitNetworking(boost::asio::ip::tcp::socket *s, unsigned cha
 
 static double handleFrameNetworking(boost::asio::ip::tcp::socket *s, hlt::Map& m, std::set<hlt::Move> * moves)
 {
+	std::cout << "map size: " << m.map_width << ", " << m.map_height << "\n";
     sendObject(s, m);
     
     moves->clear();

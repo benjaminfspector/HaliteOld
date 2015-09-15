@@ -5,7 +5,8 @@
 #include <set>
 #include <iostream>
 #include <cstdlib>
-#include <sstream>
+#include <fstream>
+#include <boost/archive/archive_exception.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/set.hpp>
@@ -16,7 +17,7 @@
 
 #include "hlt.h"
 
-struct InitPackage 
+struct InitPackage
 {
 	unsigned char playerTag;
 	unsigned char ageOfSentient;
@@ -70,16 +71,15 @@ static void deserializeMap(std::string &inputString, hlt::Map &map) {
 }
 
 template<class type>
-static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
+static void sendObject(boost::asio::ip::tcp::socket *s, const type &sendingObject)
 {
     boost::asio::streambuf buf;
     std::ostream os( &buf );
-    boost::archive::text_oarchive ar( os );
-    ar & sendingObject;
+    boost::archive::text_oarchive ar( os, boost::archive::archive_flags::no_header);
+    ar << sendingObject;
     
-    const size_t header = buf.size();
+	size_t header = buf.size();
     
-    // send header and buffer using scatter
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back( boost::asio::buffer(&header, sizeof(header)) );
     buffers.push_back( buf.data() );
@@ -89,17 +89,24 @@ static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
 template<class type>
 static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 {
-    size_t header;
-	boost::system::error_code error;
+	size_t header;
 	s->read_some(boost::asio::buffer(&header, sizeof(header)));
     
     boost::asio::streambuf buf;
     s->read_some(buf.prepare( header ));
     buf.commit( header );
-    
-    std::istream is( &buf );
-    boost::archive::text_iarchive ar( is );
-    ar & receivingObject;
+
+	std::cout << "header: " << header << "\n";
+	std::cout << "bur: " << buf.size();
+
+	try {
+		std::istream is(&buf);
+		boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
+		ar >> receivingObject;
+	}
+	catch (boost::archive::archive_exception e) {
+		std::cout << "ex: " << e.what() << "\n";
+	}
 }
 
 static boost::asio::ip::tcp::socket * connectToGame()
@@ -151,7 +158,7 @@ static boost::asio::ip::tcp::socket * connectToGame()
 static void getInit(boost::asio::ip::tcp::socket *s, unsigned char& playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
 
-    InitPackage package;
+	InitPackage package = {0, 0, hlt::Map()};
     getObject(s, package);
     
     playerTag = package.playerTag;

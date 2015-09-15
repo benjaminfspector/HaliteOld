@@ -28,7 +28,7 @@ int main(int argc, char* args[])
 	SetConsoleScreenBufferSize(consoleWindow, c);
 	#endif*/
 
-	std::string in;
+	/*std::string in;
 	std::thread logicThread;
 	unsigned short mapWidth, mapHeight;
 
@@ -89,7 +89,14 @@ int main(int argc, char* args[])
 			std::cout << "I couldn't open the specified file. Please enter the name of another file to play back from: ";
 			std::getline(std::cin, in);
 		}
-	}
+	}*/
+
+	/// TEMPORARY
+	unsigned short mapWidth = 100;
+	unsigned short mapHeight = 100;
+	my_game = Halite(mapWidth, mapHeight);
+	my_game.init();
+	std::thread logicThread = std::thread(doLogic);
 
 	//Initialize FreeGLUT
 	glutInit(&argc, args);
