@@ -6,13 +6,24 @@
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/set.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/asio.hpp>
-#include <boost/array.hpp>
+
+#ifdef _WIN32
+	#include <boost\archive\text_oarchive.hpp>
+	#include <boost\archive\text_iarchive.hpp>
+	#include <boost\serialization\set.hpp>
+	#include <boost\serialization\vector.hpp>
+	#include <boost\serialization\string.hpp>
+	#include <boost\asio.hpp>
+	#include <boost\array.hpp>
+#elif
+	#include <boost/archive/text_oarchive.hpp>
+	#include <boost/archive/text_iarchive.hpp>
+	#include <boost/serialization/set.hpp>
+	#include <boost/serialization/vector.hpp>
+	#include <boost/serialization/string.hpp>
+	#include <boost/asio.hpp>
+	#include <boost/array.hpp>
+#endif
 
 #include "hlt.h"
 
@@ -41,7 +52,8 @@ static void serializeMoveSet(std::set<hlt::Move> &moves, std::string &returnStri
     returnString = oss.str();
 }
 
-static void deserializeMap(std::string &inputString, hlt::Map &map) {
+static void deserializeMap(std::string &inputString, hlt::Map &map)
+{
     map = hlt::Map();
     std::stringstream iss(inputString);
     iss >> map.map_width >> map.map_height;
@@ -50,20 +62,25 @@ static void deserializeMap(std::string &inputString, hlt::Map &map) {
     // Run-length encode of owners
     unsigned short y = 0, x = 0;
     unsigned short counter = 0, owner = 0;
-    while(y != map.map_height) {
+    while(y != map.map_height) 
+	{
         iss >> counter >> owner;
-        for(int a = 0; a < counter; ++a) {
+        for(int a = 0; a < counter; ++a) 
+		{
             map.contents[y][x].owner = owner;
             ++x;
-            if(x == map.map_width) {
+            if(x == map.map_width) 
+			{
                 x = 0;
                 ++y;
             }
         }
     }
     
-    for (int a = 0; a < map.contents.size(); ++a) {
-        for (int b = 0; b < map.contents[a].size(); ++b) {
+    for (int a = 0; a < map.contents.size(); ++a) 
+	{
+        for (int b = 0; b < map.contents[a].size(); ++b) 
+		{
             iss >> map.contents[a][b].age;
         }
     }

@@ -35,9 +35,9 @@ unsigned char Halite::getNextFrame()
     
     //Figure out how long each AI is permitted to respond.
     std::vector<double> allowableTimesToRespond(number_of_players);
-    for(unsigned char a = 0; a < number_of_players; a++) allowableTimesToRespond[a] = //FLT_MAX;
+    for(unsigned char a = 0; a < number_of_players; a++) allowableTimesToRespond[a] = FLT_MAX;
         //For the time being we'll allow infinte time (debugging purposes), but eventually this will come into use):
-        allowableTimesToRespond[a] = 0.01 + (double(game_map.map_height)*game_map.map_width*.00001) + (double(numSentient[a]) * numSentient[a] * .0001);
+        //allowableTimesToRespond[a] = 0.01 + (double(game_map.map_height)*game_map.map_width*.00001) + (double(numSentient[a]) * numSentient[a] * .0001);
     
     //Join threads. Figure out if the player responded in an allowable amount of time.
     std::vector<bool> permissibleTime(number_of_players);
@@ -210,8 +210,8 @@ std::string Halite::runGame()
 
 void Halite::confirmWithinGame(signed short& turnNumber)
 {
+	if(turnNumber < 0) turnNumber = 0;
     if(turnNumber >= full_game.size()) turnNumber = full_game.size() - 1;
-    else if(turnNumber < 0) turnNumber = 0;
 }
 
 void Halite::render(short& turnNumber)

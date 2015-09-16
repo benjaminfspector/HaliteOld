@@ -14,9 +14,12 @@ void Random::run()
     {
         moves.clear();
         getFrame(connection, present_map);
-		for(unsigned short a = 0; a < present_map.map_height; a++) {
-			for(unsigned short b = 0; b < present_map.map_width; b++) {
-				if(present_map.contents[a][b].owner == my_tag && present_map.contents[a][b].age == age_of_sentient) {
+		for(unsigned short a = 0; a < present_map.map_height; a++)
+		{
+			for(unsigned short b = 0; b < present_map.map_width; b++)
+			{
+				if(present_map.contents[a][b].owner == my_tag && present_map.contents[a][b].age == age_of_sentient)
+				{
 					moves.insert({ { b, a }, (unsigned char)(rand() % 5) });
 				}
 			}

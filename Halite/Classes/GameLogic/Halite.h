@@ -1,7 +1,6 @@
 #ifndef HALITE_H
 #define HALITE_H
 
-//#include <boost\asio.hpp>
 #include <fstream>
 #include <string>
 #include <map>

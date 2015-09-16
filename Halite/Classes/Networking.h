@@ -6,13 +6,12 @@
 #include <set>
 #include <cfloat>
 #include <sstream>
-#include <boost/asio.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/set.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/asio.hpp>
+#include <boost\asio.hpp>
+#include <boost\archive\text_oarchive.hpp>
+#include <boost\archive\text_iarchive.hpp>
+#include <boost\serialization\set.hpp>
+#include <boost\serialization\vector.hpp>
+#include <boost\serialization\string.hpp>
 
 #include "GameLogic/hlt.h"
 

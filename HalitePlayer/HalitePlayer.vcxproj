@@ -39,12 +39,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\freeglutMSVC\boost_1_58_0;C:\freeglutMSVC\SFML-2.3.1\include;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\freeglutMSVC\SFML-2.3.1\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\boost_1_58_0;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\boost_1_58_0\stage\lib;C:\vsProjects\freeglut\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\freeglutMSVC\boost_1_58_0;C:\freeglutMSVC\SFML-2.3.1\include;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\freeglutMSVC\SFML-2.3.1\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\boost_1_58_0;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\boost_1_58_0\stage\lib;C:\vsProjects\freeglut\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -57,7 +57,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sfml-network-s-d.lib;sfml-system-s-d.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freeglut.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\freeglutMSVC\boost_1_58_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -75,7 +75,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>sfml-network-s.lib;sfml-system-s.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freeglut.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\freeglutMSVC\boost_1_58_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

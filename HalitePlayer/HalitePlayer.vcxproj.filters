@@ -24,14 +24,14 @@
     <ClInclude Include="Classes\hlt.h">
       <Filter>Standard Files</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Networking.h">
-      <Filter>Standard Files</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\Agents\Random\Random.h">
       <Filter>Agents\Random</Filter>
     </ClInclude>
     <ClInclude Include="Classes\Agents\Basic\Basic.h">
       <Filter>Agents\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Networking.h">
+      <Filter>Standard Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
