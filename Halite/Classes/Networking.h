@@ -5,6 +5,7 @@
 #include <time.h>
 #include <set>
 #include <cfloat>
+<<<<<<< HEAD
 #include <sstream>
 #include <boost\asio.hpp>
 #include <boost\archive\text_oarchive.hpp>
@@ -12,6 +13,16 @@
 #include <boost\serialization\set.hpp>
 #include <boost\serialization\vector.hpp>
 #include <boost\serialization\string.hpp>
+=======
+#include <fstream>
+#include <boost/asio.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/asio.hpp>
+>>>>>>> origin/master
 
 #include "GameLogic/hlt.h"
 
@@ -33,18 +44,24 @@ private:
 	}
 };
 
-static void serializeMap(hlt::Map &map, std::string &returnString) {
+static void serializeMap(hlt::Map &map, std::string &returnString)
+{
     std::ostringstream oss;
     oss << map.map_width << " " << map.map_height << " ";
     
     // Run-length encode of owners
     unsigned short currentOwner = map.contents[0][0].owner;
     unsigned short counter = 0;
-    for (int a = 0; a < map.contents.size(); ++a) {
-        for (int b = 0; b < map.contents[a].size(); ++b) {
-            if(map.contents[a][b].owner == currentOwner) {
+    for (int a = 0; a < map.contents.size(); ++a)
+	{
+        for (int b = 0; b < map.contents[a].size(); ++b) 
+		{
+            if(map.contents[a][b].owner == currentOwner)
+			{
                 counter++;
-            } else {
+            }
+			else
+			{
                 oss << counter << " " << currentOwner << " ";
                 counter = 1;
                 currentOwner = map.contents[a][b].owner;
@@ -55,8 +72,10 @@ static void serializeMap(hlt::Map &map, std::string &returnString) {
     oss << counter << " " << currentOwner << " ";
     
     // Encoding of ages
-    for (int a = 0; a < map.contents.size(); ++a) {
-        for (int b = 0; b < map.contents[a].size(); ++b) {
+    for (int a = 0; a < map.contents.size(); ++a)
+	{
+        for (int b = 0; b < map.contents[a].size(); ++b)
+		{
             oss << map.contents[a][b].age << " ";
         }
     }
@@ -64,7 +83,8 @@ static void serializeMap(hlt::Map &map, std::string &returnString) {
     returnString = oss.str();
 }
 
-static void deserializeMoveSet(std::string &inputString, std::set<hlt::Move> &moves) {
+static void deserializeMoveSet(std::string &inputString, std::set<hlt::Move> &moves)
+{
     moves = std::set<hlt::Move>();
     
     std::stringstream iss(inputString);
@@ -74,14 +94,16 @@ static void deserializeMoveSet(std::string &inputString, std::set<hlt::Move> &mo
 }
 
 template<class type>
-static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
+static void sendObject(boost::asio::ip::tcp::socket *s, const type &sendingObject)
 {
     boost::asio::streambuf buf;
     std::ostream os( &buf );
-    boost::archive::text_oarchive ar( os );
-    ar & sendingObject;
+    boost::archive::text_oarchive ar( os, boost::archive::archive_flags::no_header);
+    ar << sendingObject;
     
-    const size_t header = buf.size();
+	size_t header = buf.size();
+
+	std::cout << "header size: " << header << "\n";
     
     // send header and buffer using scatter
     std::vector<boost::asio::const_buffer> buffers;
@@ -93,7 +115,7 @@ static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
 template<class type>
 static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 {
-    size_t header;
+	size_t header;
     s->read_some(boost::asio::buffer( &header, sizeof(header) ));
     
     boost::asio::streambuf buf;
@@ -101,8 +123,8 @@ static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
     buf.commit( header );
     
     std::istream is( &buf );
-    boost::archive::text_iarchive ar( is );
-    ar & receivingObject;
+    boost::archive::text_iarchive ar( is, boost::archive::archive_flags::no_header);
+	ar >> receivingObject;
 }
 
 static double handleInitNetworking(boost::asio::ip::tcp::socket *s, unsigned char playerTag, unsigned char ageOfSentient, std::string name, hlt::Map& m)

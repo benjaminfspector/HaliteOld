@@ -11,28 +11,21 @@ unsigned char Halite::getNextFrame()
         frameThreads[a] = std::async(handleFrameNetworking, player_connections[a], game_map, &player_moves[a]);
     }
     
-    //Create a map of the locations of sentient pieces on the game map. Additionally, age pieces. Something like:
-    std::map<hlt::Location, unsigned char> sentientPieces;
-    std::vector<unsigned short> numSentient(number_of_players, 0);
-    for(unsigned short a = 0; a < game_map.map_height; a++) for(unsigned short b = 0; b < game_map.map_width; b++)
-    {
-        //If sentient
-        if(game_map.contents[a][b].age == age_of_sentient)
-        {
-            //Add to map of sentient pieces.
-            sentientPieces.insert(std::pair<hlt::Location, unsigned char>({ b, a }, game_map.contents[a][b].owner));
-            //Add to number of sentients controlled by player.
-            numSentient[game_map.contents[a][b].owner - 1]++;
-            //Leave blank square behind (for clearing sentients). Assume it has aged.
-            game_map.contents[a][b].age = 0;
-        }
-        else if(game_map.contents[a][b].owner != 0)
-        {
-            //Age piece
-            game_map.contents[a][b].age++;
-        }
-    }
-    
+	//Calculate the number of sentients each player has
+	std::vector<unsigned short> numSentient(number_of_players, 0);
+	std::map<hlt::Location, unsigned char> sentientPieces;
+	for (unsigned short a = 0; a < game_map.map_height; a++) for (unsigned short b = 0; b < game_map.map_width; b++)
+	{
+		//If sentient
+		if (game_map.contents[a][b].age == age_of_sentient)
+		{
+			//Add to map of sentient pieces.
+			sentientPieces.insert(std::pair<hlt::Location, unsigned char>({ b, a }, game_map.contents[a][b].owner));
+			//Add to number of sentients controlled by player.
+			numSentient[game_map.contents[a][b].owner - 1]++;
+		}
+	}
+
     //Figure out how long each AI is permitted to respond.
     std::vector<double> allowableTimesToRespond(number_of_players);
     for(unsigned char a = 0; a < number_of_players; a++) allowableTimesToRespond[a] = FLT_MAX;
@@ -45,9 +38,22 @@ unsigned char Halite::getNextFrame()
     {
         permissibleTime[a] = frameThreads[a].get() <= allowableTimesToRespond[a];
     }
-    
-    //De-age players who have exceed the time limit:
-    for(unsigned short a = 0; a < game_map.map_height; a++) for(unsigned short b = 0; b < game_map.map_width; b++) if(game_map.contents[a][b].owner != 0 && !permissibleTime[game_map.contents[a][b].owner - 1] && game_map.contents[a][b].age != 0) game_map.contents[a][b].age--;
+
+	//Create a map of the locations of sentient pieces on the game map. Additionally, age pieces. Something like:
+	for (unsigned short a = 0; a < game_map.map_height; a++) for (unsigned short b = 0; b < game_map.map_width; b++)
+	{
+		//If sentient
+		if (game_map.contents[a][b].age == age_of_sentient)
+		{
+			//Leave blank square behind (for clearing sentients). Assume it has aged.
+			game_map.contents[a][b].age = 0;
+		}
+		else if (game_map.contents[a][b].owner != 0 && permissibleTime[game_map.contents[a][b].owner - 1])
+		{
+			//Age piece
+			game_map.contents[a][b].age++;
+		}
+	}
     
     //Create a list of pieces to destroy:
     std::set<hlt::Location> toDestroy;
@@ -443,7 +449,7 @@ Halite::Halite(unsigned short w, unsigned short h)
         
         number_of_players++;
     }
-    
+
     getColorCodes();
     
     //Initialize map:

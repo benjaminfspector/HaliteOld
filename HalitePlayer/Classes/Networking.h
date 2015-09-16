@@ -5,6 +5,7 @@
 #include <set>
 #include <iostream>
 #include <cstdlib>
+<<<<<<< HEAD
 #include <sstream>
 
 #ifdef _WIN32
@@ -24,10 +25,21 @@
 	#include <boost/asio.hpp>
 	#include <boost/array.hpp>
 #endif
+=======
+#include <fstream>
+#include <boost/archive/archive_exception.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/asio.hpp>
+#include <boost/array.hpp>
+>>>>>>> origin/master
 
 #include "hlt.h"
 
-struct InitPackage 
+struct InitPackage
 {
 	unsigned char playerTag;
 	unsigned char ageOfSentient;
@@ -62,6 +74,7 @@ static void deserializeMap(std::string &inputString, hlt::Map &map)
     // Run-length encode of owners
     unsigned short y = 0, x = 0;
     unsigned short counter = 0, owner = 0;
+<<<<<<< HEAD
     while(y != map.map_height) 
 	{
         iss >> counter >> owner;
@@ -70,6 +83,16 @@ static void deserializeMap(std::string &inputString, hlt::Map &map)
             map.contents[y][x].owner = owner;
             ++x;
             if(x == map.map_width) 
+=======
+    while(y != map.map_height)
+	{
+        iss >> counter >> owner;
+        for(int a = 0; a < counter; ++a)
+		{
+            map.contents[y][x].owner = owner;
+            ++x;
+            if(x == map.map_width)
+>>>>>>> origin/master
 			{
                 x = 0;
                 ++y;
@@ -77,9 +100,15 @@ static void deserializeMap(std::string &inputString, hlt::Map &map)
         }
     }
     
+<<<<<<< HEAD
     for (int a = 0; a < map.contents.size(); ++a) 
 	{
         for (int b = 0; b < map.contents[a].size(); ++b) 
+=======
+    for (int a = 0; a < map.contents.size(); ++a)
+	{
+        for (int b = 0; b < map.contents[a].size(); ++b)
+>>>>>>> origin/master
 		{
             iss >> map.contents[a][b].age;
         }
@@ -87,16 +116,15 @@ static void deserializeMap(std::string &inputString, hlt::Map &map)
 }
 
 template<class type>
-static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
+static void sendObject(boost::asio::ip::tcp::socket *s, const type &sendingObject)
 {
     boost::asio::streambuf buf;
     std::ostream os( &buf );
-    boost::archive::text_oarchive ar( os );
-    ar & sendingObject;
+    boost::archive::text_oarchive ar( os, boost::archive::archive_flags::no_header);
+    ar << sendingObject;
     
-    const size_t header = buf.size();
+	size_t header = buf.size();
     
-    // send header and buffer using scatter
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back( boost::asio::buffer(&header, sizeof(header)) );
     buffers.push_back( buf.data() );
@@ -106,17 +134,18 @@ static void sendObject(boost::asio::ip::tcp::socket *s, type sendingObject)
 template<class type>
 static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 {
-    size_t header;
-	boost::system::error_code error;
+	size_t header;
 	s->read_some(boost::asio::buffer(&header, sizeof(header)));
     
     boost::asio::streambuf buf;
     s->read_some(buf.prepare( header ));
     buf.commit( header );
-    
-    std::istream is( &buf );
-    boost::archive::text_iarchive ar( is );
-    ar & receivingObject;
+
+	std::cout << "header: " << header << "\n";
+
+	std::istream is(&buf);
+	boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
+	ar >> receivingObject;
 }
 
 static boost::asio::ip::tcp::socket * connectToGame()
@@ -154,9 +183,12 @@ static boost::asio::ip::tcp::socket * connectToGame()
 		socket->set_option(option);
 		std::cout << "open " << socket->is_open() << "\n";
 		
-        if (error) {
+        if (error)
+		{
             std::cout << "There was a problem connecting. Let's try again: \n";
-        } else {
+        } 
+		else 
+		{
             std::cout << "Successfully established contact with " << socket->remote_endpoint().address().to_string() << ".\n";
             return socket;
         }
@@ -168,7 +200,7 @@ static boost::asio::ip::tcp::socket * connectToGame()
 static void getInit(boost::asio::ip::tcp::socket *s, unsigned char& playerTag, unsigned char& ageOfSentient, hlt::Map& m)
 {
 
-    InitPackage package;
+	InitPackage package = {0, 0, hlt::Map()};
     getObject(s, package);
     
     playerTag = package.playerTag;
