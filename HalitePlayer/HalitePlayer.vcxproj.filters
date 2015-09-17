@@ -30,15 +30,13 @@
     <ClInclude Include="Classes\hlt.h">
       <Filter>Standard Files</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Networking.h">
-      <Filter>Standard Files</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\Agents\Random\Random.h">
       <Filter>Agents\Random</Filter>
     </ClInclude>
     <ClInclude Include="Classes\Agents\Basic\Basic.h">
       <Filter>Agents\Basic</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\..\SecretAgents\Test.h">
       <Filter>Agents\SecretAgents</Filter>
     </ClInclude>
@@ -56,6 +54,10 @@
     </ClInclude>
     <ClInclude Include="..\..\SecretAgents\Tissue33.h">
       <Filter>Agents\SecretAgents</Filter>
+=======
+    <ClInclude Include="Classes\Networking.h">
+      <Filter>Standard Files</Filter>
+>>>>>>> origin/master
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

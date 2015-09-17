@@ -1,7 +1,6 @@
 #ifndef HALITE_H
 #define HALITE_H
 
-//#include <boost\asio.hpp>
 #include <fstream>
 #include <string>
 #include <map>
@@ -10,9 +9,7 @@
 #include <iostream>
 #include <thread>
 #include <future>
-
-//For the time being we'll use sfml sockets, and then switch to asio later once I understand it.
-#include <C:\freeglutMSVC\SFML-2.3.1\include\SFML\Network.hpp>
+#include <boost/asio.hpp>
 
 #include "hlt.h"
 #include "OpenGL.h"
@@ -21,6 +18,7 @@
 class Halite
 {
 private:
+<<<<<<< HEAD
 	hlt::Map game_map;
 	unsigned short turn_number, number_of_players, last_turn_output;
 	std::vector<std::string> player_names;
@@ -44,6 +42,30 @@ public:
 	void output();
 	bool input(std::string filename, unsigned short& width, unsigned short& height);
 	void getColorCodes();
+=======
+    hlt::Map game_map;
+    unsigned short turn_number, number_of_players, last_turn_output;
+    std::vector<std::string> player_names;
+    std::map<unsigned char, hlt::Color> color_codes;
+    std::vector<hlt::Map * > full_game;
+    char age_of_sentient;
+    std::vector<boost::asio::ip::tcp::socket *> player_connections;
+    std::vector< std::set<hlt::Move> > player_moves;
+    
+    unsigned char getNextFrame();
+    void connectToPlayers();
+    unsigned char getAgeOfSentient(unsigned short w, unsigned short h) { return pow(int(w)*h, 0.4); }
+public:
+    Halite();
+    Halite(unsigned short w, unsigned short h);
+    void init();
+    std::string runGame();
+    void confirmWithinGame(signed short& turnNumber);
+    void render(short& turnNumber);
+    void output();
+    bool input(std::string filename, unsigned short& width, unsigned short& height);
+    void getColorCodes();
+>>>>>>> origin/master
 };
 
 #endif

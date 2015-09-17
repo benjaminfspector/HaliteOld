@@ -1,10 +1,7 @@
 #include <iostream>
-#ifdef _WIN32
-	#include <Windows.h>
-#endif
 
 #include "Util.h"
-#include "GameLogic\Halite.h"
+#include "GameLogic/Halite.h"
 
 #define TestingTest 1
 
@@ -21,8 +18,13 @@ void doLogic();
 void renderLoop(int val);
 
 Halite my_game;
+<<<<<<< HEAD
 bool pause = false;
 short turn_number = 0, fps = 30;
+=======
+bool isPaused = false;
+signed short turn_number = 0, fps = 30;
+>>>>>>> origin/master
 
 int main(int argc, char* args[])
 {
@@ -154,7 +156,7 @@ int main(int argc, char* args[])
 void renderLoop(int val)
 {
 	render();
-	if(!pause)
+	if(!isPaused)
 	{
 		if(fps > 0) turn_number++;
 		else if(fps < 0) turn_number--;
@@ -208,7 +210,7 @@ void handleKeys(unsigned char key, int x, int y)
 	}
 	else if(key == ' ')
 	{
-		pause = !pause;
+		isPaused = !isPaused;
 	}
 	else if(key == 'c' || key == 'C')
 	{
@@ -240,13 +242,13 @@ void handleSpecialKeys(int key, int x, int y)
 	{
 		if(lShift || rShift) (turn_number) -= 15;
 		else (turn_number)--;
-		pause = true;
+		isPaused = true;
 	}
 	else if(key == GLUT_KEY_RIGHT)
 	{
 		if(lShift || rShift) (turn_number) += 15;
 		else (turn_number)++;
-		pause = true;
+		isPaused = true;
 	}
 	else if(key == GLUT_KEY_UP)
 	{
