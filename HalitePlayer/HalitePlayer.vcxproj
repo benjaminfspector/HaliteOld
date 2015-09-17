@@ -39,7 +39,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\Halite\HalitePlayer\Classes;$(IncludePath)</IncludePath>
+    <IncludePath>C:\freeglutMSVC\SecretAgents;C:\freeglutMSVC\SFML-2.3.1\include;C:\freeglutMSVC\Halite\HalitePlayer\Classes;$(IncludePath)</IncludePath>
     <LibraryPath>C:\freeglutMSVC\SFML-2.3.1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -75,14 +75,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\SecretAgents\Cell.h" />
+    <ClInclude Include="..\..\SecretAgents\Cell33.h" />
+    <ClInclude Include="..\..\SecretAgents\Tissue33.h" />
+    <ClInclude Include="..\..\SecretAgents\Res.h" />
+    <ClInclude Include="..\..\SecretAgents\Test.h" />
     <ClInclude Include="Classes\Agents\Basic\Basic.h" />
     <ClInclude Include="Classes\Agents\Random\Random.h" />
+    <ClInclude Include="Classes\Agents\Still\Still.h" />
     <ClInclude Include="Classes\hlt.h" />
     <ClInclude Include="Classes\Networking.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\SecretAgents\Test.cpp" />
     <ClCompile Include="Classes\Agents\Basic\Basic.cpp" />
     <ClCompile Include="Classes\Agents\Random\Random.cpp" />
+    <ClCompile Include="Classes\Agents\Still\Still.cpp" />
     <ClCompile Include="Classes\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

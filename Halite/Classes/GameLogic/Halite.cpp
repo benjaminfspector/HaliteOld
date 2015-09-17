@@ -3,10 +3,14 @@
 unsigned char Halite::getNextFrame()
 {
 	//Create threads to send/receive data to/from players. The threads should return a float of how much time passed between the end of their message being sent and the end of the AI's message being sent.
-	std::vector< std::future<double> > frameThreads(number_of_players);
-	for(unsigned char a = 0; a < number_of_players; a++)
+	std::vector< std::future<double> > frameThreads(std::count(still_in_game.begin(), still_in_game.end(), true));
+	auto stillInGameIterator = still_in_game.begin();
+	for(unsigned char a = 0; a < frameThreads.size(); a++)
 	{
-		frameThreads[a] = std::async(handleFrameNetworking, player_connections[a], game_map, &player_moves[a]);
+		stillInGameIterator = std::find(stillInGameIterator, still_in_game.end(), true);
+		unsigned char num = std::distance(still_in_game.begin(), stillInGameIterator);
+		frameThreads[a] = std::async(handleFrameNetworking, player_connections[num], game_map, &player_moves[num]);
+		stillInGameIterator++;
 	}
 
 	//Create a map of the locations of sentient pieces on the game map. Additionally, age pieces. Something like:
@@ -39,9 +43,14 @@ unsigned char Halite::getNextFrame()
 
 	//Join threads. Figure out if the player responded in an allowable amount of time.
 	std::vector<bool> permissibleTime(number_of_players);
+	unsigned char aA = 0;
 	for(unsigned char a = 0; a < number_of_players; a++)
 	{
-		permissibleTime[a] = frameThreads[a].get() <= allowableTimesToRespond[a];
+		if(still_in_game[a])
+		{
+			permissibleTime[a] = frameThreads[aA].get() <= allowableTimesToRespond[a];
+			aA++;
+		}
 	}
 
 	//De-age players who have exceed the time limit:
@@ -72,7 +81,7 @@ unsigned char Halite::getNextFrame()
 			//If there actually is a piece there:
 			if(isGood)
 			{
-				//Delete it from the list of sentientPieces - that way, we can copy over the un-moved pieces later.
+				//Delete it from the list of sentientPieces - that way, we can copy over the un-moved pieces later. Also prevents spawning of new pieces from a single piece by ordering it to move in multiple directions.
 				sentientPieces.erase(l);
 				
 			//Essentially, rather than rewriting the logic each time, which is a pain, I'm simply changing the location that we're moving from and pretending that they're all still. Same results, less(1 + obfuscated) code.
@@ -186,17 +195,19 @@ unsigned char Halite::getNextFrame()
 	//Increment turn number:
 	turn_number++;
 
+	still_in_game = std::vector<bool>(number_of_players, false);
+
 	//Check if the game is over:
-	unsigned char first_found = 0;
 	for(auto a = game_map.contents.begin(); a != game_map.contents.end(); a++) for(auto b = a->begin(); b != a->end(); b++)
 	{
-		if(b->owner != first_found && b->owner != 0)
+		if(b->owner != 0)
 		{
-			if(first_found == 0) first_found = b->owner;
-			else return 0; //Multiple people still alive
+			still_in_game[b->owner - 1] = true;
 		}
 	} 
-	return first_found; //If returns 0, that means NOBODY is alive. If it returns something else, they are the winner.
+
+	if(std::count(still_in_game.begin(), still_in_game.end(), true) > 1) return 0;
+	return std::distance(still_in_game.begin(), std::find(still_in_game.begin(), still_in_game.end(), true)) + 1;
 }
 
 std::string Halite::runGame()
@@ -206,10 +217,10 @@ std::string Halite::runGame()
 	return player_names[result - 1];
 }
 
-void Halite::confirmWithinGame(signed short& turnNumber)
+void Halite::confirmWithinGame(short& turnNumber)
 {
 	if(turnNumber >= full_game.size()) turnNumber = full_game.size() - 1;
-	else if(turnNumber < 0) turnNumber = 0;
+	if(turnNumber < 0) turnNumber = 0;
 }
 
 void Halite::render(short& turnNumber)
@@ -444,6 +455,8 @@ Halite::Halite(unsigned short w, unsigned short h)
 
 	//Initialize player moves vector
 	player_moves.resize(number_of_players);
+
+	still_in_game.resize(number_of_players);
 
 	//Add it to the full game:
 	full_game.push_back(new hlt::Map());

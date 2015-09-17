@@ -6,6 +6,8 @@
 #include "Util.h"
 #include "GameLogic\Halite.h"
 
+#define TestingTest 1
+
 void handleMouse(int button, int state, int x, int y);
 void handlePassiveMouseMotion(int x, int y);
 void handleMouseMotion(int x, int y);
@@ -20,7 +22,7 @@ void renderLoop(int val);
 
 Halite my_game;
 bool pause = false;
-signed short turn_number = 0, fps = 30;
+short turn_number = 0, fps = 30;
 
 int main(int argc, char* args[])
 {
@@ -35,6 +37,7 @@ int main(int argc, char* args[])
 	std::thread logicThread;
 	unsigned short mapWidth, mapHeight;
 
+#ifndef TestingTest
 	std::cout << "Would you like to run a new game or render a past one? Please enter \"New\" or \"Past\": ";
 	while(true)
 	{
@@ -76,12 +79,19 @@ int main(int argc, char* args[])
 				std::getline(std::cin, in);
 			}
 		}
+#else
+		mapWidth = 80;
+		mapHeight = 80;
+#endif
+
 
 		my_game = Halite(mapWidth, mapHeight);
 
 		my_game.init();
 
 		logicThread = std::thread(doLogic);
+
+#ifndef TestingTest
 	}
 	else
 	{
@@ -93,6 +103,7 @@ int main(int argc, char* args[])
 			std::getline(std::cin, in);
 		}
 	}
+#endif
 
 	//Initialize FreeGLUT
 	glutInit(&argc, args);

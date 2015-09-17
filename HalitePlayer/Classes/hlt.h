@@ -14,6 +14,11 @@ namespace hlt
 	}
 
 	struct Site { unsigned char owner, age; };
+	static bool operator==(const Site& s1, const Site& s2)
+	{
+		return s1.age == s1.age && s1.owner == s2.owner;
+	}
+
 	class Map
 	{
 	public:
@@ -135,6 +140,8 @@ namespace hlt
 			else l.x = map_width - 1;
 			return l;
 		}
+
+		std::vector< Site > operator[](short x) { return contents[x]; }
 	};
 
 	struct Move { Location l; unsigned char d; };

@@ -19,6 +19,12 @@
     <Filter Include="Agents\Basic">
       <UniqueIdentifier>{ac22dc6b-8e2f-4504-a8bd-5689e70efc98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Agents\SecretAgents">
+      <UniqueIdentifier>{db1e90d8-0028-4b4c-b58f-f1080cf285ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Agents\Still">
+      <UniqueIdentifier>{9494eb4d-606d-4733-aad6-744ee29e17a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\hlt.h">
@@ -33,6 +39,24 @@
     <ClInclude Include="Classes\Agents\Basic\Basic.h">
       <Filter>Agents\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\SecretAgents\Test.h">
+      <Filter>Agents\SecretAgents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SecretAgents\Cell.h">
+      <Filter>Agents\SecretAgents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SecretAgents\Cell33.h">
+      <Filter>Agents\SecretAgents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SecretAgents\Res.h">
+      <Filter>Agents\SecretAgents</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Agents\Still\Still.h">
+      <Filter>Agents\Still</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SecretAgents\Tissue33.h">
+      <Filter>Agents\SecretAgents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Agents\Random\Random.cpp">
@@ -41,6 +65,12 @@
     <ClCompile Include="Classes\main.cpp" />
     <ClCompile Include="Classes\Agents\Basic\Basic.cpp">
       <Filter>Agents\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SecretAgents\Test.cpp">
+      <Filter>Agents\SecretAgents</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Agents\Still\Still.cpp">
+      <Filter>Agents\Still</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
