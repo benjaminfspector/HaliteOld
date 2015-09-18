@@ -5,15 +5,6 @@
 #include <time.h>
 #include <set>
 #include <cfloat>
-<<<<<<< HEAD
-#include <sstream>
-#include <boost\asio.hpp>
-#include <boost\archive\text_oarchive.hpp>
-#include <boost\archive\text_iarchive.hpp>
-#include <boost\serialization\set.hpp>
-#include <boost\serialization\vector.hpp>
-#include <boost\serialization\string.hpp>
-=======
 #include <fstream>
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -22,7 +13,6 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/asio.hpp>
->>>>>>> origin/master
 
 #include "GameLogic/hlt.h"
 

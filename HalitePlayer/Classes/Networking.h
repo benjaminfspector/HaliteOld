@@ -5,27 +5,6 @@
 #include <set>
 #include <iostream>
 #include <cstdlib>
-<<<<<<< HEAD
-#include <sstream>
-
-#ifdef _WIN32
-	#include <boost\archive\text_oarchive.hpp>
-	#include <boost\archive\text_iarchive.hpp>
-	#include <boost\serialization\set.hpp>
-	#include <boost\serialization\vector.hpp>
-	#include <boost\serialization\string.hpp>
-	#include <boost\asio.hpp>
-	#include <boost\array.hpp>
-#elif
-	#include <boost/archive/text_oarchive.hpp>
-	#include <boost/archive/text_iarchive.hpp>
-	#include <boost/serialization/set.hpp>
-	#include <boost/serialization/vector.hpp>
-	#include <boost/serialization/string.hpp>
-	#include <boost/asio.hpp>
-	#include <boost/array.hpp>
-#endif
-=======
 #include <fstream>
 #include <boost/archive/archive_exception.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -35,7 +14,6 @@
 #include <boost/serialization/string.hpp>
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
->>>>>>> origin/master
 
 #include "hlt.h"
 
@@ -74,16 +52,6 @@ static void deserializeMap(std::string &inputString, hlt::Map &map)
     // Run-length encode of owners
     unsigned short y = 0, x = 0;
     unsigned short counter = 0, owner = 0;
-<<<<<<< HEAD
-    while(y != map.map_height) 
-	{
-        iss >> counter >> owner;
-        for(int a = 0; a < counter; ++a) 
-		{
-            map.contents[y][x].owner = owner;
-            ++x;
-            if(x == map.map_width) 
-=======
     while(y != map.map_height)
 	{
         iss >> counter >> owner;
@@ -92,23 +60,16 @@ static void deserializeMap(std::string &inputString, hlt::Map &map)
             map.contents[y][x].owner = owner;
             ++x;
             if(x == map.map_width)
->>>>>>> origin/master
 			{
                 x = 0;
                 ++y;
             }
         }
     }
-    
-<<<<<<< HEAD
+
     for (int a = 0; a < map.contents.size(); ++a) 
 	{
         for (int b = 0; b < map.contents[a].size(); ++b) 
-=======
-    for (int a = 0; a < map.contents.size(); ++a)
-	{
-        for (int b = 0; b < map.contents[a].size(); ++b)
->>>>>>> origin/master
 		{
             iss >> map.contents[a][b].age;
         }
