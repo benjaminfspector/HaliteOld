@@ -21,6 +21,10 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+# Custom VS ignores
+*.vcxproj
+*.sln
+
 # Roslyn cache directories
 *.ide/
 
