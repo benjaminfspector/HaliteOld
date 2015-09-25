@@ -92,8 +92,6 @@ static void sendObject(boost::asio::ip::tcp::socket *s, const type &sendingObjec
     ar << sendingObject;
     
 	size_t header = buf.size();
-
-	std::cout << "header size: " << header << "\n";
     
     // send header and buffer using scatter
     std::vector<boost::asio::const_buffer> buffers;
@@ -121,7 +119,7 @@ static double handleInitNetworking(boost::asio::ip::tcp::socket *s, unsigned cha
 {
     using boost::asio::ip::tcp;
     
-    InitPackage package = {playerTag, ageOfSentient, m};
+    InitPackage package = {playerTag, ageOfSentient, hlt::Map(m)};
     sendObject(s, package);
     
     

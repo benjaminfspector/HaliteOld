@@ -102,8 +102,6 @@ static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
     s->read_some(buf.prepare( header ));
     buf.commit( header );
 
-	std::cout << "header: " << header << "\n";
-
 	try {
 		std::istream is(&buf);
 		boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
