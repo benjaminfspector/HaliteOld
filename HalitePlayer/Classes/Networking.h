@@ -104,9 +104,14 @@ static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
 
 	std::cout << "header: " << header << "\n";
 
-	std::istream is(&buf);
-	boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
-	ar >> receivingObject;
+	try {
+		std::istream is(&buf);
+		boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
+		ar >> receivingObject;
+	}
+	catch (boost::archive::archive_exception e) {
+		std::cout << "ex: " << e.what() << "\n";
+	}
 }
 
 static boost::asio::ip::tcp::socket * connectToGame()
