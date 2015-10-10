@@ -10,11 +10,11 @@ Halite is played on a grid of variable size. Each square in the grid is eighter 
 
 Factory squares age each turn. When a factory piece's age reaches the grids sentient age (a constant determined by the size of the grid), the factory piece resets its age and creates a sentient piece on top of it. 
 
-Each turn, every player has the option to move each of their sentient pieces either up, down, left, or right to an adjacent position on the grid. The grid is wrap-around, so there are no boarders; pieces may always move up, down, left, or right. When a player's sentient piece moves onto an empty square or an opponent's factory piece, that square becomes a factory piece for the player who owns the sentient. When a sentient piece moves onto a friendly factory square, that factory square's age is reset. When two sentients owned by different players move adjacent to one another, both sentients are killed, and so, are removed from the game.
+Each turn, every player has the option to move each of their sentient pieces either up, down, left, or right to an adjacent position on the grid. The grid is wrap-around, so there are no boarders; pieces may always move up, down, left, or right. When a player's sentient piece moves onto an empty square or an opponent's factory piece, that square becomes a factory piece for the player who owns the sentient. When a sentient piece moves onto a friendly factory square, that factory square's age is reset. When two sentients move adjacent to one another, both sentients are killed, and so, are removed from the game.
 
 The goal of Halite is to be the last player in the game. An AI is knocked out of the game if they have no pieces left.
 
-## The AIS
+## The AIs
 
 Through the development of Halite, we and our friends have made a number of AIs and pitted them against one another. Here is a quick summary of some of the most important:
 
