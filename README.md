@@ -14,7 +14,7 @@ Each turn, every player has the option to move each of their sentient pieces eit
 
 The goal of Halite is to be the last player in the game. An AI is knocked out of the game if they have no pieces left.
 
-## The Game
+## The AIS
 
 Through the development of Halite, we and our friends have made a number of AIs and pitted them against one another. Here is a quick summary of some of the most important:
 
