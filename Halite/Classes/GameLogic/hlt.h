@@ -35,7 +35,7 @@ namespace hlt
 
 	struct Color
 	{
-		GLubyte r, g, b;
+		float r, g, b;
 	};
 
 	struct Site

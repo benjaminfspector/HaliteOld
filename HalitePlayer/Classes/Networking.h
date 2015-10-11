@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
+
 #include <boost/archive/archive_exception.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -102,11 +103,14 @@ static void getObject(boost::asio::ip::tcp::socket *s, type &receivingObject)
     s->read_some(buf.prepare( header ));
     buf.commit( header );
 
-	std::cout << "header: " << header << "\n";
-
-	std::istream is(&buf);
-	boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
-	ar >> receivingObject;
+	try {
+		std::istream is(&buf);
+		boost::archive::text_iarchive ar(is, boost::archive::archive_flags::no_header);
+		ar >> receivingObject;
+	}
+	catch (boost::archive::archive_exception e) {
+		std::cout << "ex: " << e.what() << "\n";
+	}
 }
 
 static boost::asio::ip::tcp::socket * connectToGame()

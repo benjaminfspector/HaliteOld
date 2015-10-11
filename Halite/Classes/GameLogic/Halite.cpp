@@ -4,6 +4,8 @@ using boost::asio::ip::tcp;
 
 unsigned char Halite::getNextFrame()
 {
+	if(game_map.map_width == 0 || game_map.map_height == 0) return 255;
+
     //Create threads to send/receive data to/from players. The threads should return a float of how much time passed between the end of their message being sent and the end of the AI's message being sent.
     std::vector< std::future<double> > frameThreads(number_of_players);
     for(unsigned char a = 0; a < number_of_players; a++)
@@ -211,6 +213,7 @@ std::string Halite::runGame()
 {
     unsigned short result = 0;
     while(result == 0) result = getNextFrame();
+	if(result == 255) return "";
     return player_names[result - 1];
 }
 
@@ -223,37 +226,41 @@ void Halite::confirmWithinGame(signed short& turnNumber)
 void Halite::render(short& turnNumber)
 {
     confirmWithinGame(turnNumber);
-    
-    hlt::Map * m = full_game[turnNumber];
-    
-    float xPointSize = glutGet(GLUT_WINDOW_WIDTH) / float(game_map.map_width);
-    float yPointSize = glutGet(GLUT_WINDOW_HEIGHT) / float(game_map.map_height);
-    const float decrementFactor = 0.6;
-    float pointSize = std::min(xPointSize, yPointSize) * decrementFactor;
-    glPointSize(pointSize);
-    glBegin(GL_POINTS);
-    unsigned short aD = 0;
-    for(auto a = m->contents.begin(); a != m->contents.end(); a++)
-    {
-        unsigned short bD = 0;
-        for(auto b = a->begin(); b != a->end(); b++)
-        {
-            hlt::Color c = color_codes[b->owner];
-            const double BASE_DIMMING_FACTOR = 0.5;
-            if(b->age != age_of_sentient)
-            {
-                const double TRUE_DIMMING_FACTOR = 0.15+0.85*(BASE_DIMMING_FACTOR*b->age/age_of_sentient);
-                c.r *= TRUE_DIMMING_FACTOR;
-                c.g *= TRUE_DIMMING_FACTOR;
-                c.b *= TRUE_DIMMING_FACTOR;
-            }
-            glColor3ub(c.r, c.g, c.b);
-            glVertex2f(bD + 0.5, aD + 0.5);
-            bD++;
-        }
-        aD++;
-    }
-    glEnd();
+
+	if(!full_game.empty())
+	{
+		hlt::Map * m = full_game[turnNumber];
+
+		std::vector<float> colors(unsigned int(m->map_width) * m->map_height * 3);
+
+		unsigned int colorLocation = 0;
+		for(auto a = m->contents.begin(); a != m->contents.end(); a++)
+		{
+			for(auto b = a->begin(); b != a->end(); b++)
+			{
+				hlt::Color c = color_codes[b->owner];
+				const double BASE_DIMMING_FACTOR = 0.5;
+				if(b->age != age_of_sentient)
+				{
+					const double TRUE_DIMMING_FACTOR = 0.15 + 0.85*(BASE_DIMMING_FACTOR*b->age / age_of_sentient);
+					c.r *= TRUE_DIMMING_FACTOR;
+					c.g *= TRUE_DIMMING_FACTOR;
+					c.b *= TRUE_DIMMING_FACTOR;
+				}
+				colors[colorLocation] = c.r;
+				colors[colorLocation + 1] = c.g;
+				colors[colorLocation + 2] = c.b;
+				colorLocation += 3;
+			}
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, colors.size() * sizeof(float), colors.data());
+
+		glUseProgram(shader_program);
+		glBindVertexArray(vertex_attributes);
+		glDrawArrays(GL_POINTS, 0, unsigned int(m->map_width) * m->map_height);
+	}
 }
 
 void Halite::output()
@@ -286,20 +293,24 @@ void Halite::output()
 
 bool Halite::input(std::string filename, unsigned short& width, unsigned short& height)
 {
-    std::cout << "Beginning to read in file: ";
-    
     std::fstream game_file;
     game_file.open(filename, std::ios_base::in);
     if(!game_file.is_open()) return false;
+
+	std::cout << "Beginning to read in file:\n";
+
+	clearFullGame();
+	game_map.map_width = 0;
+	game_map.map_height = 0;
     
     std::string in;
-    game_file >> width >> height>> number_of_players;
+    game_file >> width >> height >> number_of_players;
     game_map.map_width = width;
     game_map.map_height = height;
     age_of_sentient = getAgeOfSentient(width, height);
     std::getline(game_file, in);
     player_names.resize(number_of_players);
-    for(unsigned char a = 0; a < number_of_players; a++) std::getline(game_file  , player_names[a]);
+    for(unsigned char a = 0; a < number_of_players; a++) std::getline(game_file, player_names[a]);
     
     game_map.contents.resize(game_map.map_height);
     for(auto a = game_map.contents.begin(); a != game_map.contents.end(); a++) a->resize(game_map.map_width);
@@ -314,11 +325,13 @@ bool Halite::input(std::string filename, unsigned short& width, unsigned short& 
         }
         full_game.push_back(new hlt::Map());
         *full_game.back() = game_map;
-        std::cout << "Goten frame #" << short(full_game.size()) << ".\n";
+        std::cout << "Gotten frame #" << short(full_game.size()) << ".\n";
     }
     
     delete full_game.back();
     full_game.pop_back();
+
+	setupRendering(full_game[0]->map_width, full_game[0]->map_height);
     
     game_file.close();
     return true;
@@ -336,19 +349,27 @@ Halite::Halite()
     age_of_sentient = 0;
     player_connections = std::vector<tcp::socket * >();
     player_moves = std::vector< std::set<hlt::Move> >();
+	const GLuint GL_INIT_VALUE = 0;
+	vertex_buffer = GL_INIT_VALUE;
+	color_buffer = GL_INIT_VALUE;
+	vertex_attributes = GL_INIT_VALUE;
+	vertex_shader = GL_INIT_VALUE;
+	geometry_shader = GL_INIT_VALUE;
+	fragment_shader = GL_INIT_VALUE;
+	shader_program = GL_INIT_VALUE;
     //Init Color Codes:
     color_codes = std::map<unsigned char, hlt::Color>();
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(0, { 100, 100, 100 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(1, { 255, 0, 0 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(2, { 0, 255, 0 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(3, { 0, 0, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(4, { 255, 255, 0 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(5, { 255, 0, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(6, { 0, 255, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(7, { 255, 255, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(8, { 222, 184, 135 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(9, { 255, 128, 128 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(10, { 255, 165, 0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(0, { 0.05, 0.05, 0.05 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(1, { 1.0, 0.0, 0.0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(2, { 0.0, 1.0, 0.0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(3, { 0.0, 0.0, 1.0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(4, { 1.0, 1.0, 1.0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(5, { 1.0, 0.0, 1.0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(6, { 0.0, 1.0, 1.0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(7, { 1.0, 1.0, 1.0 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(8, { .87, .72, .53 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(9, { 1.0, .50, .50 }));
+    color_codes.insert(std::pair<unsigned char, hlt::Color>(10, { 1.0, .65, .0 }));
 }
 
 Halite::Halite(unsigned short w, unsigned short h)
@@ -359,19 +380,18 @@ Halite::Halite(unsigned short w, unsigned short h)
     full_game = std::vector<hlt::Map * >();
     
     //Init Color Codes:
-    color_codes = std::map<unsigned char, hlt::Color>();
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(0, { 100, 100, 100 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(1, { 255, 0, 0 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(2, { 0, 255, 0 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(3, { 0, 0, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(4, { 255, 255, 0 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(5, { 255, 0, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(6, { 0, 255, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(7, { 255, 255, 255 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(8, { 222, 184, 135 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(9, { 255, 128, 128 }));
-    color_codes.insert(std::pair<unsigned char, hlt::Color>(10, { 255, 165, 0 }));
-    
+	color_codes = std::map<unsigned char, hlt::Color>();
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(0, { 0.05, 0.05, 0.05 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(1, { 1.0, 0.0, 0.0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(2, { 0.0, 1.0, 0.0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(3, { 0.0, 0.0, 1.0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(4, { 1.0, 1.0, 1.0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(5, { 1.0, 0.0, 1.0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(6, { 0.0, 1.0, 1.0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(7, { 1.0, 1.0, 1.0 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(8, { .87, .72, .53 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(9, { 1.0, .50, .50 }));
+	color_codes.insert(std::pair<unsigned char, hlt::Color>(10, { 1.0, .65, .0 }));
     turn_number = 0;
     
     //Connect to players
@@ -444,7 +464,22 @@ Halite::Halite(unsigned short w, unsigned short h)
         player_connections.push_back(socket);
         
         std::cout << "Connected to player " << number_of_players + 1 << " at " << socket->remote_endpoint().address().to_string() << std::endl << "How should I refer to this player? Please enter their name: ";
-        std::getline(std::cin, in);
+		while(true)
+		{
+			std::getline(std::cin, in);
+			if(in == "") std::cout << "Each player requires a name to be uniquely identifiable. Please enter a name for this player: ";
+			else
+			{
+				bool good = true;
+				for(auto a = player_names.begin(); a != player_names.end(); a++) if(*a == in)
+				{
+					good = false;
+					break;
+				}
+				if(good) break;
+				else std::cout << "That name is already taken. Please enter another name for this player: ";
+			}
+		}
         player_names.push_back(in);
         
         number_of_players++;
@@ -461,6 +496,8 @@ Halite::Halite(unsigned short w, unsigned short h)
     //Add it to the full game:
     full_game.push_back(new hlt::Map());
     *full_game.back() = game_map;
+
+	setupRendering(w, h);
 }
 
 void Halite::init()
@@ -484,4 +521,97 @@ void Halite::getColorCodes()
         hlt::Color c = color_codes[a+1];
         std::cout << "Player " << player_names[a] << " has color: r = " << short(c.r) << ", g = " << short(c.g) << ", and b = " << short(c.b) << ".\n";
     }
+}
+
+void Halite::clearFullGame()
+{
+	for(auto a = full_game.begin(); a != full_game.end(); a++) delete *a;
+	full_game.clear();
+}
+
+void Halite::setupRendering(unsigned short width, unsigned short height)
+{
+	//Delete buffers and vaos
+	glDeleteBuffers(1, &vertex_buffer);
+	glDeleteBuffers(1, &color_buffer);
+	glDeleteVertexArrays(1, &vertex_attributes);
+	//Generate buffers and vaos.
+	glGenBuffers(1, &vertex_buffer);
+	glGenBuffers(1, &color_buffer);
+	glGenVertexArrays(1, &vertex_attributes);
+
+	//Generate vertices of centers of squares:
+	std::vector<float> vertexLocations(unsigned int(width) * height * 2); //2 because there are x and y values for every vertex.
+	float xLoc = -1.0 + 1.0 / width, yLoc = -1.0 + 1.0 / height, dX = 2.0 / width, dY = 2.0 / height;
+	for(unsigned int a = 0; a < vertexLocations.size(); a += 2)
+	{
+		vertexLocations[a] = xLoc;
+		vertexLocations[a + 1] = yLoc;
+
+		xLoc += dX;
+		if(xLoc > 1.0)
+		{
+			xLoc = -1.0 + 1.0 / width;
+			yLoc += dY;
+		}
+	}
+
+	//Bind vertex attribute object.
+	glBindVertexArray(vertex_attributes);
+
+	//Setup vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, vertexLocations.size() * sizeof(float), vertexLocations.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	//Create vector of floats (0.0) to reserve the memory for the color buffer and allow us to set the mode to GL_DYNAMIC_DRAW.
+	std::vector<float> colors(unsigned int(width) * height * 3); //r, g, and b components.
+
+	//Setup color buffer
+	glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+	glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(float), colors.data(), GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	//Setup shaders:
+	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+	shaderFromFile(vertex_shader, "Classes/shaders/vertexshader.glsl", "vertex_shader");
+	geometry_shader = glCreateShader(GL_GEOMETRY_SHADER);
+	shaderFromFile(geometry_shader, "Classes/shaders/geometryshader.glsl", "geometry_shader");
+	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	shaderFromFile(fragment_shader, "Classes/shaders/fragmentshader.glsl", "fragment_shader");
+
+	//Setup shader program:
+	shader_program = glCreateProgram();
+	glAttachShader(shader_program, vertex_shader);
+	glAttachShader(shader_program, geometry_shader);
+	glAttachShader(shader_program, fragment_shader);
+	glLinkProgram(shader_program);
+	glDetachShader(shader_program, vertex_shader);
+	glDetachShader(shader_program, geometry_shader);
+	glDetachShader(shader_program, fragment_shader);
+
+	//Set uniform:
+	glUseProgram(shader_program);
+	const float SPACE_FACTOR = 0.6;
+	GLint widthLoc = glGetUniformLocation(shader_program, "width"), heightLoc = glGetUniformLocation(shader_program, "height");
+	glUniform1f(widthLoc, dX * SPACE_FACTOR * 0.5);
+	glUniform1f(heightLoc, dY * SPACE_FACTOR * 0.5);
+	
+	//Cleanup - delete shaders
+	glDeleteShader(vertex_shader);
+	glDeleteShader(geometry_shader);
+	glDeleteShader(fragment_shader);
+}
+
+Halite::~Halite()
+{
+	glDeleteShader(vertex_shader);
+	glDeleteShader(geometry_shader);
+	glDeleteShader(fragment_shader);
+	glDeleteProgram(shader_program);
+	glDeleteBuffers(1, &vertex_buffer);
+	glDeleteBuffers(1, &color_buffer);
+	glDeleteVertexArrays(1, &vertex_attributes);
 }

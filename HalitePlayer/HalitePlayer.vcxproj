@@ -40,7 +40,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>C:\boost_1_58_0;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\boost_1_58_0\stage\lib;C:\vsProjects\freeglut\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\boost_1_58_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\boost_1_58_0;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>

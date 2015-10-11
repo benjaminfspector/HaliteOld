@@ -13,6 +13,7 @@
 
 #include "hlt.h"
 #include "OpenGL.h"
+#include "../Util.h"
 #include "Networking.h"
 
 class Halite
@@ -27,6 +28,9 @@ private:
     std::vector<boost::asio::ip::tcp::socket *> player_connections;
     std::vector< std::set<hlt::Move> > player_moves;
     
+	GLuint vertex_buffer, color_buffer, vertex_attributes, vertex_shader, geometry_shader, fragment_shader, shader_program;
+	void setupRendering(unsigned short width, unsigned short height);
+	void clearFullGame();
     unsigned char getNextFrame();
     void connectToPlayers();
     unsigned char getAgeOfSentient(unsigned short w, unsigned short h) { return pow(int(w)*h, 0.4); }
@@ -40,6 +44,7 @@ public:
     void output();
     bool input(std::string filename, unsigned short& width, unsigned short& height);
     void getColorCodes();
+	~Halite();
 };
 
 #endif

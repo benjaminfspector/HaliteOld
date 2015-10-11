@@ -39,8 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\boost_1_58_0;C:\vsProjects\freeglut\include;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\boost_1_58_0\stage\lib;C:\vsProjects\freeglut\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\GLEW\glew-1.12.0\include;C:\boost_1_58_0;C:\GLFW\glfw-3.1.1.bin.WIN32\include;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GLEW\glew-1.12.0\lib\Release\Win32;C:\boost_1_58_0\stage\lib;C:\GLFW\glfw-3.1.1.bin.WIN32\lib-vc2013;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\boost_1_58_0;C:\vsProjects\freeglut\include;$(ProjectDir)\Classes;$(IncludePath)</IncludePath>
@@ -57,7 +57,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;glfw3.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\freeglutMSVC\SFML-2.3.1\lib;C:\freeglutMSVC\lib;C:\freeglutMSVC\boost_1_58_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -76,12 +76,13 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\freeglutMSVC\SFML-2.3.1\lib;C:\freeglutMSVC\lib;C:\freeglutMSVC\boost_1_58_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;glfw.lib;glu.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\GameLogic\Halite.cpp" />
     <ClCompile Include="Classes\main.cpp" />
+    <ClCompile Include="Classes\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\GameLogic\Halite.h" />
@@ -89,6 +90,11 @@
     <ClInclude Include="Classes\Networking.h" />
     <ClInclude Include="Classes\OpenGL.h" />
     <ClInclude Include="Classes\Util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Classes\shaders\fragmentshader.glsl" />
+    <None Include="Classes\shaders\geometryshader.glsl" />
+    <None Include="Classes\shaders\vertexshader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
